@@ -59,6 +59,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          token: ${{ secrets.OCM_BOT_PAT }}
 
       - name: Download VSIX package artifacts
         uses: actions/download-artifact@v3
@@ -71,6 +72,7 @@ jobs:
         uses: actions/github-script@v6
         continue-on-error: true
         with:
+          github-token: ${{ secrets.OCM_BOT_PAT }}
           script: |
             const repo_name = context.payload.repository.full_name
             var response = await github.request('GET /repos/' + repo_name + '/releases/tags/early-access')
@@ -81,6 +83,7 @@ jobs:
         if: ${{ steps.existing_release.outputs.id }}
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.OCM_BOT_PAT }}
           script: |
             const repo_name = context.payload.repository.full_name
             await github.request('DELETE /repos/' + repo_name + '/releases/' + ${{ steps.existing_release.outputs.id }})
@@ -93,6 +96,7 @@ jobs:
         id: new_release
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.OCM_BOT_PAT }}
           script: |
             const repo_name = context.payload.repository.full_name
             const response = await github.request('POST /repos/' + repo_name + '/releases', {
@@ -119,7 +123,7 @@ jobs:
             asset_name=$(basename $file)
             upload_url=$(echo "${{ steps.new_release.outputs.upload_url }}" | sed "s/{?name,label}/?name=$asset_name/g")
             curl --data-binary @"$file" \
-            -H "Authorization: token ${{ github.token }}" \
+            -H "Authorization: token ${{ secrets.OCM_BOT_PAT }}" \
             -H "Content-Type: application/octet-stream" \
             $upload_url
           done
