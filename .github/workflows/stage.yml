@@ -97,7 +97,6 @@ jobs:
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.OCM_BOT_PAT }}
-          debug: true
           script: |
             const repo_name = context.payload.repository.full_name
             const response = await github.request('POST /repos/' + repo_name + '/releases', {
