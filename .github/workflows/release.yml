@@ -70,6 +70,9 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v3
 
+      - name: Pull default branch from remote
+        run: git pull origin ${{ github.event.repository.default_branch }}
+
       - name: Install node 16
         uses: actions/setup-node@v3
         with:
@@ -82,7 +85,6 @@ jobs:
       - name: Create VSIX package
         run: >
           npm run vsce:package --
-          --pre-release
           --target ${{ matrix.target }}
           --out ocm-vscode-extension-${{ matrix.target }}-${{ needs.prepare.outputs.new_version }}.vsix
 
@@ -156,6 +158,5 @@ jobs:
       - name: Publish VSIX packages to the marketplace
         run: >
           npm run vsce:publish --
-          --pre-release
           --pat ${{ secrets.VSCE_PAT }}
           --packagePath $(find ./vsix -iname *.vsix)

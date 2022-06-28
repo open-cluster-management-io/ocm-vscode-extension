@@ -11,7 +11,6 @@
 	},
 	"icon": "images/icon.png",
 	"private": true,
-	"preview": true,
 	"keywords": [
 		"ocm",
 		"open-cluster-management",

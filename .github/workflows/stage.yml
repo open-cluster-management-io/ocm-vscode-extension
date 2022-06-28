@@ -41,6 +41,7 @@ jobs:
       - name: Create VSIX package
         run: >
           npm run vsce:package --
+          --pre-release
           --target ${{ matrix.target }}
           --out ocm-vscode-extension-${{ matrix.target }}-early-access.vsix
 
