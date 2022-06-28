@@ -41,6 +41,11 @@ jobs:
         run: |
           npm version ${{ steps.bumper.outputs.new_version }} --no-git-tag-version
 
+      - name: Configure git
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+
       - name: Commit and push package modifications
         run: |
           git add package.json
