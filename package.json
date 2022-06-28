@@ -1,6 +1,6 @@
 {
 	"name": "ocm-vscode-extension",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"displayName": "OCM Extension",
 	"description": "OCM VSCode extension contributing commands and snippets",
 	"publisher": "OpenClusterManagement",
