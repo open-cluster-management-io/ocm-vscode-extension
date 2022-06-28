@@ -145,6 +145,7 @@
 		"build": "npm run lint && npm run tests:cov",
 		"clean:build": "npm run clean && npm run build",
 		"vsce:package": "vsce package",
+		"vsce:publish": "vsce publish",
 		"pretest": "npm run compile",
 		"test": "mocha --check-leaks --fail-zero --color --parallel --ui tdd ./out/tests/",
 		"tests": "npm test",
