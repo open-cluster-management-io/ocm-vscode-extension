@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"displayName": "OCM Extension",
 	"description": "OCM VSCode extension contributing commands and snippets",
-	"publisher": "redhat-ecosystem-application-engineering",
+	"publisher": "OpenClusterManagement",
 	"license": "SEE LICENSE IN LICENSE",
 	"homepage": "https://github.com/open-cluster-management-io/ocm-vscode-extension/blob/main/README.md",
 	"bugs": {
@@ -11,6 +11,7 @@
 	},
 	"icon": "images/icon.png",
 	"private": true,
+	"preview": true,
 	"keywords": [
 		"ocm",
 		"open-cluster-management",
