@@ -31,7 +31,7 @@
 	"activationEvents": [
 		"onCommand:ocm-vscode-extension.ocmNewProject",
 		"onCommand:ocm-vscode-extension.verifyTools",
-		"onCommand:ocm-vscode-extension.createLocalEnvironment",
+		"onCommand:ocm-vscode-extension.showClusterDetails",
 		"onView:ocm-vscode-extension.connectedClustersView"
 	],
 	"main": "./out/src/extension.js",
@@ -51,6 +51,11 @@
 				"command": "ocm-vscode-extension.createLocalEnvironment",
 				"title": "Build local environment",
 				"category": "OCM"
+			},
+			{
+				"command": "ocm-vscode-extension.showClusterDetails",
+				"title": "showClusterDetails",
+				"category": "OCM-View"
 			},
 			{
 				"command": "ocm-vscode-extension.connectedClustersView.refresh",
@@ -155,8 +160,11 @@
 	},
 	"dependencies": {
 		"@kubernetes/client-node": "^0.16.3",
+		"@patternfly/patternfly": "^4.202.1",
+		"@patternfly/react-core": "^4.224.1",
 		"@types/lodash": "^4.14.182",
 		"@types/shelljs": "^0.8.11",
+		"@vscode/webview-ui-toolkit": "^1.0.0",
 		"fs-extra": "^10.0.1",
 		"lodash": "^4.17.21",
 		"shelljs": "0.8.5"
