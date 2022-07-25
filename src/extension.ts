@@ -3,7 +3,7 @@ import * as newProject from './commands/newProject';
 import * as verifyEnvironment from './commands/verifyEnvironment';
 import * as vscode from 'vscode';
 import { ConnectedClustersProvider } from './providers/connectedClusters';
-import { ClusterPanel } from './view/ClusterPanel';
+import { ClusterDetailsPanel } from './view/ClusterDetailsPanel';
 
 export function activate(context: vscode.ExtensionContext): void {
 	let connectedClustersProvider = new ConnectedClustersProvider();
@@ -19,6 +19,6 @@ export function activate(context: vscode.ExtensionContext): void {
 		vscode.commands.registerCommand(
 			'ocm-vscode-extension.connectedClustersView.refresh', () => connectedClustersProvider.refresh()),
 			vscode.commands.registerCommand(
-			'ocm-vscode-extension.showClusterDetails', () => ClusterPanel.render(context.extensionUri))
+			'ocm-vscode-extension.showClusterDetails', () => ClusterDetailsPanel.render(context.extensionUri))
 	);
 }

@@ -11,6 +11,12 @@ export class ConnectedCluster extends vscode.TreeItem {
 		super(cluster.name, vscode.TreeItemCollapsibleState.Collapsed);
 		this.cluster = cluster;
 		this.tooltip = cluster.server;
+		this.command = {
+			"title": "details",
+			"command": "ocm-vscode-extension.showClusterDetails",
+			"arguments": [cluster.name]
+		};
+
 	}
 
 	iconPath = {
