@@ -8,8 +8,10 @@ function ClusterDropDownList() {
         const clusterOptions:any= []
         window.addEventListener("message", event => {
             const clusters = JSON.parse(event.data.clusters)            
-            clusters.forEach((cluster:any) => {             
-              clusterOptions.push( cluster.cluster.name)             
+            clusters.forEach((cluster:any) => {
+                if (cluster.cluster !== undefined) {
+                    clusterOptions.push( cluster.cluster.name)
+                }          
             });
             setClustersDropDown(clusterOptions)
             console.log(clustersDropDown)
