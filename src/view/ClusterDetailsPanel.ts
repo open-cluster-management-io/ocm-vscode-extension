@@ -164,12 +164,16 @@ export class ClusterDetailsPanel {
           // user selected a cluster 
           case "selectedCluster":
 
+            let selectedCluster = message.text;
+
             //reset 
             this._panel.webview.postMessage({"managedClusters":JSON.stringify([])});
-            managedClusters = await this._kubeDataLoader.loadManagedCluster(message.text);
+            managedClusters = await this._kubeDataLoader.loadManagedCluster(selectedCluster);
             // if this is hub cluster - show managed clusters
             if (managedClusters){
                   this._panel.webview.postMessage({"managedClusters":JSON.stringify(managedClusters)}); 
+                  // get manifest work 
+                  this._kubeDataLoader.getManifestWork(selectedCluster,managedClusters);
             }
               
 
