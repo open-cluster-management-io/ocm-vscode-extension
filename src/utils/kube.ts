@@ -16,6 +16,8 @@ class ConnectedCluster {
 }
 
 class KubeDataLoader {
+
+
    private kubeConfig = new k8s.KubeConfig();
 
    constructor() {
@@ -51,6 +53,28 @@ class KubeDataLoader {
 		return Promise.resolve(
 			apiResponse.body.items
 			.filter(item => item.spec.group.includes('open-cluster-management')));
+	}
+	
+	_getClusterByName(selectedCluster:string): k8s.Cluster{
+		return this.kubeConfig.clusters.filter(cluster => cluster !== undefined && cluster.name === selectedCluster)[0];     
+
+	}
+
+	async getManifestWork(selectedCluster:string ,managedClusters: OcmResource[]): Promise<OcmResource[]> {		
+
+		let manifestWorkList = [];
+		let k8sCustomObjApi = this.kubeConfig.makeApiClient(k8s.CustomObjectsApi);
+		var manifestWorks: Promise<void>[] = [];
+		var customResources: OcmResource[] = [];
+
+		let manifestWorksCrd =  (await this.getOcmResourceDefinitions(this._getClusterByName(selectedCluster))).filter(
+			crd => crd.spec.names.kind === "ManifestWork")[0];
+
+		managedClusters.forEach( async () => {
+			manifestWorkList.push(await this.getNamespacedResourceLists(manifestWorksCrd.spec,k8sCustomObjApi,manifestWorks,customResources));	
+		});
+		await Promise.all(managedClusters);
+		return Promise.resolve(managedClusters);
 	}
 
 	public async getOcmResources(crd: k8s.V1CustomResourceDefinition): Promise<OcmResource[]> {
