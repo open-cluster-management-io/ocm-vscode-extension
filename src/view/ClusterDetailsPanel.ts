@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/unbound-method */
+
 import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn } from "vscode";
+import KubeDataLoader  from '../../src/utils/kube';
 import { getUri } from "../utils/getUri";
-import KubeDataLoader  from '../../src/utils/kube'
-import { kMaxLength } from "buffer";
+
 
 
 /**
@@ -20,7 +21,7 @@ export class ClusterDetailsPanel {
   public static currentPanel: ClusterDetailsPanel | undefined;
   private readonly _panel: WebviewPanel;
   private _disposables: Disposable[] = [];
-
+  private _kubeDataLoader:KubeDataLoader;
   /**
    * The ClusterDetailsPanel class private constructor (called only from the render method).
    *
@@ -38,8 +39,8 @@ export class ClusterDetailsPanel {
     this._panel.webview.html = this._getWebviewContent(this._panel.webview, extensionUri);
 
     // Load cluster details 
-    const k = new KubeDataLoader();
-    const _clusters = k.loadConnectedClusters();
+    this._kubeDataLoader = new KubeDataLoader();
+    const _clusters =  this._kubeDataLoader.loadConnectedClusters();
     this._panel.webview.postMessage({"clusters":JSON.stringify(_clusters)}); 
 
     // Set an event listener to listen for messages passed from the webview context
@@ -53,7 +54,7 @@ export class ClusterDetailsPanel {
    *
    * @param extensionUri The URI of the directory containing the extension.
    */
-  public static render(extensionUri: Uri) {
+  public static render(extensionUri: Uri):void {
     if (ClusterDetailsPanel.currentPanel) {
       // If the webview panel already exists reveal it
       ClusterDetailsPanel.currentPanel._panel.reveal(ViewColumn.One);
@@ -80,7 +81,7 @@ export class ClusterDetailsPanel {
   /**
    * Cleans up and disposes of webview resources when the webview panel is closed.
    */
-  public dispose() {
+  public dispose():void {
     ClusterDetailsPanel.currentPanel = undefined;
 
     // Dispose of the current webview panel
@@ -106,7 +107,7 @@ export class ClusterDetailsPanel {
    * @returns A template string literal containing the HTML that should be
    * rendered within the webview panel
    */
-  private _getWebviewContent(webview: Webview, extensionUri: Uri) {
+  private _getWebviewContent(webview: Webview, extensionUri: Uri):string {
     // The CSS file from the React build output
     const stylesUri = getUri(webview, extensionUri, [
       "webview-ui",
@@ -151,20 +152,26 @@ export class ClusterDetailsPanel {
    * @param webview A reference to the extension webview
    * @param context A reference to the extension context
    */
-  private _setWebviewMessageListener(webview: Webview) {
+   _setWebviewMessageListener(webview: Webview):void {
     webview.onDidReceiveMessage(
-      (message: any) => {
+      async (message: any) => {
         const command = message.command;
         const text = message.text;
+        let managedClusters;
 
         switch (command) {
+          
+          // user selected a cluster 
           case "selectedCluster":
-            // Code that should run in response to the hello message command
-            this.k
-            window.showInformationMessage(text);
 
-
-            return;
+            //reset 
+            this._panel.webview.postMessage({"managedClusters":JSON.stringify([])});
+            managedClusters = await this._kubeDataLoader.loadManagedCluster(message.text);
+            // if this is hub cluster - show managed clusters
+            if (managedClusters){
+                  this._panel.webview.postMessage({"managedClusters":JSON.stringify(managedClusters)}); 
+            }
+              
 
         }
       },
