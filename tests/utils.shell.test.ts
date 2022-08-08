@@ -12,15 +12,15 @@ suite('Test cases for the shell utility functions', () => {
 
 	suite('Testing checkToolExists', () => {
 		test('When checking with an existing tool, the function should be successful', async () => {
-			// given the command in question exists
-			sinon.stub(shell, 'exec').withArgs('command -v existing-tool', sinon.match.func).yields(0);
+			// @ts-ignore given the command in question exists
+			sinon.stub(shell, 'which').withArgs('existing-tool').returns({code: 0});
 			// then expect the promise to be resolved
 			return expect(checkToolExists('existing-tool')).to.eventually.be.fulfilled;
 		});
 
 		test('When checking with a non-existing tool, the function should fail', async () => {
 			// given the command in question doesn't exist
-			sinon.stub(shell, 'exec').withArgs('command -v non-existing-tool', sinon.match.func).yields(999);
+			sinon.stub(shell, 'which').withArgs('non-existing-tool').returns(null);
 			// then expect the promise to be rejected
 			return expect(checkToolExists('non-existing-tool')).to.eventually.be.rejected;
 		});
