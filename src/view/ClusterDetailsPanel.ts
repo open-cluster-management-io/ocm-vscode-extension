@@ -157,15 +157,13 @@ export class ClusterDetailsPanel {
       async (message: any) => {
         const command = message.command;
         const text = message.text;
-        let managedClusters;
+        let managedClusters,manifestWorks;
 
         switch (command) {
           
           // user selected a cluster 
-          case "selectedCluster":
-
+          case "selectedCluster": {
             let selectedCluster = message.text;
-
             //reset 
             this._panel.webview.postMessage({"managedClusters":JSON.stringify([])});
             managedClusters = await this._kubeDataLoader.loadManagedCluster(selectedCluster);
@@ -173,10 +171,12 @@ export class ClusterDetailsPanel {
             if (managedClusters){
                   this._panel.webview.postMessage({"managedClusters":JSON.stringify(managedClusters)}); 
                   // get manifest work 
-                  this._kubeDataLoader.getManifestWork(selectedCluster,managedClusters);
+                  manifestWorks = this._kubeDataLoader.getManifestWork(selectedCluster,managedClusters);
+                  console.log(manifestWorks);
+                  this._panel.webview.postMessage({"manifestWorks":JSON.stringify(manifestWorks)});
             }
               
-
+          }
         }
       },
       undefined,
