@@ -168,12 +168,16 @@ export class ClusterDetailsPanel {
             this._panel.webview.postMessage({"managedClusters":JSON.stringify([])});
             managedClusters = await this._kubeDataLoader.loadManagedCluster(selectedCluster);
             // if this is hub cluster - show managed clusters
-            if (managedClusters){
+            if (managedClusters.length !== 0 ){
                   this._panel.webview.postMessage({"managedClusters":JSON.stringify(managedClusters)}); 
                   // get manifest work 
                   manifestWorks = this._kubeDataLoader.getManifestWork(selectedCluster,managedClusters);
-                  console.log(manifestWorks);
                   this._panel.webview.postMessage({"manifestWorks":JSON.stringify(manifestWorks)});
+            } else {
+                console.log("in else");
+                let appliedManifestWork = this._kubeDataLoader.getAppliedManifestWork(selectedCluster);
+                console.log(appliedManifestWork);
+
             }
               
           }
