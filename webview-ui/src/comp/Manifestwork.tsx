@@ -2,6 +2,7 @@
 /* 
 - iterate on all the managedclsuter for hub and check out for manifestwork in the namespace equil to cluster name ( oc get manifest work -n $MANAGESCLUSTER resource name )
 - than pull all manfidest work  */ 
+<<<<<<< HEAD
 import { VSCodeDataGrid, VSCodeDataGridCell, VSCodeDataGridRow,  } from '@vscode/webview-ui-toolkit/react';
 import { useState, useEffect } from 'react';
 
@@ -17,3 +18,6 @@ function ShowManifestWork() {
     },[])
 }
  export default ShowManifestWork
+=======
+export {}
+>>>>>>> b475067 (Added More btn functionality)
