@@ -45,6 +45,10 @@ class KubeDataLoader {
 
 		let managedClusterCrd =  (await this.getOcmResourceDefinitions(selectClusterlist[0])).filter(
 			crd => crd.spec.names.kind === "ManagedCluster")[0] ;
+		
+		if (managedClusterCrd === undefined) {
+			return [];
+		}	
 		let managedClusters  = this.getOcmResources(managedClusterCrd);
 		return managedClusters;
 		}
