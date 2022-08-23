@@ -27,6 +27,8 @@ class KubeDataLoader {
    private updateK8SConfig(): void {
 		this.kubeConfig.loadFromDefault();
 }
+   
+
 
    public loadConnectedClusters(): ConnectedCluster[] {
 		const kubeConfig = new k8s.KubeConfig();
@@ -37,10 +39,19 @@ class KubeDataLoader {
 	
 	async loadManagedCluster(selectCluster:string): Promise<OcmResource[]> {
 		const selectClusterlist = this.kubeConfig.clusters.filter(cluster => cluster !== undefined && cluster.name === selectCluster);     
+		if (selectClusterlist.length === 0 ){
+			return [];
+		} else {
+
 		let managedClusterCrd =  (await this.getOcmResourceDefinitions(selectClusterlist[0])).filter(
 			crd => crd.spec.names.kind === "ManagedCluster")[0] ;
+		
+		if (managedClusterCrd === undefined) {
+			return [];
+		}	
 		let managedClusters  = this.getOcmResources(managedClusterCrd);
 		return managedClusters;
+		}
 	}
 
 	public async getOcmResourceDefinitions(cluster: k8s.Cluster): Promise<V1CustomResourceDefinition[]> {
@@ -60,6 +71,20 @@ class KubeDataLoader {
 
 	}
 
+	async getAppliedManifestWork(selectedCluster:string): Promise<OcmResource[]>{
+		let k8sCustomObjApi = this.kubeConfig.makeApiClient(k8s.CustomObjectsApi);
+		var listResourcesPromises: Promise<void>[] = [];
+		var customResources: OcmResource[] = [];
+		
+		let appliedManifestWorkCrd =  (await this.getOcmResourceDefinitions(this._getClusterByName(selectedCluster))).filter(
+			crd => crd.spec.names.kind === "AppliedManifestWork")[0];
+
+		await this.getClusterResourceLists(appliedManifestWorkCrd.spec, k8sCustomObjApi, listResourcesPromises, customResources);	
+		
+		await Promise.all(listResourcesPromises);
+		return Promise.resolve(customResources);	
+	}
+
 	async getManifestWork(selectedCluster:string ,managedClusters: OcmResource[]) {		
 
 		let manifestWorkList: any[] = [];
@@ -73,8 +98,7 @@ class KubeDataLoader {
 		managedClusters.forEach( async () => {
 			await this.getNamespacedResourceLists(manifestWorksCrd.spec,k8sCustomObjApi,manifestWorks,customResources);
 			await Promise.all(manifestWorks);
-			manifestWorkList.push(customResources);	
-			console.log(customResources);	
+			manifestWorkList.push(customResources);				
 
 		});
 		return  Promise.resolve(manifestWorkList);
