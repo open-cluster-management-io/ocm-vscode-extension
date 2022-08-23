@@ -8,11 +8,7 @@ function ShowManagedClusters(){
         window.addEventListener("message", event => {
             const managedClustersList = JSON.parse(event.data.managedClusters) 
             setManagedClusters(managedClustersList) 
-            console.log(managedClustersList.length)                
-         } ); 
-
-
-         
+         } );          
     },[])
 
     return (          
