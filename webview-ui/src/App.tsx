@@ -4,6 +4,7 @@ import React from "react";
 import ClusterDropDownList from "./comp/ClustersDropDown";
 import { vscode } from "./utilities/vscode";
 import ShowManagedClusters from "./comp/ManagedClustersDetails";
+import ShowAppliedManifestWork from "./comp/AppliedManifestWork";
 
 
 
@@ -23,9 +24,13 @@ class App extends React.Component {
           <VSCodeDropdown onClick={this.selectedCluster} >  
             <ClusterDropDownList/>
           </VSCodeDropdown>  
-          <AppStatus activeApps={"1"} errorApps={"2"}/>         
+           
           <section className="component-row">
             <ShowManagedClusters/>
+          </section>
+          
+          <section className="component-row">
+            <ShowAppliedManifestWork/>
           </section>
         </main>
   )}
