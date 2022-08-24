@@ -157,7 +157,7 @@ export class ClusterDetailsPanel {
       async (message: any) => {
         const command = message.command;
         const text = message.text;
-        let managedClusters,manifestWorks,placements,placementDecisions,managedClusterSets,managedClusterAddons;
+        let managedClusters,manifestWorks,appliedManifestWork,placements,placementDecisions,managedClusterSets,managedClusterAddons;
 
         switch (command) {
           
@@ -167,6 +167,10 @@ export class ClusterDetailsPanel {
             //reset 
             this._panel.webview.postMessage({"managedClusters":JSON.stringify([])});
             this._panel.webview.postMessage({"appliedManifestWork":JSON.stringify([])});
+            this._panel.webview.postMessage({"placements":JSON.stringify([])});
+            this._panel.webview.postMessage({"placementDecisions":JSON.stringify([])});
+            this._panel.webview.postMessage({"managedClusterSets":JSON.stringify([])});
+            this._panel.webview.postMessage({"managedClusterAddons":JSON.stringify([])});
 
             if (selectedCluster.length > 0) { 
             
@@ -174,29 +178,25 @@ export class ClusterDetailsPanel {
             // if this is hub cluster - show managed clusters
             if (managedClusters.length !== 0 ){
                   this._panel.webview.postMessage({"managedClusters":JSON.stringify(managedClusters)}); 
-                  // get manifest work 
+                  // get manifest work
                   manifestWorks = this._kubeDataLoader.getManifestWork(selectedCluster,managedClusters);
                   this._panel.webview.postMessage({"manifestWorks":JSON.stringify(manifestWorks)});
-
+                  // get placements
                   placements = await this._kubeDataLoader.getResources(selectedCluster, "Placement");
-                  console.log(placements);
                   this._panel.webview.postMessage({"placements":JSON.stringify(placements)});
-                  
+                  // get placement decisions
                   placementDecisions = await this._kubeDataLoader.getResources(selectedCluster, "PlacementDecision");
-                  console.log(placementDecisions);
                   this._panel.webview.postMessage({"placementDecisions":JSON.stringify(placementDecisions)});
-                  
+                  // get managed cluster sets
                   managedClusterSets = await this._kubeDataLoader.getResources(selectedCluster, "ManagedClusterSet");
-                  console.log(managedClusterSets);
                   this._panel.webview.postMessage({"managedClusterSets":JSON.stringify(managedClusterSets)});
-                  
+                  // get managed cluster addons
                   managedClusterAddons = await this._kubeDataLoader.getResources(selectedCluster, "ManagedClusterAddOn");
-                  console.log(managedClusterAddons);
                   this._panel.webview.postMessage({"managedClusterAddons":JSON.stringify(managedClusterAddons)});
             } else {
-                let appliedManifestWork = await this._kubeDataLoader.getAppliedManifestWork(selectedCluster);
-                console.log(appliedManifestWork);
-                this._panel.webview.postMessage({"appliedManifestWork":JSON.stringify(appliedManifestWork)});              
+              // get applied manifest work
+              appliedManifestWork = await this._kubeDataLoader.getResources(selectedCluster, "AppliedManifestWork");
+              this._panel.webview.postMessage({"appliedManifestWork":JSON.stringify(appliedManifestWork)});              
             }
            }    
           }

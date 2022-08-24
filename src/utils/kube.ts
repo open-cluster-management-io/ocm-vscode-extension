@@ -71,20 +71,6 @@ class KubeDataLoader {
 
 	}
 
-	async getAppliedManifestWork(selectedCluster:string): Promise<OcmResource[]>{
-		let k8sCustomObjApi = this.kubeConfig.makeApiClient(k8s.CustomObjectsApi);
-		var listResourcesPromises: Promise<void>[] = [];
-		var customResources: OcmResource[] = [];
-		
-		let appliedManifestWorkCrd =  (await this.getOcmResourceDefinitions(this._getClusterByName(selectedCluster))).filter(
-			crd => crd.spec.names.kind === "AppliedManifestWork")[0];
-
-		await this.getClusterResourceLists(appliedManifestWorkCrd.spec, k8sCustomObjApi, listResourcesPromises, customResources);	
-		
-		await Promise.all(listResourcesPromises);
-		return Promise.resolve(customResources);	
-	}
-
 	async getResources(selectedCluster:string, kind:string): Promise<OcmResource[]>{
 		let k8sCustomObjApi = this.kubeConfig.makeApiClient(k8s.CustomObjectsApi);
 		var listResourcesPromises: Promise<void>[] = [];
