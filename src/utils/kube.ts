@@ -85,21 +85,18 @@ class KubeDataLoader {
 		return Promise.resolve(customResources);	
 	}
 
-	async getPlacement(selectedCluster:string): Promise<OcmResource[]>{
-		let placementList: any[] = [];
+	async getResources(selectedCluster:string, kind:string): Promise<OcmResource[]>{
 		let k8sCustomObjApi = this.kubeConfig.makeApiClient(k8s.CustomObjectsApi);
-		var placements: Promise<void>[] = [];
+		var listResourcesPromises: Promise<void>[] = [];
 		var customResources: OcmResource[] = [];
+		
+		let resourceCrd =  (await this.getOcmResourceDefinitions(this._getClusterByName(selectedCluster))).filter(
+			crd => crd.spec.names.kind === kind)[0];
 
-		let placementCrd =  (await this.getOcmResourceDefinitions(this._getClusterByName(selectedCluster))).filter(
-			crd => crd.spec.names.kind === "Placement")[0];
-
-		await this.getNamespacedResourceLists(placementCrd.spec,k8sCustomObjApi,placements,customResources);
-		await Promise.all(placements);
-		placementList.push(customResources);
-		console.log(customResources);		
-
-		return  Promise.resolve(placementList);	
+		await this.getClusterResourceLists(resourceCrd.spec, k8sCustomObjApi, listResourcesPromises, customResources);	
+		
+		await Promise.all(listResourcesPromises);
+		return Promise.resolve(customResources);
 	}
 
 	async getManifestWork(selectedCluster:string ,managedClusters: OcmResource[]) {		
@@ -116,9 +113,6 @@ class KubeDataLoader {
 			await this.getNamespacedResourceLists(manifestWorksCrd.spec,k8sCustomObjApi,manifestWorks,customResources);
 			await Promise.all(manifestWorks);
 			manifestWorkList.push(customResources);	
-			console.log(customResources);		
-
-
 		});
 		return  Promise.resolve(manifestWorkList);
 	}

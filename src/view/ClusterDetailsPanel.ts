@@ -157,7 +157,7 @@ export class ClusterDetailsPanel {
       async (message: any) => {
         const command = message.command;
         const text = message.text;
-        let managedClusters,manifestWorks;
+        let managedClusters,manifestWorks,placements,placementDecisions,managedClusterSets,managedClusterAddons;
 
         switch (command) {
           
@@ -177,10 +177,26 @@ export class ClusterDetailsPanel {
                   // get manifest work 
                   manifestWorks = this._kubeDataLoader.getManifestWork(selectedCluster,managedClusters);
                   this._panel.webview.postMessage({"manifestWorks":JSON.stringify(manifestWorks)});
+
+                  placements = await this._kubeDataLoader.getResources(selectedCluster, "Placement");
+                  console.log(placements);
+                  this._panel.webview.postMessage({"placements":JSON.stringify(placements)});
+                  
+                  placementDecisions = await this._kubeDataLoader.getResources(selectedCluster, "PlacementDecision");
+                  console.log(placementDecisions);
+                  this._panel.webview.postMessage({"placementDecisions":JSON.stringify(placementDecisions)});
+                  
+                  managedClusterSets = await this._kubeDataLoader.getResources(selectedCluster, "ManagedClusterSet");
+                  console.log(managedClusterSets);
+                  this._panel.webview.postMessage({"managedClusterSets":JSON.stringify(managedClusterSets)});
+                  
+                  managedClusterAddons = await this._kubeDataLoader.getResources(selectedCluster, "ManagedClusterAddOn");
+                  console.log(managedClusterAddons);
+                  this._panel.webview.postMessage({"managedClusterAddons":JSON.stringify(managedClusterAddons)});
             } else {
                 let appliedManifestWork = await this._kubeDataLoader.getAppliedManifestWork(selectedCluster);
                 console.log(appliedManifestWork);
-                this._panel.webview.postMessage({"appliedManifestWork":JSON.stringify(appliedManifestWork)});
+                this._panel.webview.postMessage({"appliedManifestWork":JSON.stringify(appliedManifestWork)});              
             }
            }    
           }
