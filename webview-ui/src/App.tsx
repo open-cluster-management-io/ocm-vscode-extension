@@ -29,29 +29,18 @@ class App extends React.Component {
             <ClusterDropDownList/>
           </VSCodeDropdown>  
            
-          <section className="component-row">
-            <ShowManagedClusters/>
-          </section>
+          <ShowManagedClusters/>
+
+          <ShowAppliedManifestWork/>
+
+          <ShowPlacements/>
+
+          <ShowPlacementDecisions/>
+
+          <ShowManagedClusterSets/>
+
+          <ShowManagedClusterAddons/>
           
-          <section className="component-row">
-            <ShowAppliedManifestWork/>
-          </section>
-
-          <section className="component-row">
-            <ShowPlacements/>
-          </section>
-
-          <section className="component-row">
-            <ShowPlacementDecisions/>
-          </section>
-
-          <section className="component-row">
-            <ShowManagedClusterSets/>
-          </section>
-
-          <section className="component-row">
-            <ShowManagedClusterAddons/>
-          </section>
         </main>
   )}
 }
