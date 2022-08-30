@@ -171,6 +171,7 @@ export class ClusterDetailsPanel {
             this._panel.webview.postMessage({"placementDecisions":JSON.stringify([])});
             this._panel.webview.postMessage({"managedClusterSets":JSON.stringify([])});
             this._panel.webview.postMessage({"managedClusterAddons":JSON.stringify([])});
+            this._panel.webview.postMessage({"subscriptions":JSON.stringify([])});
 
             if (selectedCluster.length > 0) { 
             
