@@ -157,7 +157,7 @@ export class ClusterDetailsPanel {
       async (message: any) => {
         const command = message.command;
         const text = message.text;
-        let managedClusters,manifestWorks,appliedManifestWork,placements,placementDecisions,managedClusterSets,managedClusterAddons;
+        let managedClusters,manifestWorks,appliedManifestWork,placements,placementDecisions,managedClusterSets,managedClusterAddons,subscriptions;
 
         switch (command) {
           
@@ -198,6 +198,9 @@ export class ClusterDetailsPanel {
               appliedManifestWork = await this._kubeDataLoader.getResources(selectedCluster, "AppliedManifestWork");
               this._panel.webview.postMessage({"appliedManifestWork":JSON.stringify(appliedManifestWork)});              
             }
+            // get subscriptions
+            subscriptions = await this._kubeDataLoader.getResources(selectedCluster, "Subscription");
+            this._panel.webview.postMessage({"subscriptions":JSON.stringify(subscriptions)});
            }    
           }
         }

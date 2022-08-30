@@ -16,19 +16,21 @@ function ShowPlacementDecisions() {
             { placementDecisions.length >0 &&  
                 <>
                     <h2 style={{ marginTop: '40px' }}>Placement Decisions</h2>           
-                    <VSCodeDataGrid gridTemplateColumns="1fr 1fr 1fr" aria-label='PlacementDecisions' >
+                    <VSCodeDataGrid gridTemplateColumns="1fr 1fr 1fr 1fr" aria-label='PlacementDecisions' >
                         <VSCodeDataGridRow rowType="sticky-header"> 
                                 <VSCodeDataGridCell cellType='columnheader' gridColumn='1'>Placement Decision Name</VSCodeDataGridCell>
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='2'>Namespace</VSCodeDataGridCell>                
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='3'>Decisions</VSCodeDataGridCell>
+                                <VSCodeDataGridCell cellType='columnheader' gridColumn='2'>Api Version</VSCodeDataGridCell>
+                                <VSCodeDataGridCell cellType='columnheader' gridColumn='3'>Namespace</VSCodeDataGridCell>                
+                                <VSCodeDataGridCell cellType='columnheader' gridColumn='4'>Decisions</VSCodeDataGridCell>
                         </VSCodeDataGridRow>
 
                         {placementDecisions.map((decision:any) => {
                             console.log(decision)
                             return <VSCodeDataGridRow> 
                                         <VSCodeDataGridCell gridColumn='1' >{decision.metadata.name}</VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='2'>{decision.metadata.namespace} </VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='3'>{decision.status.decisions.map( ( dec:any )=> { return<p> {dec.clusterName} - {dec.reason} </p>  })} </VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='2' >{decision.apiVersion.split('/')[1]}</VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='3'>{decision.metadata.namespace} </VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='4'>{decision.status.decisions.map( ( dec:any )=> { return<p> {dec.clusterName} - {dec.reason} </p>  })} </VSCodeDataGridCell>
                                    </VSCodeDataGridRow>
                         } )
                         }
