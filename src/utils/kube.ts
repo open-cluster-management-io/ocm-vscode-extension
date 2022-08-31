@@ -9,7 +9,7 @@ class ConnectedCluster {
 	}
 }
 
-class OcmResource {
+export class OcmResource {
 	readonly name: string;
 	readonly namespace: string;
 	readonly version: string;
@@ -157,7 +157,6 @@ class KubeDataLoader {
 				}
 			}));
 	}
-
 }
 
 export default KubeDataLoader;
