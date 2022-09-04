@@ -11,26 +11,32 @@ function ShowAppliedManifestWork() {
          } );          
     },[])
 
-    return (          
-        <VSCodeDataGrid gridTemplateColumns="1fr 1fr 1fr 1fr" aria-label='Applied Manifest Work' >
-            { appliedManifestWork.length >0 &&
-                 <VSCodeDataGridRow rowType="sticky-header"> 
-                                    <VSCodeDataGridCell cellType='columnheader' gridColumn='1'>Manifest Work Name</VSCodeDataGridCell>
-                                    <VSCodeDataGridCell cellType='columnheader' gridColumn='2'>Creation TimeStamp</VSCodeDataGridCell>                
-                                    <VSCodeDataGridCell cellType='columnheader' gridColumn='3'>Applied Resources</VSCodeDataGridCell>
-                              </VSCodeDataGridRow>
-            } 
+    return (   
+        <section className="component-row"> 
+            { appliedManifestWork.length >0 &&  
+                <>
+                    <h2 style={{ marginTop: '40px' }}>Applied Manifest Works</h2>        
+                    <VSCodeDataGrid gridTemplateColumns="1fr 1fr 1fr" aria-label='Applied Manifest Work' >
+                        <VSCodeDataGridRow rowType="sticky-header"> 
+                                <VSCodeDataGridCell cellType='columnheader' gridColumn='1'>Manifest Work Name</VSCodeDataGridCell>
+                                <VSCodeDataGridCell cellType='columnheader' gridColumn='2'>Creation TimeStamp</VSCodeDataGridCell>                
+                                <VSCodeDataGridCell cellType='columnheader' gridColumn='3'>Applied Resources</VSCodeDataGridCell>
+                        </VSCodeDataGridRow>
 
-            {appliedManifestWork.map((appliedManifest:any) => {
-                console.log(appliedManifest)
-                return <VSCodeDataGridRow> 
-                            <VSCodeDataGridCell gridColumn='1' >{appliedManifest.spec.manifestWorkName}</VSCodeDataGridCell>
-                            <VSCodeDataGridCell gridColumn='2'>{appliedManifest.metadata.creationTimestamp} </VSCodeDataGridCell>
-                            <VSCodeDataGridCell gridColumn='3'>{appliedManifest.status.appliedResources.map( ( resource:any )=> { return<div>  Group: {resource.group} {"\n"}, Name: {resource.name}  {"\n"} ,Namespace: {resource.namespace}  {"\n"} ,Resource: {resource.resource} {"\n"} </div>  })} </VSCodeDataGridCell>
-                       </VSCodeDataGridRow>
-            } )
+                        {appliedManifestWork.map((appliedManifest:any) => {
+                            console.log(appliedManifest)
+                            return <VSCodeDataGridRow> 
+                                        <VSCodeDataGridCell gridColumn='1' >{appliedManifest.spec.manifestWorkName}</VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='2'>{appliedManifest.metadata.creationTimestamp} </VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='3'>{appliedManifest.status.appliedResources.map( ( resource:any )=> { return<div>  Group: {resource.group} {"\n"}, Name: {resource.name}  {"\n"} ,Namespace: {resource.namespace}  {"\n"} ,Resource: {resource.resource} {"\n"} </div>  })} </VSCodeDataGridCell>
+                                   </VSCodeDataGridRow>
+                        } )
+                        }
+                    </VSCodeDataGrid>
+                    <div style={{ borderTop: "1px solid #fff ", marginLeft: 10, marginRight: 10 }}></div>
+                </>
             }
-        </VSCodeDataGrid>
+        </section>
     )
 
 }

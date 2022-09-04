@@ -2,8 +2,8 @@ import * as createEnvironment from './commands/createEnvironment';
 import * as newProject from './commands/newProject';
 import * as verifyEnvironment from './commands/verifyEnvironment';
 import * as vscode from 'vscode';
-import { ConnectedClustersProvider } from './providers/connectedClusters';
 import { ClusterDetailsPanel } from './view/ClusterDetailsPanel';
+import { ConnectedClustersProvider } from './providers/connectedClusters';
 
 export function activate(context: vscode.ExtensionContext): void {
 	let connectedClustersProvider = new ConnectedClustersProvider();

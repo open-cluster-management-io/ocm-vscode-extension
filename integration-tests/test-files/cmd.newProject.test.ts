@@ -24,8 +24,8 @@ async function sleep(ms: number): Promise<void> {
 
 // Test cases for the the ocm-vscode-extension.ocmNewProject command
 suite('Create a new project command', () => {
-	var quickPickStub: sinon.SinonStub;
-	var projectCreationDelayMS = 500;
+	let quickPickStub: sinon.SinonStub;
+	let projectCreationDelayMS = 500;
 
 	// expected template files
 	const expectedTemplateFiles = [
@@ -117,7 +117,7 @@ suite('Create a new project command', () => {
 
 	test('Fail creating a new project when the folder already exists', async () => {
 		// wrap a spy over vscode's error message box
-		var errorBoxSpy = sinon.spy(vscode.window, 'showErrorMessage');
+		let errorBoxSpy = sinon.spy(vscode.window, 'showErrorMessage');
 		// given the following project name and path
 		let projectNameInput = 'existing-folder-name';
 		let projectFolder: string = path.resolve(__dirname, `../../../test-workspace/${projectNameInput}`);
