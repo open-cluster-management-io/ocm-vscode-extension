@@ -1,56 +1,54 @@
 import * as k8s from '@kubernetes/client-node/dist/';
-import { OcmResource} from '../providers/connectedClusters';
 import { V1CustomResourceDefinition } from '@kubernetes/client-node/dist/';
-
-
-// interface clusterDetails {
-
-// }
 
 class ConnectedCluster {
 	readonly cluster: k8s.Cluster;
+
 	constructor(cluster: k8s.Cluster) {
 		this.cluster = cluster;
+	}
+}
 
+export class OcmResource {
+	readonly name: string;
+	readonly namespace: string;
+	readonly version: string;
+
+	constructor(name: string, namespace: string, version: string) {
+		this.name = name;
+		this.namespace = namespace;
+		this.version = version;
 	}
 }
 
 class KubeDataLoader {
+	private kubeConfig = new k8s.KubeConfig();
 
-
-   private kubeConfig = new k8s.KubeConfig();
-
-   constructor() {
+	constructor() {
 		this.updateK8SConfig();
-}
+	}
 
-   private updateK8SConfig(): void {
+	private updateK8SConfig(): void {
 		this.kubeConfig.loadFromDefault();
-}
-   
+	}
 
-
-   public loadConnectedClusters(): ConnectedCluster[] {
+	public loadConnectedClusters(): ConnectedCluster[] {
 		const kubeConfig = new k8s.KubeConfig();
 		kubeConfig.loadFromDefault();
-		const connectedClusters = kubeConfig.clusters.map(cluster => new ConnectedCluster(cluster));     
-		return connectedClusters;        
+		return kubeConfig.clusters.map(cluster => new ConnectedCluster(cluster));
     }
-	
+
 	async loadManagedCluster(selectCluster:string): Promise<OcmResource[]> {
-		const selectClusterlist = this.kubeConfig.clusters.filter(cluster => cluster !== undefined && cluster.name === selectCluster);     
+		const selectClusterlist = this.kubeConfig.clusters.filter(cluster => cluster !== undefined && cluster.name === selectCluster);
 		if (selectClusterlist.length === 0 ){
 			return [];
 		} else {
-
-		let managedClusterCrd =  (await this.getOcmResourceDefinitions(selectClusterlist[0])).filter(
-			crd => crd.spec.names.kind === "ManagedCluster")[0] ;
-		
-		if (managedClusterCrd === undefined) {
-			return [];
-		}	
-		let managedClusters  = this.getOcmResources(managedClusterCrd);
-		return managedClusters;
+			let managedClusterCrd =  (await this.getOcmResourceDefinitions(selectClusterlist[0])).filter(
+				crd => crd.spec.names.kind === "ManagedCluster")[0] ;
+			if (managedClusterCrd === undefined) {
+				return [];
+			}
+		return this.getOcmResources(managedClusterCrd);
 		}
 	}
 
@@ -61,67 +59,62 @@ class KubeDataLoader {
 		if (apiResponse.response.statusCode !== 200) {
 			return Promise.resolve([]);
 		}
-		return Promise.resolve(
-			apiResponse.body.items
-			.filter(item => item.spec.group.includes('open-cluster-management')));
+		return apiResponse.body.items.filter(item => item.spec.group.includes('open-cluster-management'));
 	}
-	
+
 	_getClusterByName(selectedCluster:string): k8s.Cluster{
-		return this.kubeConfig.clusters.filter(cluster => cluster !== undefined && cluster.name === selectedCluster)[0];     
-
+		return this.kubeConfig.clusters.filter(cluster => cluster !== undefined && cluster.name === selectedCluster)[0];
 	}
 
-	async getAppliedManifestWork(selectedCluster:string): Promise<OcmResource[]>{
+	async getResources(selectedCluster:string, kind:string): Promise<OcmResource[]>{
 		let k8sCustomObjApi = this.kubeConfig.makeApiClient(k8s.CustomObjectsApi);
-		var listResourcesPromises: Promise<void>[] = [];
-		var customResources: OcmResource[] = [];
-		
-		let appliedManifestWorkCrd =  (await this.getOcmResourceDefinitions(this._getClusterByName(selectedCluster))).filter(
-			crd => crd.spec.names.kind === "AppliedManifestWork")[0];
+		let listResourcesPromises: Promise<void>[] = [];
+		let customResources: OcmResource[] = [];
 
-		await this.getClusterResourceLists(appliedManifestWorkCrd.spec, k8sCustomObjApi, listResourcesPromises, customResources);	
-		
+		let resourceCrd =  (await this.getOcmResourceDefinitions(this._getClusterByName(selectedCluster))).filter(
+			crd => crd.spec.names.kind === kind)[0];
+
+		await this.getClusterResourceLists(resourceCrd, k8sCustomObjApi, listResourcesPromises, customResources);
+
 		await Promise.all(listResourcesPromises);
-		return Promise.resolve(customResources);	
+		return customResources;
 	}
 
-	async getManifestWork(selectedCluster:string ,managedClusters: OcmResource[]) {		
-
+	async getManifestWork(selectedCluster:string ,managedClusters: OcmResource[]): Promise<any[]> {
 		let manifestWorkList: any[] = [];
 		let k8sCustomObjApi = this.kubeConfig.makeApiClient(k8s.CustomObjectsApi);
-		var manifestWorks: Promise<void>[] = [];
-		var customResources: OcmResource[] = [];
+		let manifestWorks: Promise<void>[] = [];
+		let customResources: OcmResource[] = [];
 
 		let manifestWorksCrd =  (await this.getOcmResourceDefinitions(this._getClusterByName(selectedCluster))).filter(
 			crd => crd.spec.names.kind === "ManifestWork")[0];
 
-		managedClusters.forEach( async () => {
-			await this.getNamespacedResourceLists(manifestWorksCrd.spec,k8sCustomObjApi,manifestWorks,customResources);
+		managedClusters.forEach(async () => {
+			await this.getNamespacedResourceLists(manifestWorksCrd, k8sCustomObjApi, manifestWorks, customResources);
 			await Promise.all(manifestWorks);
-			manifestWorkList.push(customResources);				
-
+			manifestWorkList.push(customResources);
 		});
-		return  Promise.resolve(manifestWorkList);
+		return  manifestWorkList;
 	}
 
 	public async getOcmResources(crd: k8s.V1CustomResourceDefinition): Promise<OcmResource[]> {
 		let k8sCustomObjApi = this.kubeConfig.makeApiClient(k8s.CustomObjectsApi);
 
-		var listResourcesPromises: Promise<void>[] = [];
-		var customResources: OcmResource[] = [];
+		let listResourcesPromises: Promise<void>[] = [];
+		let customResources: OcmResource[] = [];
 
 		if (crd.spec.scope === 'Namespaced') {
-			await this.getNamespacedResourceLists(crd.spec, k8sCustomObjApi, listResourcesPromises, customResources);
+			await this.getNamespacedResourceLists(crd, k8sCustomObjApi, listResourcesPromises, customResources);
 		} else {
-			await this.getClusterResourceLists(crd.spec, k8sCustomObjApi, listResourcesPromises, customResources);
+			await this.getClusterResourceLists(crd, k8sCustomObjApi, listResourcesPromises, customResources);
 		}
 
 		await Promise.all(listResourcesPromises);
-		return Promise.resolve(customResources);
+		return customResources;
 	}
 
 	public async getNamespacedResourceLists(
-		spec: k8s.V1CustomResourceDefinitionSpec,
+		crd: k8s.V1CustomResourceDefinition,
 		k8sCustomObjApi: k8s.CustomObjectsApi,
 		listResourcesPromises: Promise<void>[],
 		customResources: any[]): Promise<void> {
@@ -132,41 +125,38 @@ class KubeDataLoader {
 			namespacesApiResponse.body.items.forEach(ns => {
 				if (ns.metadata && ns.metadata.name) {
 					let namespace = ns.metadata.name;
-					spec.versions.forEach(async ver => {
-						listResourcesPromises.push(
-							k8sCustomObjApi.listNamespacedCustomObject(spec.group, ver.name, namespace, spec.names.plural)
-							.then(crApiResponse => {
-								if (crApiResponse.response.statusCode === 200) {
-									// @ts-ignore
-									crApiResponse.body.items.forEach(item =>
-										customResources.push(item));
-								}
-							}));
-					});
+					let storedVersion = crd.status?.storedVersions?.at(0);
+					listResourcesPromises.push(
+						// @ts-ignore
+						k8sCustomObjApi.listNamespacedCustomObject(crd.spec.group, storedVersion, namespace, crd.spec.names.plural)
+						.then(crApiResponse => {
+							if (crApiResponse.response.statusCode === 200) {
+								// @ts-ignore
+								crApiResponse.body.items.forEach(item => customResources.push(item));
+							}
+						}));
 				}
 			});
 		}
 	}
 
 	public async getClusterResourceLists(
-		spec: k8s.V1CustomResourceDefinitionSpec,
+		crd: k8s.V1CustomResourceDefinition,
 		k8sCustomObjApi: k8s.CustomObjectsApi,
 		listResourcesPromises: Promise<void>[],
 		customResources: any[]): Promise<void> {
 
-		spec.versions.forEach(async ver => {
-			listResourcesPromises.push(
-				k8sCustomObjApi.listClusterCustomObject(spec.group, ver.name, spec.names.plural)
-				.then(crApiResponse => {
-					if (crApiResponse.response.statusCode === 200) {
-						// @ts-ignore
-						crApiResponse.body.items.forEach(item =>
-							customResources.push( item ));
-					}
-				}));
-		});
+		let storedVersion = crd.status?.storedVersions?.at(0);
+		listResourcesPromises.push(
+			// @ts-ignore
+			k8sCustomObjApi.listClusterCustomObject(crd.spec.group, storedVersion, crd.spec.names.plural)
+			.then(crApiResponse => {
+				if (crApiResponse.response.statusCode === 200) {
+					// @ts-ignore
+					crApiResponse.body.items.forEach(item => customResources.push(item));
+				}
+			}));
 	}
-
 }
 
 export default KubeDataLoader;

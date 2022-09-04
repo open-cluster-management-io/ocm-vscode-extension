@@ -5,6 +5,11 @@ import ClusterDropDownList from "./comp/ClustersDropDown";
 import { vscode } from "./utilities/vscode";
 import ShowManagedClusters from "./comp/ManagedClustersDetails";
 import ShowAppliedManifestWork from "./comp/AppliedManifestWork";
+import ShowPlacements from "./comp/Placements";
+import ShowPlacementDecisions from "./comp/PlacementDecisions";
+import ShowManagedClusterSets from "./comp/ManagedClusterSets";
+import ShowManagedClusterAddons from "./comp/ManagedClusterAddons";
+import ShowSubscriptions from "./comp/Subscriptions";
 
 
 
@@ -25,13 +30,20 @@ class App extends React.Component {
             <ClusterDropDownList/>
           </VSCodeDropdown>  
            
-          <section className="component-row">
-            <ShowManagedClusters/>
-          </section>
+          <ShowManagedClusters/>
+
+          <ShowAppliedManifestWork/>
+
+          <ShowSubscriptions/>
+
+          <ShowPlacements/>
+
+          <ShowPlacementDecisions/>
+
+          <ShowManagedClusterSets/>
+
+          <ShowManagedClusterAddons/>
           
-          <section className="component-row">
-            <ShowAppliedManifestWork/>
-          </section>
         </main>
   )}
 }

@@ -10,8 +10,8 @@ chaiUse(chaiAsPromised);
 chaiUse(sinonChai);
 
 suite('Test cases for the build utility functions', () => {
-	var shellExecutionStub: sinon.SinonStub;
-	var fakeProgressReporter: sinon.SinonStub;
+	let shellExecutionStub: sinon.SinonStub;
+	let fakeProgressReporter: sinon.SinonStub;
 
 	const dummyHubCluster1: Cluster = {
 		name: 'dummyHub1',
