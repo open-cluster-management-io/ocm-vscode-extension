@@ -143,7 +143,7 @@ export class ClusterDetailsPanel {
 		webview.onDidReceiveMessage(async (message: any) => {
 			const command = message.command;
 			let managedClusters, manifestWorks, appliedManifestWork,placements : OcmResource[];
-			let placementDecisions, managedClusterSets, managedClusterAddons, subscriptions: OcmResource[];
+			let placementDecisions, managedClusterSets, managedClusterAddons, subscriptions, clusterManager, klusterlet: OcmResource[];
 
 			if (command === "selectedCluster") { // user selected a cluster
 				let selectedCluster = message.text;
@@ -155,6 +155,8 @@ export class ClusterDetailsPanel {
 				this._panel.webview.postMessage({"managedClusterSets":JSON.stringify([])});
 				this._panel.webview.postMessage({"managedClusterAddons":JSON.stringify([])});
 				this._panel.webview.postMessage({"subscriptions":JSON.stringify([])});
+				this._panel.webview.postMessage({"clusterManager":JSON.stringify([])});
+				this._panel.webview.postMessage({"klusterlet":JSON.stringify([])});
 
 				if (selectedCluster.length > 0) {
 					managedClusters = await this._kubeDataLoader.loadManagedCluster(selectedCluster);
@@ -176,10 +178,16 @@ export class ClusterDetailsPanel {
 						// get managed cluster addons
 						managedClusterAddons = await this._kubeDataLoader.getResources(selectedCluster, "ManagedClusterAddOn");
 						this._panel.webview.postMessage({"managedClusterAddons":JSON.stringify(managedClusterAddons)});
+						// get managed cluster
+						clusterManager = await this._kubeDataLoader.getResources(selectedCluster, "ClusterManager");
+						this._panel.webview.postMessage({"clusterManager":JSON.stringify(clusterManager)});
 					} else {
 						// get applied manifest work
 						appliedManifestWork = await this._kubeDataLoader.getResources(selectedCluster, "AppliedManifestWork");
 						this._panel.webview.postMessage({"appliedManifestWork":JSON.stringify(appliedManifestWork)});
+						// get klusterlet
+						klusterlet = await this._kubeDataLoader.getResources(selectedCluster, "Klusterlet");
+						this._panel.webview.postMessage({"klusterlet":JSON.stringify(klusterlet)});
 					}
 					// get subscriptions
 					subscriptions = await this._kubeDataLoader.getResources(selectedCluster, "Subscription");
