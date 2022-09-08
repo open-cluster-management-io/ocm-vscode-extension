@@ -160,7 +160,7 @@ export class ClusterDetailsPanel {
 
 				if (selectedCluster.length > 0) {
 					managedClusters = await this._kubeDataLoader.loadManagedCluster(selectedCluster);
-					// if this is hub cluster - show managed clusters
+					// if this is hub cluster
 					if (managedClusters.length !== 0 ){
 						this._panel.webview.postMessage({"managedClusters":JSON.stringify(managedClusters)});
 						// get manifest work
@@ -181,17 +181,27 @@ export class ClusterDetailsPanel {
 						// get managed cluster
 						clusterManager = await this._kubeDataLoader.getResources(selectedCluster, "ClusterManager");
 						this._panel.webview.postMessage({"clusterManager":JSON.stringify(clusterManager)});
-					} else {
+					}
+					try {
+						klusterlet = await this._kubeDataLoader.getResources(selectedCluster, "Klusterlet");
+
+					} catch (exceptionVar) {
+						klusterlet = [];
+
+					} 
+					// if this is managed cluster
+					if (klusterlet.length !== 0 ){
+						// get klusterlet
+						this._panel.webview.postMessage({"klusterlet":JSON.stringify(klusterlet)});
 						// get applied manifest work
 						appliedManifestWork = await this._kubeDataLoader.getResources(selectedCluster, "AppliedManifestWork");
 						this._panel.webview.postMessage({"appliedManifestWork":JSON.stringify(appliedManifestWork)});
-						// get klusterlet
-						klusterlet = await this._kubeDataLoader.getResources(selectedCluster, "Klusterlet");
-						this._panel.webview.postMessage({"klusterlet":JSON.stringify(klusterlet)});
 					}
-					// get subscriptions
-					subscriptions = await this._kubeDataLoader.getResources(selectedCluster, "Subscription");
-					this._panel.webview.postMessage({"subscriptions":JSON.stringify(subscriptions)});
+					if (klusterlet.length !== 0 || managedClusters.length !== 0 ){
+						// get subscriptions
+						subscriptions = await this._kubeDataLoader.getResources(selectedCluster, "Subscription");
+						this._panel.webview.postMessage({"subscriptions":JSON.stringify(subscriptions)});
+					}
 				}
 			}
 		},
