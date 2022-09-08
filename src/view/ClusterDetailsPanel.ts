@@ -182,13 +182,7 @@ export class ClusterDetailsPanel {
 						clusterManager = await this._kubeDataLoader.getResources(selectedCluster, "ClusterManager");
 						this._panel.webview.postMessage({"clusterManager":JSON.stringify(clusterManager)});
 					}
-					try {
-						klusterlet = await this._kubeDataLoader.getResources(selectedCluster, "Klusterlet");
-
-					} catch (exceptionVar) {
-						klusterlet = [];
-
-					} 
+					klusterlet = await this._kubeDataLoader.getResources(selectedCluster, "Klusterlet");
 					// if this is managed cluster
 					if (klusterlet.length !== 0 ){
 						// get klusterlet
@@ -197,6 +191,7 @@ export class ClusterDetailsPanel {
 						appliedManifestWork = await this._kubeDataLoader.getResources(selectedCluster, "AppliedManifestWork");
 						this._panel.webview.postMessage({"appliedManifestWork":JSON.stringify(appliedManifestWork)});
 					}
+					// if this is hub cluster or managed cluster
 					if (klusterlet.length !== 0 || managedClusters.length !== 0 ){
 						// get subscriptions
 						subscriptions = await this._kubeDataLoader.getResources(selectedCluster, "Subscription");
