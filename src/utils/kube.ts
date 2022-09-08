@@ -74,6 +74,10 @@ class KubeDataLoader {
 		let resourceCrd =  (await this.getOcmResourceDefinitions(this._getClusterByName(selectedCluster))).filter(
 			crd => crd.spec.names.kind === kind)[0];
 
+		if (resourceCrd === undefined) {
+			return [];
+		}
+
 		await this.getClusterResourceLists(resourceCrd, k8sCustomObjApi, listResourcesPromises, customResources);
 
 		await Promise.all(listResourcesPromises);
