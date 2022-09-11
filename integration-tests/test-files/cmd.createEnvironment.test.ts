@@ -16,7 +16,7 @@ async function sleep(ms: number): Promise<void> {
 // Test cases for the the ocm-vscode-extension.createLocalEnvironment command
 suite('Create local environment command', () => {
 	const fakeBuildSuccessMsg = 'this is a fake message';
-	const buildEnvironmentDelayMS = 1500;
+	const buildEnvironmentDelayMS = 2000;
 
 	let quickPickStub: sinon.SinonStub;
 	let inputBoxStub: sinon.SinonStub;
