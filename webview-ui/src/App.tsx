@@ -1,5 +1,4 @@
 import {  VSCodeDropdown } from "@vscode/webview-ui-toolkit/react";
-import AppStatus from "./comp/AppStatus"
 import React from "react";
 import ClusterDropDownList from "./comp/ClustersDropDown";
 import { vscode } from "./utilities/vscode";

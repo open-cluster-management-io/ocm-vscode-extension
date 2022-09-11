@@ -16,7 +16,7 @@ function ClusterDropDownList() {
             setClustersDropDown(clusterOptions)
             console.log(clustersDropDown)
         }); 
-    },[])
+    })
     
     return ( 
         <>

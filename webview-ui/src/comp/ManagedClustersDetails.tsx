@@ -12,12 +12,10 @@ function ShowManagedClusters(){
     useEffect(() => {       
         window.addEventListener("message", event => {
             const managedClustersList = JSON.parse(event.data.managedClusters) 
-            managedClustersList.map((cluster:any) => {
-                updateShowMore(cluster.metadata.name, false)
-            })
+            managedClustersList.map((cluster:any) => updateShowMore(cluster.metadata.name, false))
             setManagedClusters(managedClustersList) 
          } );          
-    },[])
+    })
 
     return (  
         <section className="component-row"> 
