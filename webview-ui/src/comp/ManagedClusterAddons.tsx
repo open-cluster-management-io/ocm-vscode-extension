@@ -3,30 +3,30 @@ import { useState, useEffect } from 'react';
 
 function ShowManagedClusterAddons() {
     const [managedClusterAddons, setManagedClusterAddons] = useState([]);
-    useEffect(() => {       
+    useEffect(() => {
         window.addEventListener("message", event => {
             const managedClusterAddonsList = JSON.parse(event.data.managedClusterAddons)
-            setManagedClusterAddons(managedClusterAddonsList) 
-                
-         } );          
+            setManagedClusterAddons(managedClusterAddonsList)
+
+         } );
     },[])
 
-    return ( 
-        <section className="component-row"> 
-            { managedClusterAddons.length >0 &&  
+    return (
+        <section className="component-row">
+            { managedClusterAddons.length >0 &&
                 <>
-                    <h2 style={{ marginTop: '40px' }}>Managed Cluster Addons</h2>             
+                    <h2 style={{ marginTop: '40px' }}>Managed Cluster Addons</h2>
                     <VSCodeDataGrid gridTemplateColumns="1fr 1fr 1fr" aria-label='ManagedClusterAddons' >
-                        <VSCodeDataGridRow rowType="sticky-header"> 
+                        <VSCodeDataGridRow rowType="sticky-header">
                                 <VSCodeDataGridCell cellType='columnheader' gridColumn='1'>Managed Cluster Addon Name</VSCodeDataGridCell>
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='3'>Namespace</VSCodeDataGridCell>                
+                                <VSCodeDataGridCell cellType='columnheader' gridColumn='3'>Namespace</VSCodeDataGridCell>
                                 <VSCodeDataGridCell cellType='columnheader' gridColumn='4'>Conditions</VSCodeDataGridCell>
                         </VSCodeDataGridRow>
 
                         {managedClusterAddons.map((addon:any) => {
                             console.log(addon)
-                            return <VSCodeDataGridRow> 
-                                        <VSCodeDataGridCell gridColumn='1' >{addon.metadata.name}</VSCodeDataGridCell>
+                            return <VSCodeDataGridRow>
+                                        <VSCodeDataGridCell gridColumn='1'>{addon.metadata.name}</VSCodeDataGridCell>
                                         <VSCodeDataGridCell gridColumn='3'>{addon.metadata.namespace} </VSCodeDataGridCell>
                                         <VSCodeDataGridCell gridColumn='4'>{addon.status.conditions.map( ( condition:any )=> { return<p> {condition.message} - {condition.lastTransitionTime} - {condition.type}: {condition.status} </p>  })} </VSCodeDataGridCell>
                                    </VSCodeDataGridRow>
