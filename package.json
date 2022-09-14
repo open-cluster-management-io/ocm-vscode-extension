@@ -22,7 +22,7 @@
 		"url": "https://github.com/open-cluster-management-io/ocm-vscode-extension.git"
 	},
 	"engines": {
-		"vscode": "^1.65.0"
+		"vscode": "^1.71.0"
 	},
 	"categories": [
 		"Snippets",
