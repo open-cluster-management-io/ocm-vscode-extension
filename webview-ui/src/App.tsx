@@ -8,9 +8,10 @@ import ShowPlacements from "./comp/Placements";
 import ShowPlacementDecisions from "./comp/PlacementDecisions";
 import ShowManagedClusterSets from "./comp/ManagedClusterSets";
 import ShowManagedClusterAddons from "./comp/ManagedClusterAddons";
-import ShowSubscriptions from "./comp/Subscriptions";
 import ShowClusterManager from "./comp/ClusterManager";
 import ShowKlusterlet from "./comp/Klusterlet";
+import ShowSubscriptionReport from "./comp/SubscriptionReport";
+import ShowSubscriptionStatus from "./comp/SubscriptionStatus";
 
 
 
@@ -39,7 +40,9 @@ class App extends React.Component {
 
           <ShowAppliedManifestWork/>
 
-          <ShowSubscriptions/>
+          <ShowSubscriptionReport/>
+
+          <ShowSubscriptionStatus/>
 
           <ShowPlacements/>
 

@@ -26,7 +26,7 @@ function ShowManagedClusterSets() {
                         console.log(set)
                         return <VSCodeDataGridRow>
                                     <VSCodeDataGridCell gridColumn='1'>{set.metadata.name}</VSCodeDataGridCell>
-                                    <VSCodeDataGridCell gridColumn='2'>{set.status.conditions.map( ( condition:any )=> { return<p> {condition.message} - {condition.lastTransitionTime} - {condition.type}: {condition.status} </p>  })} </VSCodeDataGridCell>
+                                    <VSCodeDataGridCell gridColumn='2'>{set.status.conditions.map( ( condition:any )=> { return<p> - lastTransitionTime: {condition.lastTransitionTime}, message: {condition.message}, reason: {condition.reason}, status: {condition.status}, type: {condition.type} </p>  })} </VSCodeDataGridCell>
                                 </VSCodeDataGridRow>
                     } )
                     }

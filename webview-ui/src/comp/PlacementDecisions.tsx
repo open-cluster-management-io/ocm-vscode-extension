@@ -28,7 +28,7 @@ function ShowPlacementDecisions() {
                             return <VSCodeDataGridRow>
                                         <VSCodeDataGridCell gridColumn='1'>{decision.metadata.name}</VSCodeDataGridCell>
                                         <VSCodeDataGridCell gridColumn='2'>{decision.metadata.namespace} </VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='3'>{decision.status.decisions.map( ( dec:any )=> { return<p> {dec.clusterName} - {dec.reason} </p>  })} </VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='3'>{decision.status.decisions.map( ( dec:any )=> { return<p> - clusterName: {dec.clusterName}, reason: {dec.reason} </p>  })} </VSCodeDataGridCell>
                                    </VSCodeDataGridRow>
                         } )
                         }

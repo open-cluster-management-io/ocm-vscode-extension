@@ -30,7 +30,7 @@ function ShowPlacements() {
                                         <VSCodeDataGridCell gridColumn='1'>{placement.metadata.name}</VSCodeDataGridCell>
                                         <VSCodeDataGridCell gridColumn='2'>{placement.metadata.namespace} </VSCodeDataGridCell>
                                         <VSCodeDataGridCell gridColumn='3'>{placement.status.numberOfSelectedClusters} </VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='4'>{placement.status.conditions.map( ( condition:any )=> { return<p> {condition.message} - {condition.lastTransitionTime} - {condition.type}: {condition.status} </p>  })} </VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='4'>{placement.status.conditions.map( ( condition:any )=> { return<p> - lastTransitionTime: {condition.lastTransitionTime}, message: {condition.message}, reason: {condition.reason}, status: {condition.status}, type: {condition.type} </p>  })} </VSCodeDataGridCell>
                                     </VSCodeDataGridRow>
                         } )
                         }

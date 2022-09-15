@@ -8,7 +8,6 @@ function ShowManagedClusters(){
     const updateShowMore = (k:any,v:boolean) => {
         setShowMore(new Map(showMore.set(k,v)));
     }
-    const text = "hello world".repeat(300);
     useEffect(() => {
         window.addEventListener("message", event => {
             const managedClustersList = JSON.parse(event.data.managedClusters)
@@ -35,10 +34,10 @@ function ShowManagedClusters(){
                             return <VSCodeDataGridRow>
                                         <VSCodeDataGridCell gridColumn='1'>{cluster.metadata.name}</VSCodeDataGridCell>
                                         <VSCodeDataGridCell gridColumn='2'>{cluster.status.version.kubernetes} </VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='3'>{cluster.status.conditions.map( ( condition:any )=> { return<p> {condition.message} - {condition.lastTransitionTime} - {condition.type}: {condition.status} </p>  })} </VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='3'>{cluster.status.conditions.map( ( condition:any )=> { return<p> - lastTransitionTime: {condition.lastTransitionTime}, message: {condition.message}, reason: {condition.reason}, status: {condition.status}, type: {condition.type} </p>  })} </VSCodeDataGridCell>
                                         <VSCodeDataGridCell gridColumn='4'>
                                             <VSCodeButton onClick={() => updateShowMore(cluster.metadata.name, !showMore.get(cluster.metadata.name))}> {showMore.get(cluster.metadata.name) ? "Less" : "More"} </VSCodeButton>
-                                            <p>{showMore.get(cluster.metadata.name) ? text : ''}</p>
+                                            <p>{showMore.get(cluster.metadata.name) ? '' : ''}</p>
                                         </VSCodeDataGridCell>
                                     </VSCodeDataGridRow>
                         } )
