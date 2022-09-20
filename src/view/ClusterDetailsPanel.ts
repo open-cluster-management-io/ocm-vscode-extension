@@ -143,20 +143,22 @@ export class ClusterDetailsPanel {
 		webview.onDidReceiveMessage(async (message: any) => {
 			const command = message.command;
 			let managedClusters, manifestWorks, appliedManifestWork,placements : OcmResource[];
-			let placementDecisions, managedClusterSets, managedClusterAddons, subscriptions, clusterManager, klusterlet: OcmResource[];
+			let placementDecisions, managedClusterSets, managedClusterAddons, subscriptionReport, subscriptionStatus, clusterManager, klusterlet: OcmResource[];
 
 			if (command === "selectedCluster") { // user selected a cluster
 				let selectedCluster = message.text;
 				//reset
 				this._panel.webview.postMessage({"managedClusters":JSON.stringify([])});
 				this._panel.webview.postMessage({"appliedManifestWork":JSON.stringify([])});
+				this._panel.webview.postMessage({"manifestWorks":JSON.stringify([])});
 				this._panel.webview.postMessage({"placements":JSON.stringify([])});
 				this._panel.webview.postMessage({"placementDecisions":JSON.stringify([])});
 				this._panel.webview.postMessage({"managedClusterSets":JSON.stringify([])});
 				this._panel.webview.postMessage({"managedClusterAddons":JSON.stringify([])});
-				this._panel.webview.postMessage({"subscriptions":JSON.stringify([])});
 				this._panel.webview.postMessage({"clusterManager":JSON.stringify([])});
 				this._panel.webview.postMessage({"klusterlet":JSON.stringify([])});
+				this._panel.webview.postMessage({"subscriptionReport":JSON.stringify([])});
+				this._panel.webview.postMessage({"subscriptionStatus":JSON.stringify([])});
 
 				if (selectedCluster.length > 0) {
 					managedClusters = await this._kubeDataLoader.loadManagedCluster(selectedCluster);
@@ -164,7 +166,7 @@ export class ClusterDetailsPanel {
 					if (managedClusters.length !== 0 ){
 						this._panel.webview.postMessage({"managedClusters":JSON.stringify(managedClusters)});
 						// get manifest work
-						manifestWorks = this._kubeDataLoader.getManifestWork(selectedCluster,managedClusters);
+						manifestWorks = await this._kubeDataLoader.getResources(selectedCluster, "ManifestWork");
 						this._panel.webview.postMessage({"manifestWorks":JSON.stringify(manifestWorks)});
 						// get placements
 						placements = await this._kubeDataLoader.getResources(selectedCluster, "Placement");
@@ -181,6 +183,9 @@ export class ClusterDetailsPanel {
 						// get managed cluster
 						clusterManager = await this._kubeDataLoader.getResources(selectedCluster, "ClusterManager");
 						this._panel.webview.postMessage({"clusterManager":JSON.stringify(clusterManager)});
+						// get subscription report
+						subscriptionReport = await this._kubeDataLoader.getResources(selectedCluster, "SubscriptionReport");
+						this._panel.webview.postMessage({"subscriptionReport":JSON.stringify(subscriptionReport)});
 					}
 					klusterlet = await this._kubeDataLoader.getResources(selectedCluster, "Klusterlet");
 					// if this is managed cluster
@@ -190,12 +195,9 @@ export class ClusterDetailsPanel {
 						// get applied manifest work
 						appliedManifestWork = await this._kubeDataLoader.getResources(selectedCluster, "AppliedManifestWork");
 						this._panel.webview.postMessage({"appliedManifestWork":JSON.stringify(appliedManifestWork)});
-					}
-					// if this is hub cluster or managed cluster
-					if (klusterlet.length !== 0 || managedClusters.length !== 0 ){
-						// get subscriptions
-						subscriptions = await this._kubeDataLoader.getResources(selectedCluster, "Subscription");
-						this._panel.webview.postMessage({"subscriptions":JSON.stringify(subscriptions)});
+						// get subscription status
+						subscriptionStatus = await this._kubeDataLoader.getResources(selectedCluster, "SubscriptionStatus");
+						this._panel.webview.postMessage({"subscriptionStatus":JSON.stringify(subscriptionStatus)});
 					}
 				}
 			}

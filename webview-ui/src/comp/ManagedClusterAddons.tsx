@@ -19,16 +19,16 @@ function ShowManagedClusterAddons() {
                     <VSCodeDataGrid gridTemplateColumns="1fr 1fr 1fr" aria-label='ManagedClusterAddons' >
                         <VSCodeDataGridRow rowType="sticky-header">
                                 <VSCodeDataGridCell cellType='columnheader' gridColumn='1'>Managed Cluster Addon Name</VSCodeDataGridCell>
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='3'>Namespace</VSCodeDataGridCell>
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='4'>Conditions</VSCodeDataGridCell>
+                                <VSCodeDataGridCell cellType='columnheader' gridColumn='2'>Namespace</VSCodeDataGridCell>
+                                <VSCodeDataGridCell cellType='columnheader' gridColumn='3'>Conditions</VSCodeDataGridCell>
                         </VSCodeDataGridRow>
 
                         {managedClusterAddons.map((addon:any) => {
                             console.log(addon)
                             return <VSCodeDataGridRow>
                                         <VSCodeDataGridCell gridColumn='1'>{addon.metadata.name}</VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='3'>{addon.metadata.namespace} </VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='4'>{addon.status.conditions.map( ( condition:any )=> { return<p> {condition.message} - {condition.lastTransitionTime} - {condition.type}: {condition.status} </p>  })} </VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='2'>{addon.metadata.namespace} </VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='3'>{addon.status.conditions.map( ( condition:any )=> { return<p> - lastTransitionTime: {condition.lastTransitionTime}, message: {condition.message}, reason: {condition.reason}, status: {condition.status}, type: {condition.type} </p>  })} </VSCodeDataGridCell>
                                    </VSCodeDataGridRow>
                         } )
                         }

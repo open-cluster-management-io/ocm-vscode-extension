@@ -8,9 +8,11 @@ import ShowPlacements from "./comp/Placements";
 import ShowPlacementDecisions from "./comp/PlacementDecisions";
 import ShowManagedClusterSets from "./comp/ManagedClusterSets";
 import ShowManagedClusterAddons from "./comp/ManagedClusterAddons";
-import ShowSubscriptions from "./comp/Subscriptions";
 import ShowClusterManager from "./comp/ClusterManager";
 import ShowKlusterlet from "./comp/Klusterlet";
+import ShowSubscriptionReport from "./comp/SubscriptionReport";
+import ShowSubscriptionStatus from "./comp/SubscriptionStatus";
+import ShowManifestWorks from "./comp/Manifestwork";
 
 
 
@@ -35,11 +37,9 @@ class App extends React.Component {
            
           <ShowManagedClusters/>
 
-          <ShowKlusterlet/>
+          <ShowManifestWorks/>
 
-          <ShowAppliedManifestWork/>
-
-          <ShowSubscriptions/>
+          <ShowSubscriptionReport/>
 
           <ShowPlacements/>
 
@@ -48,7 +48,13 @@ class App extends React.Component {
           <ShowManagedClusterSets/>
 
           <ShowManagedClusterAddons/>
-          
+
+          <ShowKlusterlet/>
+
+          <ShowAppliedManifestWork/>
+
+          <ShowSubscriptionStatus/>
+
         </main>
   )}
 }

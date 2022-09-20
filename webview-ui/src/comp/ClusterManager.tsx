@@ -15,7 +15,7 @@ function ShowClusterManager() {
         <section className="component-row">
             { clusterManager.length >0 &&
                 <>
-                    <h2 style={{ marginTop: '40px' }}>ClusterManager</h2>
+                    <h2 style={{ marginTop: '40px' }}>Cluster Manager</h2>
                     <VSCodeDataGrid gridTemplateColumns="1fr 1fr" aria-label='ClusterManager' >
                         <VSCodeDataGridRow rowType="sticky-header">
                                 <VSCodeDataGridCell cellType='columnheader' gridColumn='1'>Cluster Manager Name</VSCodeDataGridCell>
@@ -26,7 +26,7 @@ function ShowClusterManager() {
                             console.log(manager)
                             return <VSCodeDataGridRow>
                                         <VSCodeDataGridCell gridColumn='1'>{manager.metadata.name}</VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='2'>{manager.status.conditions.map( ( condition:any )=> { return<p> {condition.message} - {condition.lastTransitionTime} - {condition.type}: {condition.status} </p>  })} </VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='2'>{manager.status.conditions.map( ( condition:any )=> { return<p> - lastTransitionTime: {condition.lastTransitionTime}, message: {condition.message}, reason: {condition.reason}, status: {condition.status}, type: {condition.type} </p>  })} </VSCodeDataGridCell>
                                     </VSCodeDataGridRow>
                         } )
                         }
