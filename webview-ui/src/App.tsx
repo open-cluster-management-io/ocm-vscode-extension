@@ -12,6 +12,7 @@ import ShowClusterManager from "./comp/ClusterManager";
 import ShowKlusterlet from "./comp/Klusterlet";
 import ShowSubscriptionReport from "./comp/SubscriptionReport";
 import ShowSubscriptionStatus from "./comp/SubscriptionStatus";
+import ShowManifestWorks from "./comp/Manifestwork";
 
 
 
@@ -36,13 +37,9 @@ class App extends React.Component {
            
           <ShowManagedClusters/>
 
-          <ShowKlusterlet/>
-
-          <ShowAppliedManifestWork/>
+          <ShowManifestWorks/>
 
           <ShowSubscriptionReport/>
-
-          <ShowSubscriptionStatus/>
 
           <ShowPlacements/>
 
@@ -51,7 +48,13 @@ class App extends React.Component {
           <ShowManagedClusterSets/>
 
           <ShowManagedClusterAddons/>
-          
+
+          <ShowKlusterlet/>
+
+          <ShowAppliedManifestWork/>
+
+          <ShowSubscriptionStatus/>
+
         </main>
   )}
 }

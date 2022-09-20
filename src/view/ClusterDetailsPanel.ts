@@ -150,6 +150,7 @@ export class ClusterDetailsPanel {
 				//reset
 				this._panel.webview.postMessage({"managedClusters":JSON.stringify([])});
 				this._panel.webview.postMessage({"appliedManifestWork":JSON.stringify([])});
+				this._panel.webview.postMessage({"manifestWorks":JSON.stringify([])});
 				this._panel.webview.postMessage({"placements":JSON.stringify([])});
 				this._panel.webview.postMessage({"placementDecisions":JSON.stringify([])});
 				this._panel.webview.postMessage({"managedClusterSets":JSON.stringify([])});
@@ -165,7 +166,7 @@ export class ClusterDetailsPanel {
 					if (managedClusters.length !== 0 ){
 						this._panel.webview.postMessage({"managedClusters":JSON.stringify(managedClusters)});
 						// get manifest work
-						manifestWorks = this._kubeDataLoader.getManifestWork(selectedCluster,managedClusters);
+						manifestWorks = await this._kubeDataLoader.getResources(selectedCluster, "ManifestWork");
 						this._panel.webview.postMessage({"manifestWorks":JSON.stringify(manifestWorks)});
 						// get placements
 						placements = await this._kubeDataLoader.getResources(selectedCluster, "Placement");
