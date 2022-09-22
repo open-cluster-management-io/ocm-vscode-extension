@@ -17,7 +17,7 @@ function ShowManagedClusters(){
             { managedClusters.length >0 &&
                 <>
                     <h2 style={{ marginTop: '40px' }}>Managed Clusters</h2>
-                    <VSCodeDataGrid gridTemplateColumns="1fr 1fr 1fr" aria-label='Managed Clusters' >
+                    <VSCodeDataGrid gridTemplateColumns="1fr 1fr 2fr" aria-label='Managed Clusters' >
                         <VSCodeDataGridRow rowType="sticky-header">
                                 <VSCodeDataGridCell cellType='columnheader' gridColumn='1'>Cluster Name</VSCodeDataGridCell>
                                 <VSCodeDataGridCell cellType='columnheader' gridColumn='2'>Kube Version</VSCodeDataGridCell>
