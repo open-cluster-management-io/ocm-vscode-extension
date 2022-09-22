@@ -16,7 +16,7 @@ function ShowManagedClusterAddons() {
             { managedClusterAddons.length >0 &&
                 <>
                     <h2 style={{ marginTop: '40px' }}>Managed Cluster Addons</h2>
-                    <VSCodeDataGrid gridTemplateColumns="1fr 1fr 1fr" aria-label='ManagedClusterAddons' >
+                    <VSCodeDataGrid gridTemplateColumns="1fr 1fr 2fr" aria-label='ManagedClusterAddons' >
                         <VSCodeDataGridRow rowType="sticky-header">
                                 <VSCodeDataGridCell cellType='columnheader' gridColumn='1'>Managed Cluster Addon Name</VSCodeDataGridCell>
                                 <VSCodeDataGridCell cellType='columnheader' gridColumn='2'>Namespace</VSCodeDataGridCell>

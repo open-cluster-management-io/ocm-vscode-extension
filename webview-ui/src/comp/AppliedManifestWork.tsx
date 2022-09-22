@@ -16,7 +16,7 @@ function ShowAppliedManifestWork() {
             { appliedManifestWork.length >0 &&
                 <>
                     <h2 style={{ marginTop: '40px' }}>Applied Manifest Works</h2>
-                    <VSCodeDataGrid gridTemplateColumns="1fr 1fr 1fr" aria-label='AppliedManifestWork' >
+                    <VSCodeDataGrid gridTemplateColumns="1fr 1fr 2fr" aria-label='AppliedManifestWork' >
                         <VSCodeDataGridRow rowType="sticky-header">
                                 <VSCodeDataGridCell cellType='columnheader' gridColumn='1'>Manifest Work Name</VSCodeDataGridCell>
                                 <VSCodeDataGridCell cellType='columnheader' gridColumn='2'>Creation TimeStamp</VSCodeDataGridCell>
