@@ -18,11 +18,9 @@ export function executeShellCommand(command: string): Promise<string> {
 // check if a cli tool exists and return a promise
 export  function checkToolExists(tool: string): Promise<void> {
 	return new Promise((resolve, reject) => {
-		shell.exec(`command -v ${tool}`, code => {
-			if (code === 0) {
-				resolve();
-			}
-			reject();
-		});
+		if (shell.which(tool)?.code === 0) {
+			resolve();
+		}
+		reject();
 	});
 }
