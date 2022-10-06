@@ -16,11 +16,11 @@ async function sleep(ms: number): Promise<void> {
 // Test cases for the the ocm-vscode-extension.createLocalEnvironment command
 suite('Create local environment command', () => {
 	const fakeBuildSuccessMsg = 'this is a fake message';
-	const buildEnvironmentDelayMS = 1500;
+	const buildEnvironmentDelayMS = 2000;
 
-	var quickPickStub: sinon.SinonStub;
-	var inputBoxStub: sinon.SinonStub;
-	var infoBoxSpy: sinon.SinonSpy;
+	let quickPickStub: sinon.SinonStub;
+	let inputBoxStub: sinon.SinonStub;
+	let infoBoxSpy: sinon.SinonSpy;
 
 	const matchDefaultConfigQuickPick = sinon.match(
 		op => op['title'] === 'use default configuration, 1 hub and 2 managed clusters?');
@@ -33,7 +33,7 @@ suite('Create local environment command', () => {
 	});
 
 	suite('Using the default configuration', () => {
-		var errorBoxSpy: sinon.SinonSpy;
+		let errorBoxSpy: sinon.SinonSpy;
 
 		beforeEach(() => {
 			// given the the user will choose to use the default configuration
@@ -88,7 +88,7 @@ suite('Create local environment command', () => {
 		const fakeManage2Name = `my-managed-cluster-2`;
 		const fakeManage3Name = `my-managed-cluster-3`;
 
-		var buildLocalEnvSpy: sinon.SinonSpy;
+		let buildLocalEnvSpy: sinon.SinonSpy;
 
 		const matchHubNameInputBox = sinon.match(op =>op['title'] === 'hub cluster name?');
 		const matchNumManagedInputBox = sinon.match(op => op['title'] === 'how many managed clusters?');

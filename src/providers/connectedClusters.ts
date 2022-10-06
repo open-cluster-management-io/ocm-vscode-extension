@@ -11,6 +11,12 @@ export class ConnectedCluster extends vscode.TreeItem {
 		super(cluster.name, vscode.TreeItemCollapsibleState.Collapsed);
 		this.cluster = cluster;
 		this.tooltip = cluster.server;
+		this.command = {
+			"title": "details",
+			"command": "ocm-vscode-extension.showClusterDetails",
+			"arguments": [cluster.name]
+		};
+
 	}
 
 	iconPath = {
@@ -20,12 +26,12 @@ export class ConnectedCluster extends vscode.TreeItem {
 }
 
 export class OcmResourceDefinition extends vscode.TreeItem {
-	readonly resourceSpec: k8s.V1CustomResourceDefinitionSpec;
+	readonly crd: k8s.V1CustomResourceDefinition;
 
-	constructor(spec: k8s.V1CustomResourceDefinitionSpec) {
-		super(spec.names.kind, vscode.TreeItemCollapsibleState.Collapsed);
-		this.resourceSpec = spec;
-		this.tooltip = spec.group;
+	constructor(crd: k8s.V1CustomResourceDefinition) {
+		super(crd.spec.names.kind, vscode.TreeItemCollapsibleState.Collapsed);
+		this.crd = crd;
+		this.tooltip = crd.spec.group;
 	}
 
 	iconPath = {
@@ -69,7 +75,7 @@ export class ConnectedClustersProvider implements vscode.TreeDataProvider<Custom
 			}
 			if (element instanceof OcmResourceDefinition) {
 				// children of an ocm resource definition are ocm resources
-				return this.getOcmResources(element.resourceSpec);
+				return this.getOcmResources(element.crd);
 			}
 		}
 		// top level children are the connected clusters
@@ -86,32 +92,31 @@ export class ConnectedClustersProvider implements vscode.TreeDataProvider<Custom
 		let k8sExtApi = this.kubeConfig.makeApiClient(k8s.ApiextensionsV1Api);
 		let apiResponse = await k8sExtApi.listCustomResourceDefinition();
 		if (apiResponse.response.statusCode !== 200) {
-			return Promise.resolve([]);
+			return [];
 		}
-		return Promise.resolve(
-			apiResponse.body.items
+		return apiResponse.body.items
 			.filter(item => item.spec.group.includes('open-cluster-management'))
-			.map(item => new OcmResourceDefinition(item.spec)));
+			.map(item => new OcmResourceDefinition(item));
 	}
 
-	private async getOcmResources(spec: k8s.V1CustomResourceDefinitionSpec): Promise<OcmResource[]> {
+	private async getOcmResources(crd: k8s.V1CustomResourceDefinition): Promise<OcmResource[]> {
 		let k8sCustomObjApi = this.kubeConfig.makeApiClient(k8s.CustomObjectsApi);
 
-		var listResourcesPromises: Promise<void>[] = [];
-		var customResources: OcmResource[] = [];
+		let listResourcesPromises: Promise<void>[] = [];
+		let customResources: OcmResource[] = [];
 
-		if (spec.scope === 'Namespaced') {
-			await this.getNamespacedResourceLists(spec, k8sCustomObjApi, listResourcesPromises, customResources);
+		if (crd.spec.scope === 'Namespaced') {
+			await this.getNamespacedResourceLists(crd, k8sCustomObjApi, listResourcesPromises, customResources);
 		} else {
-			await this.getClusterResourceLists(spec, k8sCustomObjApi, listResourcesPromises, customResources);
+			await this.getClusterResourceLists(crd, k8sCustomObjApi, listResourcesPromises, customResources);
 		}
 
 		await Promise.allSettled(listResourcesPromises);
-		return Promise.resolve(customResources);
+		return customResources;
 	}
 
 	private async getNamespacedResourceLists(
-		spec: k8s.V1CustomResourceDefinitionSpec,
+		crd: k8s.V1CustomResourceDefinition,
 		k8sCustomObjApi: k8s.CustomObjectsApi,
 		listResourcesPromises: Promise<void>[],
 		customResources: OcmResource[]): Promise<void> {
@@ -122,38 +127,38 @@ export class ConnectedClustersProvider implements vscode.TreeDataProvider<Custom
 			namespacesApiResponse.body.items.forEach(ns => {
 				if (ns.metadata && ns.metadata.name) {
 					let namespace = ns.metadata.name;
-					spec.versions.forEach(async ver => {
-						listResourcesPromises.push(
-							k8sCustomObjApi.listNamespacedCustomObject(spec.group, ver.name, namespace, spec.names.plural)
-							.then(crApiResponse => {
-								if (crApiResponse.response.statusCode === 200) {
-									// @ts-ignore
-									crApiResponse.body.items.forEach(item =>
-										customResources.push(new OcmResource(item.metadata.name, namespace, ver.name)));
-								}
-							}));
-					});
+					let storedVersion = crd.status?.storedVersions?.at(0);
+					listResourcesPromises.push(
+						// @ts-ignore
+						k8sCustomObjApi.listNamespacedCustomObject(crd.spec.group, storedVersion, namespace, crd.spec.names.plural)
+						.then(crApiResponse => {
+							if (crApiResponse.response.statusCode === 200) {
+								// @ts-ignore
+								crApiResponse.body.items.forEach(item =>
+									customResources.push(new OcmResource(item.metadata.name, namespace, item.apiVersion.split('/').at(-1))));
+							}
+						}));
 				}
 			});
 		}
 	}
 
 	private async getClusterResourceLists(
-		spec: k8s.V1CustomResourceDefinitionSpec,
+		crd: k8s.V1CustomResourceDefinition,
 		k8sCustomObjApi: k8s.CustomObjectsApi,
 		listResourcesPromises: Promise<void>[],
 		customResources: OcmResource[]): Promise<void> {
 
-		spec.versions.forEach(async ver => {
-			listResourcesPromises.push(
-				k8sCustomObjApi.listClusterCustomObject(spec.group, ver.name, spec.names.plural)
-				.then(crApiResponse => {
-					if (crApiResponse.response.statusCode === 200) {
-						// @ts-ignore
-						crApiResponse.body.items.forEach(item =>
-							customResources.push(new OcmResource(item.metadata.name, '', ver.name)));
-					}
-				}));
-		});
+		let storedVersion = crd.status?.storedVersions?.at(0);
+		listResourcesPromises.push(
+			// @ts-ignore
+			k8sCustomObjApi.listClusterCustomObject(crd.spec.group, storedVersion, crd.spec.names.plural)
+			.then(crApiResponse => {
+				if (crApiResponse.response.statusCode === 200) {
+					// @ts-ignore
+					crApiResponse.body.items.forEach(item =>
+						customResources.push(new OcmResource(item.metadata.name, '', item.apiVersion.split('/').at(-1))));
+				}
+			}));
 	}
 }

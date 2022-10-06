@@ -1,7 +1,7 @@
 
 import * as shell from 'shelljs';
 
-shell.config.execPath = String(shell.which('node'));
+shell.config.execPath =  String(shell.which('node'));
 
 // execute a command and return a promise of the output as string
 export function executeShellCommand(command: string): Promise<string> {

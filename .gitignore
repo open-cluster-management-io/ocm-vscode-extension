@@ -2,6 +2,7 @@
 .vscode-test
 coverage
 node_modules
+build
 out
 # note the order of the next test-workspace records
 test-workspace/*
