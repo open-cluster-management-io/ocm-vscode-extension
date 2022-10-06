@@ -1,6 +1,6 @@
 {
 	"name": "ocm-vscode-extension",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"displayName": "OCM Extension",
 	"description": "OCM VSCode extension contributing commands and snippets",
 	"publisher": "OpenClusterManagement",
@@ -148,7 +148,9 @@
 			}
 		]
 	},
-	"workspaces": ["webview-ui"],
+	"workspaces": [
+		"webview-ui"
+	],
 	"scripts": {
 		"vscode:prepublish": "npm run clean:build",
 		"compile": "tsc -p ./",
