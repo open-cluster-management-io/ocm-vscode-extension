@@ -2,13 +2,8 @@ import * as connect from '../utils/connectToServer';
 import KubeDataLoader from '../utils/kube';
 import * as vscode from 'vscode';
 
-// login options 
-export enum loginOption {
-	credentials = 'Credentials',
-	token = 'Token'
-}
-
 async function requestLoginConfirmation(): Promise<string> {
+	
 	if (!await connect.requireLogin()) {
 		const cluster = new KubeDataLoader().getCurrentServer();
 		return await vscode.window.showInformationMessage(`You are already logged into ${cluster} cluster. Do you want to login to a different cluster?`, 'Yes', 'No') || 'No';
@@ -17,6 +12,7 @@ async function requestLoginConfirmation(): Promise<string> {
 }
 
 async function getUrl(): Promise<string | undefined> {
+	
 	const createUrl: vscode.QuickPickItem = { label: '$(plus) Provide new URL...'};
 	const clusterItems = new KubeDataLoader().getServers();
 	const choice = await vscode.window.showQuickPick(
@@ -120,7 +116,7 @@ async function tokenLogin(clusterURL: string): Promise<void> {
 
 export async function login(): Promise<void> {
 
-	// check if already logged in to a kubernetes API server
+	// check for an existing connection to an API server
 	const response = await requestLoginConfirmation();
     if (response !== 'Yes') return;
 

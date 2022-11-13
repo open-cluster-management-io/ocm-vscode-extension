@@ -1,7 +1,6 @@
 import * as k8s from '@kubernetes/client-node/dist/';
 import { V1CustomResourceDefinition } from '@kubernetes/client-node/dist/';
 import { User as UserType, Cluster as ClusterType } from '@kubernetes/client-node/dist/config_types';
-import { Cluster } from 'cluster';
 import { QuickPickItem } from 'vscode';
 
 class ConnectedCluster {
