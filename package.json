@@ -30,6 +30,7 @@
 	],
 	"activationEvents": [
 		"onCommand:ocm-vscode-extension.ocmNewProject",
+		"onCommand:ocm-vscode-extension.login",
 		"onCommand:ocm-vscode-extension.verifyTools",
 		"onCommand:ocm-vscode-extension.createLocalEnvironment",
 		"onCommand:ocm-vscode-extension.showClusterDetails",
@@ -41,6 +42,11 @@
 			{
 				"command": "ocm-vscode-extension.ocmNewProject",
 				"title": "Create an application-manager project",
+				"category": "OCM"
+			},
+			{
+				"command": "ocm-vscode-extension.login",
+				"title": "Login to kubernetes cluster",
 				"category": "OCM"
 			},
 			{
@@ -99,7 +105,7 @@
 		"viewsWelcome": [
 			{
 				"view": "ocm-vscode-extension.forDevelopersView",
-				"contents": "[Verify Required Tools](command:ocm-vscode-extension.verifyTools)\n[Create Local Environment](command:ocm-vscode-extension.createLocalEnvironment)"
+				"contents": "[Login](command:ocm-vscode-extension.login)\n[Verify Required Tools](command:ocm-vscode-extension.verifyTools)\n[Create Local Environment](command:ocm-vscode-extension.createLocalEnvironment)"
 			}
 		],
 		"menus": {
@@ -188,7 +194,8 @@
 		"http2": "^2.7.1",
 		"lodash": "^4.17.21",
 		"ocm-webview": "file:webview-ui",
-		"shelljs": "0.8.5"
+		"shelljs": "0.8.5",
+		"validator": "^13.7.0"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.3.3",
