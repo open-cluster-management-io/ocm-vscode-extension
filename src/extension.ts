@@ -2,6 +2,7 @@ import * as createEnvironment from './commands/createEnvironment';
 import * as newProject from './commands/newProject';
 import * as verifyEnvironment from './commands/verifyEnvironment';
 import * as login from './commands/login';
+import * as logout from './commands/logout';
 import * as vscode from 'vscode';
 import { ClusterDetailsPanel } from './view/ClusterDetailsPanel';
 import { ConnectedClustersProvider } from './providers/connectedClusters';
@@ -13,6 +14,8 @@ export function activate(context: vscode.ExtensionContext): void {
 			'ocm-vscode-extension.ocmNewProject', () => newProject.create()),
 		vscode.commands.registerCommand(
 			'ocm-vscode-extension.login', () => login.login()),
+		vscode.commands.registerCommand(
+			'ocm-vscode-extension.logout', () => logout.logout()),
 		vscode.commands.registerCommand(
 			'ocm-vscode-extension.verifyTools', () => verifyEnvironment.verifyTools()),
 		vscode.commands.registerCommand(

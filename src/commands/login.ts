@@ -76,7 +76,10 @@ async function credentialsLogin(clusterURL: string): Promise<void> {
 				message: `Logging in using credentials`,
 			});
 			await connect.connectWithCredentials(clusterURL, username, password)
-			.then((msg: string) => vscode.window.showInformationMessage(msg))
+			.then(async (msg: string) => {
+				vscode.window.showInformationMessage(msg);
+				await vscode.commands.executeCommand('setContext', 'isLoggedIn', true);
+			})
 			.catch((err: string | Error) =>
 				vscode.window.showErrorMessage(err instanceof Error ? err.name : err));
 		}
@@ -108,7 +111,10 @@ async function tokenLogin(clusterURL: string): Promise<void> {
 			});
 			// Connect to API server using bearer token
 			await connect.connectWithToken(clusterURL, token)
-			.then((msg: string) => vscode.window.showInformationMessage(msg))
+			.then(async (msg: string) => {
+				vscode.window.showInformationMessage(msg);
+				await vscode.commands.executeCommand('setContext', 'isLoggedIn', true);
+			})
 			.catch((err: string | Error) =>
 				vscode.window.showErrorMessage(err instanceof Error ? err.name : err));
 		});

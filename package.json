@@ -31,6 +31,7 @@
 	"activationEvents": [
 		"onCommand:ocm-vscode-extension.ocmNewProject",
 		"onCommand:ocm-vscode-extension.login",
+		"onCommand:ocm-vscode-extension.logout",
 		"onCommand:ocm-vscode-extension.verifyTools",
 		"onCommand:ocm-vscode-extension.createLocalEnvironment",
 		"onCommand:ocm-vscode-extension.showClusterDetails",
@@ -47,6 +48,11 @@
 			{
 				"command": "ocm-vscode-extension.login",
 				"title": "Login to kubernetes cluster",
+				"category": "OCM"
+			},
+			{
+				"command": "ocm-vscode-extension.logout",
+				"title": "Logout of kubernetes cluster",
 				"category": "OCM"
 			},
 			{
@@ -105,7 +111,16 @@
 		"viewsWelcome": [
 			{
 				"view": "ocm-vscode-extension.forDevelopersView",
-				"contents": "[Login](command:ocm-vscode-extension.login)\n[Verify Required Tools](command:ocm-vscode-extension.verifyTools)\n[Create Local Environment](command:ocm-vscode-extension.createLocalEnvironment)"
+				"contents": "[Log-in To New Cluster](command:ocm-vscode-extension.login)"
+			},
+			{
+				"view": "ocm-vscode-extension.forDevelopersView",
+				"contents": "[Log-out Of Current Cluster](command:ocm-vscode-extension.logout)",
+				"when": "isLoggedIn"
+			},
+			{
+				"view": "ocm-vscode-extension.forDevelopersView",
+				"contents": "[Verify Required Tools](command:ocm-vscode-extension.verifyTools)\n[Create Local Environment](command:ocm-vscode-extension.createLocalEnvironment)"
 			}
 		],
 		"menus": {

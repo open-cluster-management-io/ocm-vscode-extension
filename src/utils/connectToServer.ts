@@ -1,15 +1,21 @@
 import * as shell from './shell';
 
 // connect to API server using credentials
-export function connectWithCredentials(clusterURL: String, username: String, password: String):  Promise<string> {
+export async function connectWithCredentials(clusterURL: String, username: String, password: String):  Promise<string> {
 	console.debug(`Connect to API server using credentials`);
 	return shell.executeShellCommand(`oc login -u ${username} -p ${password} --server=${clusterURL}`);
 }
 
 // connect to API server using bearer token
-export function connectWithToken(clusterURL: String, token: String):  Promise<string> {
+export async function connectWithToken(clusterURL: String, token: String):  Promise<string> {
 	console.debug(`Connect to API server using bearer token`);
 	return shell.executeShellCommand(`oc login --token=${token} --server=${clusterURL}`);
+}
+
+// disconnect from API server
+export async function disconnect():  Promise<string> {
+	console.debug(`Disconnecting from API server`);
+	return shell.executeShellCommand(`oc logout`);
 }
 
 // check if a connection to an API server already exists
