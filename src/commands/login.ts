@@ -181,5 +181,5 @@ export async function login(): Promise<void> {
 
 export async function refresh(): Promise<void> {
 	let loginState: boolean = await connect.requireLogin();
-	vscode.commands.executeCommand('setContext', 'isLoggedIn', !loginState)
+	vscode.commands.executeCommand('setContext', 'isLoggedIn', !loginState);
 }
