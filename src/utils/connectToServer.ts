@@ -1,13 +1,13 @@
 import * as shell from './shell';
 
 // connect to API server using credentials
-export async function connectWithCredentials(clusterURL: String, username: String, password: String):  Promise<string> {
+export async function connectWithCredentials(clusterURL: string, username: string, password: string):  Promise<string> {
 	console.debug('Connect to API server using credentials');
 	return shell.executeShellCommand(`oc login -u ${username} -p ${password} --server=${clusterURL}`);
 }
 
 // connect to API server using bearer token
-export async function connectWithToken(clusterURL: String, token: String):  Promise<string> {
+export async function connectWithToken(clusterURL: string, token: string):  Promise<string> {
 	console.debug('Connect to API server using bearer token');
 	return shell.executeShellCommand(`oc login --token=${token} --server=${clusterURL}`);
 }

@@ -1,7 +1,7 @@
 import * as k8s from '@kubernetes/client-node/dist/';
-import { V1CustomResourceDefinition } from '@kubernetes/client-node/dist/';
-import { User as UserType, Cluster as ClusterType } from '@kubernetes/client-node/dist/config_types';
+import { Cluster as ClusterType, User as UserType } from '@kubernetes/client-node/dist/config_types';
 import { QuickPickItem } from 'vscode';
+import { V1CustomResourceDefinition } from '@kubernetes/client-node/dist/';
 
 class ConnectedCluster {
 	readonly cluster: k8s.Cluster;
@@ -34,8 +34,9 @@ class KubeDataLoader {
 		this.kubeConfig.loadFromDefault();
 	}
 
-	public getCurrentServer(): String {
-		return this.kubeConfig.getCurrentCluster()!.server;
+	public getCurrentServer(): string {
+		const currentCluster = this.kubeConfig.getCurrentCluster();
+		return currentCluster ? currentCluster.server : 'undefined';
 	}
 
 	public getServers(): QuickPickItem[] {

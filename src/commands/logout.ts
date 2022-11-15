@@ -11,7 +11,7 @@ export async function logout(): Promise<void> {
 			vscode.window.showErrorMessage(err instanceof Error ? err.name : err))
 		.then(async (msg) => {
 				await vscode.commands.executeCommand('setContext', 'isLoggedIn', false);
-				const logoutInfo = await vscode.window.showInformationMessage(`${msg}. Do you want to login to a new cluster?`, 'Yes', 'No');
+				const logoutInfo = await vscode.window.showInformationMessage(`${msg || 'Process outcome undefined'}. Do you want to login to a new cluster?`, 'Yes', 'No');
 				if (logoutInfo === 'Yes') {
 					return login();
 				}

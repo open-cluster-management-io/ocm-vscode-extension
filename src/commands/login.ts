@@ -1,6 +1,6 @@
 import * as connect from '../utils/connectToServer';
-import KubeDataLoader from '../utils/kube';
 import * as vscode from 'vscode';
+import KubeDataLoader from '../utils/kube';
 import validator from 'validator';
 
 async function requestLoginConfirmation(): Promise<string> {
@@ -22,7 +22,7 @@ async function getUrl(): Promise<string | undefined> {
 			title: 'Provide Cluster URL to connect',
 			ignoreFocusOut: true,
 		});
-	if (!choice) return;
+	if (!choice) { return; }
 	return (choice.label === createUrl.label) ?
 		vscode.window.showInputBox({
 			title: 'Provide new Cluster URL to connect',
@@ -49,7 +49,7 @@ async function credentialsLogin(clusterURL: string): Promise<void> {
 			title: 'Provide Username for basic authentication to the API server',
 			ignoreFocusOut: true,
 		});
-	if (!choice) return;
+	if (!choice) { return; }
 
 	let username: string;
 	if (choice.label === addUser.label) {
@@ -66,7 +66,7 @@ async function credentialsLogin(clusterURL: string): Promise<void> {
 		username = choice.label;
 	}
 
-	if (!username) return;
+	if (!username) { return; }
 
 	// get password
 	let password = await vscode.window.showInputBox({
@@ -80,7 +80,7 @@ async function credentialsLogin(clusterURL: string): Promise<void> {
 		}
 	}) || '';
 
-	if (!password) return;
+	if (!password) { return; }
 
 	// login to API server using credentials
 	await vscode.window.withProgress(
@@ -119,7 +119,7 @@ async function tokenLogin(clusterURL: string): Promise<void> {
 		}
 	}) || '';
 
-	if (!token) return;
+	if (!token) { return; }
 
 	// login to API server using bearer token
 	await vscode.window.withProgress(
@@ -148,11 +148,11 @@ export async function login(): Promise<void> {
 
 	// check for an existing connection to an API server
 	const response = await requestLoginConfirmation();
-    if (response !== 'Yes') return;
+    if (response !== 'Yes') { return; }
 
 	// get target cluster URL
 	let clusterURL = await getUrl();
-	if (!clusterURL) return;
+	if (!clusterURL) { return; }
 
 	//define login actions
 	const loginActions = [
@@ -173,7 +173,7 @@ export async function login(): Promise<void> {
 			title: 'Select a way to log in to the cluster', 
 			ignoreFocusOut: true,
 		});
-	if (!selectedLoginAction) return;
+	if (!selectedLoginAction) { return; }
 
 	// login using action
 	selectedLoginAction.label === 'Credentials' ? await credentialsLogin(clusterURL) : await tokenLogin(clusterURL);

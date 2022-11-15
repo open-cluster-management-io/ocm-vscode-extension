@@ -1,8 +1,8 @@
 import * as createEnvironment from './commands/createEnvironment';
-import * as newProject from './commands/newProject';
-import * as verifyEnvironment from './commands/verifyEnvironment';
 import * as login from './commands/login';
 import * as logout from './commands/logout';
+import * as newProject from './commands/newProject';
+import * as verifyEnvironment from './commands/verifyEnvironment';
 import * as vscode from 'vscode';
 import { ClusterDetailsPanel } from './view/ClusterDetailsPanel';
 import { ConnectedClustersProvider } from './providers/connectedClusters';
