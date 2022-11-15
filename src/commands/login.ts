@@ -1,6 +1,7 @@
 import * as connect from '../utils/connectToServer';
 import KubeDataLoader from '../utils/kube';
 import * as vscode from 'vscode';
+import validator from 'validator';
 
 async function requestLoginConfirmation(): Promise<string> {
 	
@@ -26,6 +27,14 @@ async function getUrl(): Promise<string | undefined> {
 		vscode.window.showInputBox({
 			title: 'Provide new Cluster URL to connect',
 			ignoreFocusOut: true,
+			validateInput: (input: string) => {
+				if (input.trim().length === 0) {
+					return 'Input cannot be empty';
+				}
+                if (!validator.isURL(input.trim())) {
+                    return 'Invalid URL provided';
+                }
+			}
 		}) || '' : choice.label;
 }
 
@@ -47,6 +56,11 @@ async function credentialsLogin(clusterURL: string): Promise<void> {
 		username = await vscode.window.showInputBox({
 			title: 'Provide new Username for basic authentication to the API server',
 			ignoreFocusOut: true,
+			validateInput: (input: string) => {
+				if (input.trim().length === 0) {
+					return 'Input cannot be empty';
+				}
+			}
 		}) || '';
 	} else {
 		username = choice.label;
@@ -59,6 +73,11 @@ async function credentialsLogin(clusterURL: string): Promise<void> {
 		title: 'Provide Password for basic authentication to the API server',
 		ignoreFocusOut: true,
 		password: true,
+		validateInput: (input: string) => {
+			if (input.trim().length === 0) {
+				return 'Input cannot be empty';
+			}
+		}
 	}) || '';
 
 	if (!password) return;
@@ -93,6 +112,11 @@ async function tokenLogin(clusterURL: string): Promise<void> {
 		title: 'Provide Bearer token for authentication to the API server',
 		ignoreFocusOut: true,
 		password: true,
+		validateInput: (input: string) => {
+			if (input.trim().length === 0) {
+				return 'Input cannot be empty';
+			}
+		}
 	}) || '';
 
 	if (!token) return;
