@@ -31,6 +31,7 @@
 	"activationEvents": [
 		"onCommand:ocm-vscode-extension.ocmNewProject",
 		"onCommand:ocm-vscode-extension.login",
+		"onCommand:ocm-vscode-extension.login.refresh",
 		"onCommand:ocm-vscode-extension.logout",
 		"onCommand:ocm-vscode-extension.verifyTools",
 		"onCommand:ocm-vscode-extension.createLocalEnvironment",
@@ -49,6 +50,15 @@
 				"command": "ocm-vscode-extension.login",
 				"title": "Login to kubernetes cluster",
 				"category": "OCM"
+			},
+			{
+				"command": "ocm-vscode-extension.login.refresh",
+				"title": "Refresh login state view",
+				"category": "OCM",
+				"icon": {
+					"light": "images/light/refresh.svg",
+					"dark": "images/dark/refresh.svg"
+				}
 			},
 			{
 				"command": "ocm-vscode-extension.logout",
@@ -99,6 +109,10 @@
 		"views": {
 			"ocmView": [
 				{
+					"id": "ocm-vscode-extension.connectionToClusterView",
+					"name": "Connection To Cluster"
+				},
+				{
 					"id": "ocm-vscode-extension.forDevelopersView",
 					"name": "Developers Tools"
 				},
@@ -110,12 +124,12 @@
 		},
 		"viewsWelcome": [
 			{
-				"view": "ocm-vscode-extension.forDevelopersView",
-				"contents": "[Log-in To New Cluster](command:ocm-vscode-extension.login)"
+				"view": "ocm-vscode-extension.connectionToClusterView",
+				"contents": "[Login To New Cluster](command:ocm-vscode-extension.login)"
 			},
 			{
-				"view": "ocm-vscode-extension.forDevelopersView",
-				"contents": "[Log-out Of Current Cluster](command:ocm-vscode-extension.logout)",
+				"view": "ocm-vscode-extension.connectionToClusterView",
+				"contents": "[Logout Of Current Cluster](command:ocm-vscode-extension.logout)",
 				"when": "isLoggedIn"
 			},
 			{
@@ -128,6 +142,11 @@
 				{
 					"command": "ocm-vscode-extension.connectedClustersView.refresh",
 					"when": "view == ocm-vscode-extension.connectedClustersView",
+					"group": "navigation"
+				},
+				{
+					"command": "ocm-vscode-extension.login.refresh",
+					"when": "view == ocm-vscode-extension.connectionToClusterView",
 					"group": "navigation"
 				}
 			],

@@ -154,3 +154,8 @@ export async function login(): Promise<void> {
 	// login using action
 	selectedLoginAction.label === 'Credentials' ? await credentialsLogin(clusterURL) : await tokenLogin(clusterURL);
 }
+
+export async function refresh(): Promise<void> {
+	let loginState: boolean = await connect.requireLogin();
+	vscode.commands.executeCommand('setContext', 'isLoggedIn', !loginState)
+}

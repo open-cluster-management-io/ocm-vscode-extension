@@ -15,6 +15,8 @@ export function activate(context: vscode.ExtensionContext): void {
 		vscode.commands.registerCommand(
 			'ocm-vscode-extension.login', () => login.login()),
 		vscode.commands.registerCommand(
+			'ocm-vscode-extension.login.refresh', () => login.refresh()),
+		vscode.commands.registerCommand(
 			'ocm-vscode-extension.logout', () => logout.logout()),
 		vscode.commands.registerCommand(
 			'ocm-vscode-extension.verifyTools', () => verifyEnvironment.verifyTools()),
