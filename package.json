@@ -125,11 +125,11 @@
 		"viewsWelcome": [
 			{
 				"view": "ocm-vscode-extension.connectionToClusterView",
-				"contents": "[Login To New Cluster](command:ocm-vscode-extension.login)"
+				"contents": "[Login To New OCP Cluster](command:ocm-vscode-extension.login)"
 			},
 			{
 				"view": "ocm-vscode-extension.connectionToClusterView",
-				"contents": "[Logout Of Current Cluster](command:ocm-vscode-extension.logout)",
+				"contents": "[Logout Of Current OCP Cluster](command:ocm-vscode-extension.logout)",
 				"when": "isLoggedIn"
 			},
 			{

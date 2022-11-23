@@ -1,10 +1,21 @@
 import * as connect from '../utils/connectToServer';
+import * as environment from '../utils/environment';
 import * as vscode from 'vscode';
 import KubeDataLoader from '../utils/kube';
 import validator from 'validator';
 
 async function requestLoginConfirmation(): Promise<string> {
-	
+	let verifiedTools = await environment.verifyTools(...environment.loginTools)
+	.catch((msg: string[]) => {
+		vscode.window.showErrorMessage(msg[0], 'Install Instructions')
+		.then(answer => {
+			if (answer === 'Install Instructions') {
+				vscode.env.openExternal(vscode.Uri.parse(msg[1]));
+			}
+		})
+		return 'No';
+	}) || 'Yes';
+	if (verifiedTools == 'No') { return verifiedTools; }
 	if (!await connect.requireLogin()) {
 		const cluster = new KubeDataLoader().getCurrentServer();
 		return await vscode.window.showInformationMessage(`You are already logged into ${cluster} cluster. Do you want to login to a different cluster?`, 'Yes', 'No') || 'No';

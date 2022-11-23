@@ -20,6 +20,13 @@ export const requiredTools: RequiredTool[] = [
 	}
 ];
 
+export const loginTools: RequiredTool[] = [
+	{
+		'name': 'oc',
+		'installUrl': 'https://docs.openshift.com/container-platform/4.11/cli_reference/openshift_cli/getting-started-cli.html#installing-openshift-cli'
+	}
+];
+
 // verify the the existence of the required tools in the environment's shell
 // will be resolved with a string or rejected with a string[]
 export async function verifyTools(...tools: RequiredTool[]): Promise<string|string[]> {
