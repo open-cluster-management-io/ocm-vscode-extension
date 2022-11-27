@@ -1,6 +1,4 @@
 import * as k8s from '@kubernetes/client-node/dist/';
-import { Cluster as ClusterType, User as UserType } from '@kubernetes/client-node/dist/config_types';
-import { QuickPickItem } from 'vscode';
 import { V1CustomResourceDefinition } from '@kubernetes/client-node/dist/';
 
 class ConnectedCluster {
@@ -33,46 +31,6 @@ class KubeDataLoader {
 	private updateK8SConfig(): void {
 		this.kubeConfig.loadFromDefault();
 	}
-
-	public getCurrentServer(): string {
-		const currentCluster = this.kubeConfig.getCurrentCluster();
-		return currentCluster ? currentCluster.server : 'undefined';
-	}
-
-	public getServers(): QuickPickItem[] {
-        const currentCluster = this.kubeConfig.getCurrentCluster();
-        const clusters = this.kubeConfig.clusters || [];
-        const qpItems = clusters.map((c: k8s.Cluster) => ({
-            label: c.server,
-            description: currentCluster && c.name === currentCluster.name ? 'Current Context' : '',
-        }));
-        const filterMap = new Set();
-        return qpItems.filter((item) => {
-            const notDuplicate = !filterMap.has(item.label);
-            if(notDuplicate)  {
-               filterMap.add(item.label);
-            }
-            return notDuplicate;
-        });
-    }
-
-	public getClusterUsers(clusterServer: string): QuickPickItem[] {
-        const currentUser = this.kubeConfig.getCurrentUser();
-        const cluster = this.findCluster(clusterServer);
-        const users = this.kubeConfig.getUsers();
-        const clusterUsers = users.filter((user) => cluster && user.name.includes(cluster.name));
-        return clusterUsers.map((u: UserType) => {
-            const userName = u.name.split('/')[0];
-            return {
-                label: userName === 'kube:admin' ? 'kubeadmin' : userName,
-                description: u === currentUser ? 'Current Context' : '',
-            };
-        });
-    }
-
-	public findCluster(clusterServer: string): ClusterType | undefined {
-        return this.kubeConfig.getClusters().find((cluster: ClusterType) => cluster.server === clusterServer);
-    }
 
 	public loadConnectedClusters(): ConnectedCluster[] {
 		const kubeConfig = new k8s.KubeConfig();
