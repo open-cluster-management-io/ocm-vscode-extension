@@ -19,6 +19,7 @@ Having an effective UI tool for managing your cluster is key to a healthy enviro
     - [Bootstrap Project](#bootstrap-project)
     - [Create Local Environment](#create-local-environment)
     - [Manage Existing Resources](#manage-existing-resources)
+  - [Recommendations](#recommendations)
   - [Contributing](#contributing)
 
 <br>
@@ -43,17 +44,17 @@ You must meet some additional prerequisites to utilize OCM VScode Extension feat
 ## Installation
 
 ### Install Latest version
-In your VScode instance, go to the Extensions Marketplace (by clicking on the _Extensions_ icon in the composite bar on the left hand side or simply typing Ctrl+Shift+X).
+In your VScode instance, go to the _Extensions Marketplace_ (by clicking on the _Extensions_ icon in the composite bar on the left hand side or simply pressing Ctrl+Shift+X on your keyboard).
 
 Search for _OCM Extension_ and click install.
 
 ### Install specific version
-To download a specific version of VScode Extention visit the [releases page][releases], expand the _Assets_ section of the target version,
+To download a specific version of VScode Extension visit the [releases page][releases], expand the _Assets_ section of the target version,
 and download the version for your operating system.
 
-In your VScode instance, go to the Extensions Marketplace (by clicking on the _Extensions_ icon in the composite bar on the left hand side or simply typing Ctrl+Shift+X).
+In your VScode instance, go to the _Extensions Marketplace_ (by clicking on the _Extensions_ icon in the composite bar on the left hand side or simply pressing Ctrl+Shift+X on your keyboard).
 
-Click the **...** at the top right corner of the palette, select the _Install from VSIX..._ action, and browes for the specific _VSIX_ file you downloaded.
+Click the **...** at the top right corner of the palette, select the _Install from VSIX..._ action, and browse for the specific _VSIX_ file you downloaded.
 
 Select a _VSIX_ file and hit install.
 
@@ -80,7 +81,7 @@ To exercise this feature you must take the following steps:
   3. In the search container at the top of your screen choose _Snippets: Insert Snippet_
   4. Choose a desired snippet from list
 
-<div>
+<br><div>
    <img src="images/snippets-from-palette.gif" alt="Resources Snippets">
 </div><br>
 
@@ -96,7 +97,7 @@ To exercise this feature you must take the following steps:
   3. Choose a desired channel type
   4. Type in a project name and hit enter
 
-<div>
+<br><div>
    <img src="images/new-project.gif" alt="Bootstrap Project">
 </div><br>
 
@@ -118,7 +119,7 @@ To exercise this feature you must take the following steps:
   3. Notice that at the top of your screen an action container will prompt you to choose between default or custom configuration
   4. After configuration was specified, a progress bar at the botom right of your screen will provide feadback on the build process
 
-<div>
+<br><div>
    <img src="images/create-local-env.gif" alt="Create Local Environment" style="margin: 0 auto; width: 1264px">
 </div><br>
 
@@ -132,13 +133,27 @@ To exercise this feature you must take the following steps:
       * Clicking on the _OCM_ icon in the composite bar on the left hand side to open the OCM VScode Extension control pane, locating the _Connected Clusters_ section and selecting any cluster in the list
   2. Inside the _Cluster Details_ tab, use the dropdown to select any cluster from the list of availabe clusters in order to view the resources within it 
 
-<div>
+<br><div>
    <img src="images/mng-existing-resources.gif" alt="Create Local Environment" style="margin: 0 auto; width: 1264px">
 </div><br>
+
+## Recommendations
+
+Take a look at some other great VScode extensions to improve your OCM experience!
+
+* [Visual Studio Code Kubernetes Tools][ext-kubernetes]
+* [OpenShift Toolkit][ext-openshift-toolkit]
+* [YAML Language Support][ext-yaml]
+
+To install the recommended VScode extensions, please visit the _Extensions Marketplace_ (by clicking on the _Extensions_ icon in the composite bar on the left hand side or simply pressing Ctrl+Shift+X on your keyboard).
+
+<br>
 
 ## Contributing
 
 See our [Contributing Guidelines][repo-contribute] for more information.
+
+<br>
 
 <!-- LINKS -->
 [ocm-io]: https://open-cluster-management.io/
@@ -152,3 +167,6 @@ See our [Contributing Guidelines][repo-contribute] for more information.
 [clusteradm]: https://github.com/open-cluster-management-io/clusteradm
 [klusterlet]: https://operatorhub.io/operator/klusterlet
 [repo-contribute]: https://github.com/open-cluster-management-io/ocm-vscode-extension/contribute
+[ext-yaml]:https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml
+[ext-openshift-toolkit]:https://marketplace.visualstudio.com/items?itemName=redhat.vscode-openshift-connector
+[ext-kubernetes]:https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools
