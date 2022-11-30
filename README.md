@@ -2,12 +2,13 @@
 
 [Open Cluster Management][ocm-io] (OCM) is a community-driven project focused on multicluster and multicloud scenarios for Kubernetes apps.
 
-OCM VScode Extension is a UI tool for OCM related Kubernetes resources.
-The extension has been built upon Visual Studio Code and offers additional OCM administrative and monitoring features in order to improve operational efficiency and accelerate development within engineering teams.
-OCM VScode Extension provides tons of useful features, including easy to generate OCM related Kubernetes resources, automated local OCM environment creation and a simple and convenient monitoring view for cluster resources.
-Having an effective UI tool for managing your cluster is key to a healthy environment. With the right user interface, you can administer changes to the cluster, track resources, and troubleshoot issues more efficiently, without having to use numerous additional CLI tools.
+OCM VScode Extension is a UI tool for OCM related Kubernetes resources that has been built upon Visual Studio Code and offers additional OCM administrative and monitoring features in order to improve operational efficiency and accelerate development within engineering teams.
 
-<br> 
+Get a full introduction to [OCM VScode Extension on YOUTUBE][youtube-ocm-vscode-ext-intro]
+
+<br><div>
+   <img src="images/ocm-vscode-ext-intro.gif" alt="Create Local Environment" style="margin: 0 auto; width: 1264px">
+</div><br>
 
 - [OCM VScode Extension](#ocm-vscode-extension)
   - [Prerequisites](#prerequisites)
@@ -26,7 +27,7 @@ Having an effective UI tool for managing your cluster is key to a healthy enviro
 
 ## Prerequisites
 
-You must meet the following prerequisites to install the OCM VScode Extension:
+You must meet the following prerequisites to install OCM VScode Extension:
 
 * Ensure your [`Visual Studio Code`][install-vscode] release is at least `v1.71.0`.
 
@@ -114,7 +115,7 @@ The feature does it all for you:
   - Accepts the join requests from the _hub cluster_ using [clusteradm][clusteradm], and [kubectl][install-kubectl].
 
 To exercise this feature you must take the following steps:
-  1. Click on the _OCM_ icon in the composite bar on the left hand side to open the OCM VScode Extension control pane
+  1. Click on the _OCM_ icon in the composite bar on the left hand side to open OCM VScode Extension control pane
   2. Locate the _Create Local Environment_ button in the _Developers Tools_ section and give it a click
   3. Notice that at the top of your screen an action container will prompt you to choose between default or custom configuration
   4. After configuration was specified, a progress bar at the botom right of your screen will provide feadback on the build process
@@ -130,7 +131,7 @@ The Manage Existing Resources feature provides a wide and detailed overview of a
 To exercise this feature you must take the following steps:
   1. Access the _Cluster Details_ tab either by:
       * Pressing Ctrl+Shift+P on your keyboard and choosing _OCM-View: Cluster Details_ in the search container at the top of your screen 
-      * Clicking on the _OCM_ icon in the composite bar on the left hand side to open the OCM VScode Extension control pane, locating the _Connected Clusters_ section and selecting any cluster in the list
+      * Clicking on the _OCM_ icon in the composite bar on the left hand side to open OCM VScode Extension control pane, locating the _Connected Clusters_ section and selecting any cluster in the list
   2. Inside the _Cluster Details_ tab, use the dropdown to select any cluster from the list of availabe clusters in order to view the resources within it 
 
 <br><div>
@@ -170,3 +171,4 @@ See our [Contributing Guidelines][repo-contribute] for more information.
 [ext-yaml]:https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml
 [ext-openshift-toolkit]:https://marketplace.visualstudio.com/items?itemName=redhat.vscode-openshift-connector
 [ext-kubernetes]:https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools
+[youtube-ocm-vscode-ext-intro]:https://www.youtube.com/watch?v=3WATGbheqbQ
