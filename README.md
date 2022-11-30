@@ -2,9 +2,9 @@
 
 [Open Cluster Management][ocm-io] (OCM) is a community-driven project focused on multicluster and multicloud scenarios for Kubernetes apps.
 
-The OCM VScode Extension is a UI tool for OCM related Kubernetes resources.
+OCM VScode Extension is a UI tool for OCM related Kubernetes resources.
 The extension has been built upon Visual Studio Code and offers additional OCM administrative and monitoring features in order to improve operational efficiency and accelerate development within engineering teams.
-The OCM VScode Extension provides tons of useful features, including easy to generate OCM related Kubernetes resources, automated local OCM environment creation and a simple and convenient monitoring view for cluster resources.
+OCM VScode Extension provides tons of useful features, including easy to generate OCM related Kubernetes resources, automated local OCM environment creation and a simple and convenient monitoring view for cluster resources.
 Having an effective UI tool for managing your cluster is key to a healthy environment. With the right user interface, you can administer changes to the cluster, track resources, and troubleshoot issues more efficiently, without having to use numerous additional CLI tools.
 
 <br> 
@@ -64,9 +64,9 @@ Select a _VSIX_ file and hit install.
 
 ### Resources Snippets
 
-The OCM VScode Extension allows users to load Custom Resource (CR) snippets from the command palette.
+OCM VScode Extension allows users to load Custom Resource (CR) snippets from the command palette.
 
-The resources available as snipperts are:
+The resources available as snippets are:
   * Subscription
   * Placement
   * Channel
@@ -87,7 +87,7 @@ To exercise this feature you must take the following steps:
 
 ### Bootstrap Project
 
-Another Valuable feature of the OCM VScode Extension is to create a Bootstrap project for the various channel types.
+Another valuable feature of OCM VScode Extension is to create a Bootstrap project for the various channel types.
 
 The Bootstrap project is basically a collection of snippets, customized to fit one of three channel types - Git, Helm or ObjectBucket, that form a project template for you to build upon.
 
