@@ -33,7 +33,7 @@
 		"onCommand:ocm-vscode-extension.verifyTools",
 		"onCommand:ocm-vscode-extension.createLocalEnvironment",
 		"onCommand:ocm-vscode-extension.showClusterDetails",
-		"onView:ocm-vscode-extension.connectedClustersView"
+		"onView:ocm-vscode-extension.connectedContextsView"
 	],
 	"main": "./out/src/extension.js",
 	"contributes": {
@@ -67,7 +67,7 @@
 				}
 			},
 			{
-				"command": "ocm-vscode-extension.connectedClustersView.refresh",
+				"command": "ocm-vscode-extension.connectedContextsView.refresh",
 				"title": "Refresh connected clusters view",
 				"icon": {
 					"light": "images/light/refresh.svg",
@@ -91,8 +91,8 @@
 					"name": "Developers Tools"
 				},
 				{
-					"id": "ocm-vscode-extension.connectedClustersView",
-					"name": "Connected Clusters"
+					"id": "ocm-vscode-extension.connectedContextsView",
+					"name": "Connected Contexts"
 				}
 			]
 		},
@@ -105,8 +105,8 @@
 		"menus": {
 			"view/title": [
 				{
-					"command": "ocm-vscode-extension.connectedClustersView.refresh",
-					"when": "view == ocm-vscode-extension.connectedClustersView",
+					"command": "ocm-vscode-extension.connectedContextsView.refresh",
+					"when": "view == ocm-vscode-extension.connectedContextsView",
 					"group": "navigation"
 				}
 			],

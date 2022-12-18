@@ -3,10 +3,10 @@ import * as newProject from './commands/newProject';
 import * as verifyEnvironment from './commands/verifyEnvironment';
 import * as vscode from 'vscode';
 import { ClusterDetailsPanel } from './view/ClusterDetailsPanel';
-import { ConnectedClustersProvider } from './providers/connectedClusters';
+import { ConnectedContextsProvider } from './providers/connectedContexts';
 
 export function activate(context: vscode.ExtensionContext): void {
-	let connectedClustersProvider = new ConnectedClustersProvider();
+	let connectedContextsProvider = new ConnectedContextsProvider();
 	context.subscriptions.push(
 		vscode.commands.registerCommand(
 			'ocm-vscode-extension.ocmNewProject', () => newProject.create()),
@@ -15,9 +15,9 @@ export function activate(context: vscode.ExtensionContext): void {
 		vscode.commands.registerCommand(
 			'ocm-vscode-extension.createLocalEnvironment', () => createEnvironment.createLocalEnvironment()),
 		vscode.window.registerTreeDataProvider(
-			'ocm-vscode-extension.connectedClustersView', connectedClustersProvider),
+			'ocm-vscode-extension.connectedContextsView', connectedContextsProvider),
 		vscode.commands.registerCommand(
-			'ocm-vscode-extension.connectedClustersView.refresh', () => connectedClustersProvider.refresh()),
+			'ocm-vscode-extension.connectedContextsView.refresh', () => connectedContextsProvider.refresh()),
 			vscode.commands.registerCommand(
 			'ocm-vscode-extension.showClusterDetails', () => ClusterDetailsPanel.render(context.extensionUri))
 	);
