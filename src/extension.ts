@@ -2,8 +2,8 @@ import * as createEnvironment from './commands/createEnvironment';
 import * as newProject from './commands/newProject';
 import * as verifyEnvironment from './commands/verifyEnvironment';
 import * as vscode from 'vscode';
-import { ClusterDetailsPanel } from './view/ClusterDetailsPanel';
 import { ConnectedContextsProvider } from './providers/connectedContexts';
+import { ContextDetailsPanel } from './view/ContextDetailsPanel';
 
 export function activate(context: vscode.ExtensionContext): void {
 	let connectedContextsProvider = new ConnectedContextsProvider();
@@ -18,7 +18,7 @@ export function activate(context: vscode.ExtensionContext): void {
 			'ocm-vscode-extension.connectedContextsView', connectedContextsProvider),
 		vscode.commands.registerCommand(
 			'ocm-vscode-extension.connectedContextsView.refresh', () => connectedContextsProvider.refresh()),
-			vscode.commands.registerCommand(
-			'ocm-vscode-extension.showClusterDetails', () => ClusterDetailsPanel.render(context.extensionUri))
+		vscode.commands.registerCommand(
+			'ocm-vscode-extension.showContextDetails', () => ContextDetailsPanel.render(context.extensionUri))
 	);
 }

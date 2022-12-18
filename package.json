@@ -32,7 +32,7 @@
 		"onCommand:ocm-vscode-extension.ocmNewProject",
 		"onCommand:ocm-vscode-extension.verifyTools",
 		"onCommand:ocm-vscode-extension.createLocalEnvironment",
-		"onCommand:ocm-vscode-extension.showClusterDetails",
+		"onCommand:ocm-vscode-extension.showContextDetails",
 		"onView:ocm-vscode-extension.connectedContextsView"
 	],
 	"main": "./out/src/extension.js",
@@ -58,8 +58,8 @@
 				}
 			},
 			{
-				"command": "ocm-vscode-extension.showClusterDetails",
-				"title": "Cluster Details",
+				"command": "ocm-vscode-extension.showContextDetails",
+				"title": "Context Details",
 				"category": "OCM-View",
 				"icon": {
 					"light": "images/light/exclamation.svg",
@@ -68,7 +68,7 @@
 			},
 			{
 				"command": "ocm-vscode-extension.connectedContextsView.refresh",
-				"title": "Refresh connected clusters view",
+				"title": "Refresh connected contexts view",
 				"icon": {
 					"light": "images/light/refresh.svg",
 					"dark": "images/dark/refresh.svg"
@@ -112,7 +112,7 @@
 			],
 			"view/item/context": [
 				{
-					"command": "ocm-vscode-extension.showClusterDetails",
+					"command": "ocm-vscode-extension.showContextDetails",
 					"group": "inline"
 				}
 			]

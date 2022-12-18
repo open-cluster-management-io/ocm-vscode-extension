@@ -13,8 +13,8 @@ export class ConnectedContext extends vscode.TreeItem {
 		this.tooltip =  context.cluster;
 		this.command = {
 			"title": "details",
-			"command": "ocm-vscode-extension.showClusterDetails",
-			"arguments": [context.cluster]
+			"command": "ocm-vscode-extension.showContextDetails",
+			"arguments": [context.name]
 		};
 
 	}
@@ -71,7 +71,7 @@ export class ConnectedContextsProvider implements vscode.TreeDataProvider<Custom
 	getChildren(element?: CustomViewType): vscode.ProviderResult<CustomViewType[]> {
 		if (element) {
 			if (element instanceof ConnectedContext) {
-				// children of a connected clusters are ocm's api resources
+				// children of a connected contexts are ocm's api resources
 				return this.getOcmResourceDefinitions(element.context);
 			}
 			if (element instanceof OcmResourceDefinition) {

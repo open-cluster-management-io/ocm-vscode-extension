@@ -1,11 +1,11 @@
 import * as k8s from '@kubernetes/client-node/dist/';
 import { V1CustomResourceDefinition } from '@kubernetes/client-node/dist/';
 
-class ConnectedCluster {
-	readonly cluster: k8s.Cluster;
+class ConnectedContext {
+	readonly context: k8s.Context;
 
-	constructor(cluster: k8s.Cluster) {
-		this.cluster = cluster;
+	constructor(context: k8s.Context) {
+		this.context = context;
 	}
 }
 
@@ -32,28 +32,26 @@ class KubeDataLoader {
 		this.kubeConfig.loadFromDefault();
 	}
 
-	public loadConnectedClusters(): ConnectedCluster[] {
+	public loadConnectedContexts(): ConnectedContext[] {
 		const kubeConfig = new k8s.KubeConfig();
 		kubeConfig.loadFromDefault();
-		return kubeConfig.clusters.map(cluster => new ConnectedCluster(cluster));
+		return kubeConfig.contexts.map(context => new ConnectedContext(context));
     }
 
-	async loadManagedCluster(selectCluster:string): Promise<OcmResource[]> {
-		const selectClusterlist = this.kubeConfig.clusters.filter(cluster => cluster !== undefined && cluster.name === selectCluster);
-		if (selectClusterlist.length === 0 ){
-			return [];
-		} else {
-			let managedClusterCrd =  (await this.getOcmResourceDefinitions(selectClusterlist[0])).filter(
-				crd => crd.spec.names.kind === "ManagedCluster")[0] ;
-			if (managedClusterCrd === undefined) {
-				return [];
+	async loadManagedCluster(selectedContext: string): Promise<OcmResource[]> {
+		let context = this.kubeConfig.getContextObject(selectedContext);
+		if (context !== null) {
+			let managedClusterCrd =  (await this.getOcmResourceDefinitions(context))
+				.filter(crd => crd.spec.names.kind === "ManagedCluster")[0];
+			if (managedClusterCrd !== undefined) {
+				return this.getOcmResources(managedClusterCrd);
 			}
-		return this.getOcmResources(managedClusterCrd);
 		}
+		return [];
 	}
 
-	public async getOcmResourceDefinitions(cluster: k8s.Cluster): Promise<V1CustomResourceDefinition[]> {
-		this.kubeConfig.setCurrentContext(cluster.name);
+	public async getOcmResourceDefinitions(context: k8s.Context): Promise<V1CustomResourceDefinition[]> {
+		this.kubeConfig.setCurrentContext(context.name);
 		let k8sExtApi = this.kubeConfig.makeApiClient(k8s.ApiextensionsV1Api);
 		let apiResponse = await k8sExtApi.listCustomResourceDefinition();
 		if (apiResponse.response.statusCode !== 200) {
@@ -62,26 +60,22 @@ class KubeDataLoader {
 		return apiResponse.body.items.filter(item => item.spec.group.includes('open-cluster-management'));
 	}
 
-	_getClusterByName(selectedCluster:string): k8s.Cluster{
-		return this.kubeConfig.clusters.filter(cluster => cluster !== undefined && cluster.name === selectedCluster)[0];
-	}
-
-	async getResources(selectedCluster:string, kind:string): Promise<OcmResource[]>{
+	async getResources(selectedContext: string, kind: string): Promise<OcmResource[]>{
 		let k8sCustomObjApi = this.kubeConfig.makeApiClient(k8s.CustomObjectsApi);
 		let listResourcesPromises: Promise<void>[] = [];
 		let customResources: OcmResource[] = [];
 
-		let resourceCrd =  (await this.getOcmResourceDefinitions(this._getClusterByName(selectedCluster))).filter(
-			crd => crd.spec.names.kind === kind)[0];
-
-		if (resourceCrd === undefined) {
-			return [];
+		let context = this.kubeConfig.getContextObject(selectedContext);
+		if (context !== null) {
+			let resourceCrd =  (await this.getOcmResourceDefinitions(context))
+				.filter(crd => crd.spec.names.kind === kind)[0];
+			if (resourceCrd !== undefined) {
+				await this.getClusterResourceLists(resourceCrd, k8sCustomObjApi, listResourcesPromises, customResources);
+				await Promise.all(listResourcesPromises);
+				return customResources;
+			}
 		}
-
-		await this.getClusterResourceLists(resourceCrd, k8sCustomObjApi, listResourcesPromises, customResources);
-
-		await Promise.all(listResourcesPromises);
-		return customResources;
+		return [];
 	}
 
 	public async getOcmResources(crd: k8s.V1CustomResourceDefinition): Promise<OcmResource[]> {
