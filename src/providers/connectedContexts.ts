@@ -14,7 +14,7 @@ export class ConnectedContext extends vscode.TreeItem {
 		this.command = {
 			"title": "details",
 			"command": "ocm-vscode-extension.showContextDetails",
-			"arguments": [context.name]
+			"arguments": [{name: context.name, cluster: context.cluster, user: context.user}]
 		};
 
 	}

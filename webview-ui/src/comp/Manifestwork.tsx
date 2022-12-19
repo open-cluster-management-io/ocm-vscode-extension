@@ -9,11 +9,12 @@ function ShowManifestWorks() {
     }
     useEffect(() => {
         window.addEventListener("message", event => {
-            const manifestWorksList = JSON.parse(event.data.manifestWorks)
-            manifestWorksList.map((cluster:any) => updateShowMore(cluster.metadata.name, false))
-            setManifestWorks(manifestWorksList)
-
-         } );
+			if ('manifestWorks' in event.data) {
+				const manifestWorksList = JSON.parse(event.data.manifestWorks)
+				manifestWorksList.map((cluster:any) => updateShowMore(cluster.metadata.name, false))
+				setManifestWorks(manifestWorksList)
+			}
+        });
     })
 
     return (
@@ -36,22 +37,22 @@ function ShowManifestWorks() {
                                         <VSCodeDataGridCell gridColumn='1'>{manifest.metadata.name}</VSCodeDataGridCell>
                                         <VSCodeDataGridCell gridColumn='2'>{manifest.metadata.namespace} </VSCodeDataGridCell>
                                         <VSCodeDataGridCell gridColumn='3'>
-                                            {manifest.metadata.ownerReferences !== undefined && manifest.metadata.ownerReferences !== null 
-                                                ? 
+                                            {manifest.metadata.ownerReferences !== undefined && manifest.metadata.ownerReferences !== null
+                                                ?
                                                     manifest.metadata.ownerReferences.map( ( owner:any )=> { return<p> - apiVersion: {owner.apiVersion}, blockOwnerDeletion: {owner.blockOwnerDeletion.toString()}, controller: {owner.controller.toString()}, kind: {owner.kind}, name: {owner.name} </p>  })
-                                                : 
+                                                :
                                                     ""
-                                            } 
+                                            }
                                         </VSCodeDataGridCell>
                                         <VSCodeDataGridCell gridColumn='4'>{manifest.status.conditions.map( ( condition:any )=> { return<p> - lastTransitionTime: {condition.lastTransitionTime}, message: {condition.message}, observedGeneration: {condition.observedGeneration}, reason: {condition.reason}, status: {condition.status}, type: {condition.type} </p>  })} </VSCodeDataGridCell>
                                         <VSCodeDataGridCell gridColumn='5'>
                                             <VSCodeButton onClick={() => updateShowMore(manifest.metadata.name, !showMore.get(manifest.metadata.name))}> {showMore.get(manifest.metadata.name) ? "Less" : "More"} </VSCodeButton>
-                                            {showMore.get(manifest.metadata.name) 
+                                            {showMore.get(manifest.metadata.name)
                                                 ?
                                                     manifest.status.resourceStatus.manifests.map( ( mf:any )=> { return<p> - group: {mf.resourceMeta.group}, kind: {mf.resourceMeta.kind}, name: {mf.resourceMeta.name}, namespace: {mf.resourceMeta.namespace}, ordinal: {mf.resourceMeta.ordinal}, resource: {mf.resourceMeta.resource}, version: {mf.resourceMeta.version}
                                                         <ul>{mf.conditions.map( ( cond:any )=> { return<li> lastTransitionTime: {cond.lastTransitionTime}, message: {cond.message}, reason: {cond.reason}, status: {cond.status}, type: {cond.type} </li>  })}</ul>
                                                     </p>  })
-                                                : 
+                                                :
                                                     ''
                                             }
                                         </VSCodeDataGridCell>

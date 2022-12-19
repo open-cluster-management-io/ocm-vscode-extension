@@ -5,10 +5,11 @@ function ShowAppliedManifestWork() {
     const [appliedManifestWork, setAppliedManifestWork] = useState([]);
     useEffect(() => {
         window.addEventListener("message", event => {
-            const appliedManifestWorksList = JSON.parse(event.data.appliedManifestWork)
-            setAppliedManifestWork(appliedManifestWorksList)
-
-         } );
+			if ('appliedManifestWork' in event.data) {
+				const appliedManifestWorksList = JSON.parse(event.data.appliedManifestWork)
+				setAppliedManifestWork(appliedManifestWorksList)
+			}
+        });
     },[])
 
     return (

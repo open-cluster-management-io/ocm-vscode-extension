@@ -5,9 +5,9 @@ import * as vscode from 'vscode';
 import { ConnectedContextsProvider } from './providers/connectedContexts';
 import { ContextDetailsPanel } from './view/ContextDetailsPanel';
 
-export function activate(context: vscode.ExtensionContext): void {
+export function activate(extensionContext: vscode.ExtensionContext): void {
 	let connectedContextsProvider = new ConnectedContextsProvider();
-	context.subscriptions.push(
+	extensionContext.subscriptions.push(
 		vscode.commands.registerCommand(
 			'ocm-vscode-extension.ocmNewProject', () => newProject.create()),
 		vscode.commands.registerCommand(
@@ -19,6 +19,7 @@ export function activate(context: vscode.ExtensionContext): void {
 		vscode.commands.registerCommand(
 			'ocm-vscode-extension.connectedContextsView.refresh', () => connectedContextsProvider.refresh()),
 		vscode.commands.registerCommand(
-			'ocm-vscode-extension.showContextDetails', () => ContextDetailsPanel.render(context.extensionUri))
+			'ocm-vscode-extension.showContextDetails',
+			(selectedContext: string) => ContextDetailsPanel.render(extensionContext.extensionUri, selectedContext))
 	);
 }

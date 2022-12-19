@@ -5,10 +5,11 @@ function ShowSubscriptionReport() {
     const [subscriptionReport, setSubscriptionReport] = useState([]);
     useEffect(() => {
         window.addEventListener("message", event => {
-            const subscriptionReportList = JSON.parse(event.data.subscriptionReport) 
-            setSubscriptionReport(subscriptionReportList) 
-                
-         } );          
+			if ('subscriptionReport' in event.data) {
+				const subscriptionReportList = JSON.parse(event.data.subscriptionReport)
+				setSubscriptionReport(subscriptionReportList)
+			}
+        });
     },[])
 
     return (
@@ -19,14 +20,14 @@ function ShowSubscriptionReport() {
                     <VSCodeDataGrid gridTemplateColumns="1fr 1fr 1fr 1fr" aria-label='SubscriptionReport' >
                         <VSCodeDataGridRow rowType="sticky-header">
                                 <VSCodeDataGridCell cellType='columnheader' gridColumn='1'>Subscription Name</VSCodeDataGridCell>
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='2'>Namespace</VSCodeDataGridCell>                
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='3'>Report Type</VSCodeDataGridCell>                
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='4'>Results</VSCodeDataGridCell>                
+                                <VSCodeDataGridCell cellType='columnheader' gridColumn='2'>Namespace</VSCodeDataGridCell>
+                                <VSCodeDataGridCell cellType='columnheader' gridColumn='3'>Report Type</VSCodeDataGridCell>
+                                <VSCodeDataGridCell cellType='columnheader' gridColumn='4'>Results</VSCodeDataGridCell>
                         </VSCodeDataGridRow>
 
                         {subscriptionReport.map((report:any) => {
                             console.log(report)
-                            return <VSCodeDataGridRow> 
+                            return <VSCodeDataGridRow>
                                         <VSCodeDataGridCell gridColumn='1' >{report.metadata.name}</VSCodeDataGridCell>
                                         <VSCodeDataGridCell gridColumn='2' >{report.metadata.namespace}</VSCodeDataGridCell>
                                         <VSCodeDataGridCell gridColumn='3'>{report.reportType} </VSCodeDataGridCell>

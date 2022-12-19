@@ -5,10 +5,11 @@ function ShowKlusterlet() {
     const [klusterlet, setKlusterlet] = useState([]);
     useEffect(() => {
         window.addEventListener("message", event => {
-            const klusterletList = JSON.parse(event.data.klusterlet)
-            setKlusterlet(klusterletList)
-
-         } );
+			if ('klusterlet' in event.data) {
+				const klusterletList = JSON.parse(event.data.klusterlet)
+				setKlusterlet(klusterletList)
+			}
+        });
     },[])
 
     return (

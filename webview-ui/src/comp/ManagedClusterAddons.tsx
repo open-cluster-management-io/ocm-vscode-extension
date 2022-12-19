@@ -5,10 +5,11 @@ function ShowManagedClusterAddons() {
     const [managedClusterAddons, setManagedClusterAddons] = useState([]);
     useEffect(() => {
         window.addEventListener("message", event => {
-            const managedClusterAddonsList = JSON.parse(event.data.managedClusterAddons)
-            setManagedClusterAddons(managedClusterAddonsList)
-
-         } );
+			if ('managedClusterAddons' in event.data) {
+				const managedClusterAddonsList = JSON.parse(event.data.managedClusterAddons)
+				setManagedClusterAddons(managedClusterAddonsList)
+			}
+        });
     },[])
 
     return (
