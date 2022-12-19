@@ -5,10 +5,11 @@ function ShowSubscriptionStatus() {
     const [subscriptionStatus, setSubscriptionStatus] = useState([]);
     useEffect(() => {
         window.addEventListener("message", event => {
-            const subscriptionStatusList = JSON.parse(event.data.subscriptionStatus) 
-            setSubscriptionStatus(subscriptionStatusList) 
-                
-         } );          
+			if ('subscriptionStatus' in event.data) {
+				const subscriptionStatusList = JSON.parse(event.data.subscriptionStatus)
+				setSubscriptionStatus(subscriptionStatusList)
+			}
+        });
     },[])
 
     return (
@@ -19,12 +20,12 @@ function ShowSubscriptionStatus() {
                     <VSCodeDataGrid gridTemplateColumns="1fr 1fr" aria-label='SubscriptionStatus' >
                         <VSCodeDataGridRow rowType="sticky-header">
                                 <VSCodeDataGridCell cellType='columnheader' gridColumn='1'>Subscription Name</VSCodeDataGridCell>
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='2'>Report Type</VSCodeDataGridCell>                
+                                <VSCodeDataGridCell cellType='columnheader' gridColumn='2'>Report Type</VSCodeDataGridCell>
                         </VSCodeDataGridRow>
 
                         {subscriptionStatus.map((status:any) => {
                             console.log(status)
-                            return <VSCodeDataGridRow> 
+                            return <VSCodeDataGridRow>
                                         <VSCodeDataGridCell gridColumn='1' >{status.metadata.name}</VSCodeDataGridCell>
                                         <VSCodeDataGridCell gridColumn='2'>{status.statuses.packages.map( ( pkg:any )=> { return<p> - kind: {pkg.kind}, lastUpdateTime: {pkg.lastUpdateTime}, name: {pkg.name}, namespace: {pkg.namespace}, phase: {pkg.phase} </p>  })} </VSCodeDataGridCell>
                                     </VSCodeDataGridRow>

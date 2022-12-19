@@ -5,10 +5,12 @@ function ShowClusterManager() {
     const [clusterManager, setClusterManager] = useState([]);
     useEffect(() => {
         window.addEventListener("message", event => {
-            const clusterManagerList = JSON.parse(event.data.clusterManager)
-            setClusterManager(clusterManagerList)
+			if ('clusterManager' in event.data) {
+				const clusterManagerList = JSON.parse(event.data.clusterManager)
+				setClusterManager(clusterManagerList)
+			}
 
-         } );
+		});
     },[])
 
     return (

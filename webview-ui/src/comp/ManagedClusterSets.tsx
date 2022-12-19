@@ -5,10 +5,11 @@ function ShowManagedClusterSets() {
     const [managedClusterSets, setManagedClusterSets] = useState([]);
     useEffect(() => {
         window.addEventListener("message", event => {
-            const managedClusterSetsList = JSON.parse(event.data.managedClusterSets)
-            setManagedClusterSets(managedClusterSetsList)
-
-         } );
+			if ('managedClusterSets' in event.data) {
+				const managedClusterSetsList = JSON.parse(event.data.managedClusterSets)
+				setManagedClusterSets(managedClusterSetsList)
+			}
+        });
     },[])
 
     return (

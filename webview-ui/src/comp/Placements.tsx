@@ -5,10 +5,11 @@ function ShowPlacements() {
     const [placements, setPlacements] = useState([]);
     useEffect(() => {
         window.addEventListener("message", event => {
-            const placementsList = JSON.parse(event.data.placements)
-            setPlacements(placementsList)
-
-         } );
+			if ('placements' in event.data) {
+				const placementsList = JSON.parse(event.data.placements)
+				setPlacements(placementsList)
+			}
+        });
     },[])
 
     return (

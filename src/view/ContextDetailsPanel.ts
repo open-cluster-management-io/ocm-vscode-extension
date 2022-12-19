@@ -30,7 +30,7 @@ export class ContextDetailsPanel {
 	* @param panel A reference to the webview panel
 	* @param extensionUri The URI of the directory containing the extension
 	*/
-	private constructor(panel: WebviewPanel, extensionUri: Uri) {
+	private constructor(panel: WebviewPanel, extensionUri: Uri, contextInfo: any) {
 		this._panel = panel;
 
 		// Set an event listener to listen for when the panel is disposed (i.e. when the user closes
@@ -45,8 +45,7 @@ export class ContextDetailsPanel {
 		const _contexts =  this._kubeDataLoader.loadConnectedContexts();
 		this._panel.webview.postMessage({"contexts":JSON.stringify(_contexts)});
 
-		// Set an event listener to listen for messages passed from the webview context
-		this._setWebviewMessageListener(this._panel.webview);
+		this.handleMessage({command: "contextInfo", name: contextInfo.name, cluster: contextInfo.cluster, user: contextInfo.user});
 
 	}
 
@@ -56,21 +55,20 @@ export class ContextDetailsPanel {
 	*
 	* @param extensionUri The URI of the directory containing the extension.
 	*/
-	public static render(extensionUri: Uri):void {
+	public static render(extensionUri: Uri, contextInfo: any):void {
 		if (ContextDetailsPanel.currentPanel) {
-			// If the webview panel already exists reveal it
-			ContextDetailsPanel.currentPanel._panel.reveal(ViewColumn.One);
-		} else {
-			// If a webview panel does not already exist create and show a new one
-			const panel = window.createWebviewPanel(
-				"contextDetails", // Panel view type
-				"Context Details", // Panel title
-				ViewColumn.One, // The editor column the panel should be displayed in
-				{ // Extra panel configurations
-					enableScripts: true, // Enable JavaScript in the webview
-				});
-				ContextDetailsPanel.currentPanel = new ContextDetailsPanel(panel, extensionUri);
+			// If the webview panel already exists dispose it
+			ContextDetailsPanel.currentPanel._panel.dispose();
 		}
+		// Create and show a new one
+		const panel = window.createWebviewPanel(
+			"contextDetails", // Panel view type
+			"Context Details", // Panel title
+			ViewColumn.One, // The editor column the panel should be displayed in
+			{ // Extra panel configurations
+				enableScripts: true, // Enable JavaScript in the webview
+			});
+			ContextDetailsPanel.currentPanel = new ContextDetailsPanel(panel, extensionUri, contextInfo);
 	}
 
 	/**
@@ -104,6 +102,7 @@ export class ContextDetailsPanel {
 	*/
 	private _getWebviewContent(webview: Webview, extensionUri: Uri):string {
 		// The CSS file from the React build output
+		// TODO: it doesn't look like this css is generated
 		const stylesUri = getUri(webview, extensionUri, [
 			"webview-ui", "build","static", "css", "main.css"
 		]);
@@ -132,78 +131,54 @@ export class ContextDetailsPanel {
 		`;
 	}
 
-	/**
-	* Sets up an event listener to listen for messages passed from the webview context and
-	* executes code based on the message that is recieved.
-	*
-	* @param webview A reference to the extension webview
-	* @param context A reference to the extension context
-	*/
-	_setWebviewMessageListener(webview: Webview):void {
-		webview.onDidReceiveMessage(async (message: any) => {
-			const command = message.command;
-			let managedClusters, manifestWorks, appliedManifestWork,placements : OcmResource[];
-			let placementDecisions, managedClusterSets, managedClusterAddons, subscriptionReport, subscriptionStatus, clusterManager, klusterlet: OcmResource[];
+	private async handleMessage(message: any): Promise<void> {
+		const command = message.command;
+		let managedClusters, manifestWorks, appliedManifestWork,placements : OcmResource[];
+		let placementDecisions, managedClusterSets, managedClusterAddons, subscriptionReport, subscriptionStatus, clusterManager, klusterlet: OcmResource[];
 
-			if (command === "selectedContext") { // user selected a context
-				let selectedContext = message.text;
-				//reset
-				// TODO: do we need stringify?
-				this._panel.webview.postMessage({"managedClusters":JSON.stringify([])});
-				this._panel.webview.postMessage({"appliedManifestWork":JSON.stringify([])});
-				this._panel.webview.postMessage({"manifestWorks":JSON.stringify([])});
-				this._panel.webview.postMessage({"placements":JSON.stringify([])});
-				this._panel.webview.postMessage({"placementDecisions":JSON.stringify([])});
-				this._panel.webview.postMessage({"managedClusterSets":JSON.stringify([])});
-				this._panel.webview.postMessage({"managedClusterAddons":JSON.stringify([])});
-				this._panel.webview.postMessage({"clusterManager":JSON.stringify([])});
-				this._panel.webview.postMessage({"klusterlet":JSON.stringify([])});
-				this._panel.webview.postMessage({"subscriptionReport":JSON.stringify([])});
-				this._panel.webview.postMessage({"subscriptionStatus":JSON.stringify([])});
-
-				if (selectedContext.length > 0) {
-					managedClusters = await this._kubeDataLoader.loadManagedCluster(selectedContext);
-					// if this is hub cluster
-					if (managedClusters.length !== 0 ){
-						this._panel.webview.postMessage({"managedClusters":JSON.stringify(managedClusters)});
-						// get manifest work
-						manifestWorks = await this._kubeDataLoader.getResources(selectedContext, "ManifestWork");
-						this._panel.webview.postMessage({"manifestWorks":JSON.stringify(manifestWorks)});
-						// get placements
-						placements = await this._kubeDataLoader.getResources(selectedContext, "Placement");
-						this._panel.webview.postMessage({"placements":JSON.stringify(placements)});
-						// get placement decisions
-						placementDecisions = await this._kubeDataLoader.getResources(selectedContext, "PlacementDecision");
-						this._panel.webview.postMessage({"placementDecisions":JSON.stringify(placementDecisions)});
-						// get managed cluster sets
-						managedClusterSets = await this._kubeDataLoader.getResources(selectedContext, "ManagedClusterSet");
-						this._panel.webview.postMessage({"managedClusterSets":JSON.stringify(managedClusterSets)});
-						// get managed cluster addons
-						managedClusterAddons = await this._kubeDataLoader.getResources(selectedContext, "ManagedClusterAddOn");
-						this._panel.webview.postMessage({"managedClusterAddons":JSON.stringify(managedClusterAddons)});
-						// get managed cluster
-						clusterManager = await this._kubeDataLoader.getResources(selectedContext, "ClusterManager");
-						this._panel.webview.postMessage({"clusterManager":JSON.stringify(clusterManager)});
-						// get subscription report
-						subscriptionReport = await this._kubeDataLoader.getResources(selectedContext, "SubscriptionReport");
-						this._panel.webview.postMessage({"subscriptionReport":JSON.stringify(subscriptionReport)});
-					}
-					klusterlet = await this._kubeDataLoader.getResources(selectedContext, "Klusterlet");
-					// if this is managed cluster
-					if (klusterlet.length !== 0 ){
-						// get klusterlet
-						this._panel.webview.postMessage({"klusterlet":JSON.stringify(klusterlet)});
-						// get applied manifest work
-						appliedManifestWork = await this._kubeDataLoader.getResources(selectedContext, "AppliedManifestWork");
-						this._panel.webview.postMessage({"appliedManifestWork":JSON.stringify(appliedManifestWork)});
-						// get subscription status
-						subscriptionStatus = await this._kubeDataLoader.getResources(selectedContext, "SubscriptionStatus");
-						this._panel.webview.postMessage({"subscriptionStatus":JSON.stringify(subscriptionStatus)});
-					}
+		if (command === "contextInfo") { // user selected a context
+			let selectedContext = message.name;
+			if (selectedContext.length > 0) {
+				this._panel.webview.postMessage({contextInfo: message});
+				managedClusters = await this._kubeDataLoader.loadManagedCluster(selectedContext);
+				// if this is hub cluster
+				if (managedClusters.length !== 0 ){
+					this._panel.webview.postMessage({"managedClusters":JSON.stringify(managedClusters)});
+					// get manifest work
+					manifestWorks = await this._kubeDataLoader.getResources(selectedContext, "ManifestWork");
+					this._panel.webview.postMessage({"manifestWorks":JSON.stringify(manifestWorks)});
+					// get placements
+					placements = await this._kubeDataLoader.getResources(selectedContext, "Placement");
+					this._panel.webview.postMessage({"placements":JSON.stringify(placements)});
+					// get placement decisions
+					placementDecisions = await this._kubeDataLoader.getResources(selectedContext, "PlacementDecision");
+					this._panel.webview.postMessage({"placementDecisions":JSON.stringify(placementDecisions)});
+					// get managed cluster sets
+					managedClusterSets = await this._kubeDataLoader.getResources(selectedContext, "ManagedClusterSet");
+					this._panel.webview.postMessage({"managedClusterSets":JSON.stringify(managedClusterSets)});
+					// get managed cluster addons
+					managedClusterAddons = await this._kubeDataLoader.getResources(selectedContext, "ManagedClusterAddOn");
+					this._panel.webview.postMessage({"managedClusterAddons":JSON.stringify(managedClusterAddons)});
+					// get managed cluster
+					clusterManager = await this._kubeDataLoader.getResources(selectedContext, "ClusterManager");
+					this._panel.webview.postMessage({"clusterManager":JSON.stringify(clusterManager)});
+					// get subscription report
+					subscriptionReport = await this._kubeDataLoader.getResources(selectedContext, "SubscriptionReport");
+					this._panel.webview.postMessage({"subscriptionReport":JSON.stringify(subscriptionReport)});
+				}
+				klusterlet = await this._kubeDataLoader.getResources(selectedContext, "Klusterlet");
+				// if this is managed cluster
+				if (klusterlet.length !== 0 ){
+					// get klusterlet
+					this._panel.webview.postMessage({"klusterlet":JSON.stringify(klusterlet)});
+					// get applied manifest work
+					appliedManifestWork = await this._kubeDataLoader.getResources(selectedContext, "AppliedManifestWork");
+					this._panel.webview.postMessage({"appliedManifestWork":JSON.stringify(appliedManifestWork)});
+					// get subscription status
+					subscriptionStatus = await this._kubeDataLoader.getResources(selectedContext, "SubscriptionStatus");
+					this._panel.webview.postMessage({"subscriptionStatus":JSON.stringify(subscriptionStatus)});
 				}
 			}
-		},
-		undefined,
-		this._disposables);
+		}
 	}
 }

@@ -5,10 +5,11 @@ function ShowPlacementDecisions() {
     const [placementDecisions, setPlacementDecisions] = useState([]);
     useEffect(() => {
         window.addEventListener("message", event => {
-            const placementDecisionsList = JSON.parse(event.data.placementDecisions)
-            setPlacementDecisions(placementDecisionsList)
-
-         } );
+			if ('placementDecisions' in event.data) {
+				const placementDecisionsList = JSON.parse(event.data.placementDecisions)
+				setPlacementDecisions(placementDecisionsList)
+			}
+		});
     },[])
 
     return (
