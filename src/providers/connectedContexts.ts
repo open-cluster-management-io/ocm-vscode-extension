@@ -2,19 +2,19 @@ import * as k8s from '@kubernetes/client-node';
 import * as path  from 'path';
 import * as vscode from 'vscode';
 
-type CustomViewType = ConnectedCluster | OcmResourceDefinition| OcmResource;
+type CustomViewType = ConnectedContext | OcmResourceDefinition| OcmResource;
 
-export class ConnectedCluster extends vscode.TreeItem {
-	readonly cluster: k8s.Cluster;
+export class ConnectedContext extends vscode.TreeItem {
+	readonly context: k8s.Context;
 
-	constructor(cluster: k8s.Cluster) {
-		super(cluster.name, vscode.TreeItemCollapsibleState.Collapsed);
-		this.cluster = cluster;
-		this.tooltip = cluster.server;
+	constructor(context: k8s.Context) {
+		super(context.name, vscode.TreeItemCollapsibleState.Collapsed);
+		this.context = context;
+		this.tooltip =  context.cluster;
 		this.command = {
 			"title": "details",
-			"command": "ocm-vscode-extension.showClusterDetails",
-			"arguments": [cluster.name]
+			"command": "ocm-vscode-extension.showContextDetails",
+			"arguments": [context.name]
 		};
 
 	}
@@ -24,6 +24,7 @@ export class ConnectedCluster extends vscode.TreeItem {
 		dark: path.join(__dirname, '..', '..', '..', 'images', 'dark', 'k8s.svg'),
 	};
 }
+
 
 export class OcmResourceDefinition extends vscode.TreeItem {
 	readonly crd: k8s.V1CustomResourceDefinition;
@@ -48,9 +49,9 @@ export class OcmResource extends vscode.TreeItem {
 	}
 }
 
-export class ConnectedClustersProvider implements vscode.TreeDataProvider<CustomViewType> {
+export class ConnectedContextsProvider implements vscode.TreeDataProvider<CustomViewType> {
 	private kubeConfig = new k8s.KubeConfig();
-	private connectedClusters: ConnectedCluster[] = [];
+	private connectedContexts: ConnectedContext[] = [];
 	private configRefreshedEmitter: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();
 	readonly onDidChangeTreeData: vscode.Event<void> = this.configRefreshedEmitter.event;
 
@@ -69,26 +70,27 @@ export class ConnectedClustersProvider implements vscode.TreeDataProvider<Custom
 
 	getChildren(element?: CustomViewType): vscode.ProviderResult<CustomViewType[]> {
 		if (element) {
-			if (element instanceof ConnectedCluster) {
-				// children of a connected clusters are ocm's api resources
-				return this.getOcmResourceDefinitions(element.cluster);
+			if (element instanceof ConnectedContext) {
+				// children of a connected contexts are ocm's api resources
+				return this.getOcmResourceDefinitions(element.context);
 			}
 			if (element instanceof OcmResourceDefinition) {
 				// children of an ocm resource definition are ocm resources
 				return this.getOcmResources(element.crd);
 			}
 		}
-		// top level children are the connected clusters
-		return this.connectedClusters;
+		// top level children are the connected contexts
+		return this.connectedContexts;
 	}
 
 	private updateK8SConfig(): void {
 		this.kubeConfig.loadFromDefault();
-		this.connectedClusters = this.kubeConfig.clusters.map(cluster => new ConnectedCluster(cluster));
+		this.connectedContexts = this.kubeConfig.contexts.map(context => new ConnectedContext(context));
+
 	}
 
-	private async getOcmResourceDefinitions(cluster: k8s.Cluster): Promise<OcmResourceDefinition[]> {
-		this.kubeConfig.setCurrentContext(cluster.name);
+	private async getOcmResourceDefinitions(context: k8s.Context): Promise<OcmResourceDefinition[]> {
+		this.kubeConfig.setCurrentContext(context.name);
 		let k8sExtApi = this.kubeConfig.makeApiClient(k8s.ApiextensionsV1Api);
 		let apiResponse = await k8sExtApi.listCustomResourceDefinition();
 		if (apiResponse.response.statusCode !== 200) {

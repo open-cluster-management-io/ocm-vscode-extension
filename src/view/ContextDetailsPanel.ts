@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 
 import { Disposable, Uri, ViewColumn, Webview, WebviewPanel, window } from "vscode";
-import KubeDataLoader  from '../../src/utils/kube';
+import KubeDataLoader  from '../utils/kube';
 import { OcmResource } from "../utils/kube";
 import { getUri } from "../utils/getUri";
 
@@ -18,14 +18,14 @@ import { getUri } from "../utils/getUri";
  * - Setting the HTML (and by proxy CSS/JavaScript) content of the webview panel
  * - Setting message listeners so data can be passed between the webview and extension
  */
-export class ClusterDetailsPanel {
-	public static currentPanel: ClusterDetailsPanel | undefined;
+export class ContextDetailsPanel {
+	public static currentPanel: ContextDetailsPanel | undefined;
 	private readonly _panel: WebviewPanel;
 	private _disposables: Disposable[] = [];
 	private _kubeDataLoader:KubeDataLoader;
 
 	/**
-	* The ClusterDetailsPanel class private constructor (called only from the render method).
+	* The ContextDetailsPanel class private constructor (called only from the render method).
 	*
 	* @param panel A reference to the webview panel
 	* @param extensionUri The URI of the directory containing the extension
@@ -40,10 +40,10 @@ export class ClusterDetailsPanel {
 		// Set the HTML content for the webview panel
 		this._panel.webview.html = this._getWebviewContent(this._panel.webview, extensionUri);
 
-		// Load cluster details
+		// Load context details
 		this._kubeDataLoader = new KubeDataLoader();
-		const _clusters =  this._kubeDataLoader.loadConnectedClusters();
-		this._panel.webview.postMessage({"clusters":JSON.stringify(_clusters)});
+		const _contexts =  this._kubeDataLoader.loadConnectedContexts();
+		this._panel.webview.postMessage({"contexts":JSON.stringify(_contexts)});
 
 		// Set an event listener to listen for messages passed from the webview context
 		this._setWebviewMessageListener(this._panel.webview);
@@ -57,19 +57,19 @@ export class ClusterDetailsPanel {
 	* @param extensionUri The URI of the directory containing the extension.
 	*/
 	public static render(extensionUri: Uri):void {
-		if (ClusterDetailsPanel.currentPanel) {
+		if (ContextDetailsPanel.currentPanel) {
 			// If the webview panel already exists reveal it
-			ClusterDetailsPanel.currentPanel._panel.reveal(ViewColumn.One);
+			ContextDetailsPanel.currentPanel._panel.reveal(ViewColumn.One);
 		} else {
 			// If a webview panel does not already exist create and show a new one
 			const panel = window.createWebviewPanel(
-				"clusterDetails", // Panel view type
-				"Cluster Details", // Panel title
+				"contextDetails", // Panel view type
+				"Context Details", // Panel title
 				ViewColumn.One, // The editor column the panel should be displayed in
 				{ // Extra panel configurations
 					enableScripts: true, // Enable JavaScript in the webview
 				});
-			ClusterDetailsPanel.currentPanel = new ClusterDetailsPanel(panel, extensionUri);
+				ContextDetailsPanel.currentPanel = new ContextDetailsPanel(panel, extensionUri);
 		}
 	}
 
@@ -77,7 +77,7 @@ export class ClusterDetailsPanel {
 	* Cleans up and disposes of webview resources when the webview panel is closed.
 	*/
 	public dispose():void {
-		ClusterDetailsPanel.currentPanel = undefined;
+		ContextDetailsPanel.currentPanel = undefined;
 
 		// Dispose of the current webview panel
 		this._panel.dispose();
@@ -121,7 +121,7 @@ export class ClusterDetailsPanel {
 			<meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
 			<meta name="theme-color" content="#000000">
 			<link rel="stylesheet" type="text/css" href="${stylesUri}">
-			<title>Cluster Details</title>
+			<title>Context Details</title>
 		</head>
 		<body>
 			<noscript>You need to enable JavaScript to run this app.</noscript>
@@ -145,9 +145,10 @@ export class ClusterDetailsPanel {
 			let managedClusters, manifestWorks, appliedManifestWork,placements : OcmResource[];
 			let placementDecisions, managedClusterSets, managedClusterAddons, subscriptionReport, subscriptionStatus, clusterManager, klusterlet: OcmResource[];
 
-			if (command === "selectedCluster") { // user selected a cluster
-				let selectedCluster = message.text;
+			if (command === "selectedContext") { // user selected a context
+				let selectedContext = message.text;
 				//reset
+				// TODO: do we need stringify?
 				this._panel.webview.postMessage({"managedClusters":JSON.stringify([])});
 				this._panel.webview.postMessage({"appliedManifestWork":JSON.stringify([])});
 				this._panel.webview.postMessage({"manifestWorks":JSON.stringify([])});
@@ -160,43 +161,43 @@ export class ClusterDetailsPanel {
 				this._panel.webview.postMessage({"subscriptionReport":JSON.stringify([])});
 				this._panel.webview.postMessage({"subscriptionStatus":JSON.stringify([])});
 
-				if (selectedCluster.length > 0) {
-					managedClusters = await this._kubeDataLoader.loadManagedCluster(selectedCluster);
+				if (selectedContext.length > 0) {
+					managedClusters = await this._kubeDataLoader.loadManagedCluster(selectedContext);
 					// if this is hub cluster
 					if (managedClusters.length !== 0 ){
 						this._panel.webview.postMessage({"managedClusters":JSON.stringify(managedClusters)});
 						// get manifest work
-						manifestWorks = await this._kubeDataLoader.getResources(selectedCluster, "ManifestWork");
+						manifestWorks = await this._kubeDataLoader.getResources(selectedContext, "ManifestWork");
 						this._panel.webview.postMessage({"manifestWorks":JSON.stringify(manifestWorks)});
 						// get placements
-						placements = await this._kubeDataLoader.getResources(selectedCluster, "Placement");
+						placements = await this._kubeDataLoader.getResources(selectedContext, "Placement");
 						this._panel.webview.postMessage({"placements":JSON.stringify(placements)});
 						// get placement decisions
-						placementDecisions = await this._kubeDataLoader.getResources(selectedCluster, "PlacementDecision");
+						placementDecisions = await this._kubeDataLoader.getResources(selectedContext, "PlacementDecision");
 						this._panel.webview.postMessage({"placementDecisions":JSON.stringify(placementDecisions)});
 						// get managed cluster sets
-						managedClusterSets = await this._kubeDataLoader.getResources(selectedCluster, "ManagedClusterSet");
+						managedClusterSets = await this._kubeDataLoader.getResources(selectedContext, "ManagedClusterSet");
 						this._panel.webview.postMessage({"managedClusterSets":JSON.stringify(managedClusterSets)});
 						// get managed cluster addons
-						managedClusterAddons = await this._kubeDataLoader.getResources(selectedCluster, "ManagedClusterAddOn");
+						managedClusterAddons = await this._kubeDataLoader.getResources(selectedContext, "ManagedClusterAddOn");
 						this._panel.webview.postMessage({"managedClusterAddons":JSON.stringify(managedClusterAddons)});
 						// get managed cluster
-						clusterManager = await this._kubeDataLoader.getResources(selectedCluster, "ClusterManager");
+						clusterManager = await this._kubeDataLoader.getResources(selectedContext, "ClusterManager");
 						this._panel.webview.postMessage({"clusterManager":JSON.stringify(clusterManager)});
 						// get subscription report
-						subscriptionReport = await this._kubeDataLoader.getResources(selectedCluster, "SubscriptionReport");
+						subscriptionReport = await this._kubeDataLoader.getResources(selectedContext, "SubscriptionReport");
 						this._panel.webview.postMessage({"subscriptionReport":JSON.stringify(subscriptionReport)});
 					}
-					klusterlet = await this._kubeDataLoader.getResources(selectedCluster, "Klusterlet");
+					klusterlet = await this._kubeDataLoader.getResources(selectedContext, "Klusterlet");
 					// if this is managed cluster
 					if (klusterlet.length !== 0 ){
 						// get klusterlet
 						this._panel.webview.postMessage({"klusterlet":JSON.stringify(klusterlet)});
 						// get applied manifest work
-						appliedManifestWork = await this._kubeDataLoader.getResources(selectedCluster, "AppliedManifestWork");
+						appliedManifestWork = await this._kubeDataLoader.getResources(selectedContext, "AppliedManifestWork");
 						this._panel.webview.postMessage({"appliedManifestWork":JSON.stringify(appliedManifestWork)});
 						// get subscription status
-						subscriptionStatus = await this._kubeDataLoader.getResources(selectedCluster, "SubscriptionStatus");
+						subscriptionStatus = await this._kubeDataLoader.getResources(selectedContext, "SubscriptionStatus");
 						this._panel.webview.postMessage({"subscriptionStatus":JSON.stringify(subscriptionStatus)});
 					}
 				}
