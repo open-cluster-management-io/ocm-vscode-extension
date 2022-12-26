@@ -10,37 +10,55 @@ export enum YesNo {
 
 async function gatherClustersInfo(): Promise<build.Cluster[]> {
 	return new Promise(async (resolve, _reject) => {
+
 		// clusters array for creation
 		let clusters: build.Cluster[] = [];
 
 		// get the hub cluster name from the user
 		let hubClusterName: string = await vscode.window.showInputBox({
-			title: 'hub cluster name?',
-			placeHolder: 'hub'
-		}) || 'hub';
+			title: 'Choose a name for the hub cluster',
+			value: 'hub',
+			ignoreFocusOut: true,
+			validateInput: (input: string) => {
+				if (input.trim().length === 0) {
+					return 'Input cannot be empty';
+				}
+			}
+		}) || '';
+		if (!hubClusterName) { return; }
+
 		// add a hub cluster to the clusters array
 		clusters.push({
 			name: hubClusterName,
 			context: `kind-${hubClusterName}`,
 			type: build.ClusterType.hub
 		});
+
 		// ask the user how many managed clusters are required
 		let managedClusterTotal: number = Number(await vscode.window.showInputBox({
-			title: 'how many managed clusters?',
-			placeHolder: '2',
+			title: 'Choose the number of managed clusters to be created',
+			value: '2',
+			ignoreFocusOut: true,
 			validateInput: (input: string) => {
+				if (input.trim().length === 0) {
+					return 'Input cannot be empty';
+				}
 				if (Number.isNaN(Number(input.trim()))) {
-					return input; // only accept numbers
+					return `Input must be a number`; // only accept numbers
 				}
 				return undefined; // return undefined/null/empty for validation.
 			}
-		}) || '2');
+		}));
+		if (!managedClusterTotal) { return; }
+
 		// offer to use standard naming for the managed clusters, ie cluster1..cluster37
 		let standardNaming: string = await vscode.window.showQuickPick(
 			[YesNo.yes, YesNo.no], {
-			title: 'name managed clusters clusterX ?',
-			placeHolder: YesNo.yes
-		}) || YesNo.yes;
+			title: 'Name managed clusters by index (clusterX)?',
+			placeHolder: YesNo.yes,
+			ignoreFocusOut: true
+		}) || '';
+		if (!standardNaming) { return; }
 
 		if (standardNaming === YesNo.yes) {
 			// add managed clusters with default names to the cluster array
@@ -57,9 +75,17 @@ async function gatherClustersInfo(): Promise<build.Cluster[]> {
 			for (let idx = 1; idx <= managedClusterTotal; idx++) {
 				let defaultName = `cluster${idx}`;
 				let clusterName: string = await vscode.window.showInputBox({
-					title: `managed cluster number ${idx} name?`,
-					placeHolder: defaultName
-				}) || defaultName;
+					title: `Choose a name for managed cluster number ${idx}`,
+					value: defaultName,
+					ignoreFocusOut: true,
+					validateInput: (input: string) => {
+						if (input.trim().length === 0) {
+							return 'Input cannot be empty';
+						}
+					}
+				}) || '';
+				if (!clusterName) { return; }
+
 				clusters.push({
 					name: clusterName,
 					context: `kind-${clusterName}`,
@@ -67,6 +93,7 @@ async function gatherClustersInfo(): Promise<build.Cluster[]> {
 				});
 			}
 		}
+
 		// remove clusters with same name on the way out
 		resolve(lodash.uniqBy(clusters, c => c.name));
 	});
@@ -77,9 +104,11 @@ export async function createLocalEnvironment(): Promise<void> {
 	// 1 hub cluster named hub and 2 managed cluster named cluster1/2
 	let useDefaults: string = await vscode.window.showQuickPick(
 		[YesNo.yes, YesNo.no], {
-			title: `use default configuration, 1 hub and 2 managed clusters?`,
-			placeHolder: YesNo.yes
-		}) || YesNo.yes;
+			title: `Use default configuration, 1 hub and 2 managed clusters?`,
+			placeHolder: YesNo.yes,
+			ignoreFocusOut: true
+		}) || '';
+	if (!useDefaults) { return; }
 
 	// clusters array for creation
 	let clusters: build.Cluster[] = [];
