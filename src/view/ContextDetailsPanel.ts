@@ -67,6 +67,7 @@ export class ContextDetailsPanel {
 			ViewColumn.One, // The editor column the panel should be displayed in
 			{ // Extra panel configurations
 				enableScripts: true, // Enable JavaScript in the webview
+				retainContextWhenHidden: true,
 			});
 			ContextDetailsPanel.currentPanel = new ContextDetailsPanel(panel, extensionUri, contextInfo);
 	}
