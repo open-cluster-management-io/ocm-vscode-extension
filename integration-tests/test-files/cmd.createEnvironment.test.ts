@@ -23,7 +23,7 @@ suite('Create local environment command', () => {
 	let infoBoxSpy: sinon.SinonSpy;
 
 	const matchDefaultConfigQuickPick = sinon.match(
-		op => op['title'] === 'use default configuration, 1 hub and 2 managed clusters?');
+		op => op['title'] === 'Use default configuration, 1 hub and 2 managed clusters?');
 
 	beforeEach(() => {
 		sinon.restore(); // unwrap previously wrapped sinon objects
@@ -90,12 +90,12 @@ suite('Create local environment command', () => {
 
 		let buildLocalEnvSpy: sinon.SinonSpy;
 
-		const matchHubNameInputBox = sinon.match(op =>op['title'] === 'hub cluster name?');
-		const matchNumManagedInputBox = sinon.match(op => op['title'] === 'how many managed clusters?');
-		const matchUseDefaultNameForManagedInputBox = sinon.match(op => op['title'] === 'name managed clusters clusterX ?');
-		const matchCluster1NameInputBox = sinon.match(op => op['title'] === 'managed cluster number 1 name?');
-		const matchCluster2NameInputBox = sinon.match(op => op['title'] === 'managed cluster number 2 name?');
-		const matchCluster3NameInputBox = sinon.match(op => op['title'] === 'managed cluster number 3 name?');
+		const matchHubNameInputBox = sinon.match(op =>op['title'] === 'Choose a name for the hub cluster');
+		const matchNumManagedInputBox = sinon.match(op => op['title'] === 'Choose the number of managed clusters to be created');
+		const matchUseDefaultNameForManagedInputBox = sinon.match(op => op['title'] === 'Name managed clusters by index (clusterX)?');
+		const matchCluster1NameInputBox = sinon.match(op => op['title'] === 'Choose a name for managed cluster number 1');
+		const matchCluster2NameInputBox = sinon.match(op => op['title'] === 'Choose a name for managed cluster number 2');
+		const matchCluster3NameInputBox = sinon.match(op => op['title'] === 'Choose a name for managed cluster number 3');
 
 		beforeEach(() => {
 			// given the the user will choose NOT to use the default configuration
@@ -104,76 +104,6 @@ suite('Create local environment command', () => {
 			sinon.stub(environmentTools, 'verifyTools').withArgs(...environmentTools.requiredTools).resolves();
 			// given the build tool utility function will be resolved with a fake message
 			buildLocalEnvSpy = sinon.stub(buildTools, 'buildLocalEnv').resolves(fakeBuildSuccessMsg);
-		});
-
-		test('Create hub cluster opting for the default name and for the default 2 managed clusters using default names', async () => {
-			// given the user will NIT input a custom hub name
-			inputBoxStub.withArgs(matchHubNameInputBox).resolves();
-			// given the user will NOT input the amount of the desired managed clusters
-			inputBoxStub.withArgs(matchNumManagedInputBox).resolves();
-			// given the user will choose to use the default naming convention for the managed clusters
-			quickPickStub.withArgs([YesNo.yes, YesNo.no], matchUseDefaultNameForManagedInputBox).resolves(YesNo.yes);
-			// when invoking the command
-			vscode.commands.executeCommand('ocm-vscode-extension.createLocalEnvironment');
-			await sleep(buildEnvironmentDelayMS); // wait a sec
-			// then expect info message to be called
-			expect(infoBoxSpy).to.be.calledOnceWith(fakeBuildSuccessMsg);
-			// then expect the build environment utility function will be invoked with the expected configuration
-			expect(buildLocalEnvSpy).to.be.calledOnceWith(
-				[
-					{
-						name: 'hub',
-						context: 'kind-hub',
-						type: buildTools.ClusterType.hub
-					},
-					{
-						name: 'cluster1',
-						context: 'kind-cluster1',
-						type: buildTools.ClusterType.managed
-					},
-					{
-						name: 'cluster2',
-						context: 'kind-cluster2',
-						type: buildTools.ClusterType.managed
-					},
-				],
-				sinon.match.func
-			);
-		});
-
-		test('Create hub cluster with a custom name and opt for the default 2 managed clusters using default names', async () => {
-			// given the user will input a custom hub name
-			inputBoxStub.withArgs(matchHubNameInputBox).resolves(fakeHubName);
-			// given the user will NOT input the amount of the desired managed clusters
-			inputBoxStub.withArgs(matchNumManagedInputBox).resolves();
-			// given the user will choose to use the default naming convention for the managed clusters
-			quickPickStub.withArgs([YesNo.yes, YesNo.no], matchUseDefaultNameForManagedInputBox).resolves(YesNo.yes);
-			// when invoking the command
-			vscode.commands.executeCommand('ocm-vscode-extension.createLocalEnvironment');
-			await sleep(buildEnvironmentDelayMS); // wait a sec
-			// then expect info message to be called
-			expect(infoBoxSpy).to.be.calledOnceWith(fakeBuildSuccessMsg);
-			// then expect the build environment utility function will be invoked with the expected configuration
-			expect(buildLocalEnvSpy).to.be.calledOnceWith(
-				[
-					{
-						name: fakeHubName,
-						context: `kind-${fakeHubName}`,
-						type: buildTools.ClusterType.hub
-					},
-					{
-						name: 'cluster1',
-						context: 'kind-cluster1',
-						type: buildTools.ClusterType.managed
-					},
-					{
-						name: 'cluster2',
-						context: 'kind-cluster2',
-						type: buildTools.ClusterType.managed
-					},
-				],
-				sinon.match.func
-			);
 		});
 
 		test('Create hub cluster with a custom name and 3 managed clusters using defaults names', async () => {
