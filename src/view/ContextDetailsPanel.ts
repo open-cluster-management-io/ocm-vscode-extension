@@ -60,14 +60,14 @@ export class ContextDetailsPanel {
 			// If Context Details is called from the Command Palette 
 			let kubeLoader = new KubeDataLoader();
 			let contextInfos = kubeLoader.loadContextInfos();
-			let contextNames = contextInfos.map(context => context.name)
+			let contextNames = contextInfos.map(context => context.name);
 			let pickedContextName: string = await window.showQuickPick(
 				contextNames, {
 				title: 'Choose a context',
 				ignoreFocusOut: true
 			}) || '';
 			if (!pickedContextName) { return; }
-			contextInfo = contextInfos.filter(context => context.name == pickedContextName)[0]
+			contextInfo = contextInfos.filter(context => context.name === pickedContextName)[0];
 		}
 		if (ContextDetailsPanel.currentPanel) {
 			// If the webview panel already exists dispose it
