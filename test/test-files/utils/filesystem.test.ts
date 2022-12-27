@@ -4,7 +4,7 @@ import * as fse from 'fs-extra';
 import * as sinon from 'sinon';
 import { use as chaiUse, expect } from 'chai';
 import { beforeEach } from 'mocha';
-import { createProjectFromTemplate } from '../src/utils/filesystem';
+import { createProjectFromTemplate } from '../../../src/utils/filesystem';
 
 chaiUse(chaiAsPromised);
 

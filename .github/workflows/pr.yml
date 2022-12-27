@@ -33,25 +33,28 @@ jobs:
           node-version: '16'
           cache: npm
 
-      - name: Install project modules
-        run: npm ci
-
       - name: Cache vscode-test folder
         uses: actions/cache@v3
         with:
           path: .vscode-test
           key: ${{ runner.os }}-vscode-test-${{ hashFiles('package.json') }}
 
-      - name: Run unit tests
+      - name: Install project modules
+        run: npm ci
+
+      - name: Lint project
+        run: npm run lint
+
+      - name: Run tests linux
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm test
+
+      - name: Run tests non-linux
+        if: runner.os != 'Linux'
         run: npm test
 
-      - name: Run integration tests linux
-        if: runner.os == 'Linux'
-        run: xvfb-run -a npm run integration-tests
-
-      - name: Run integration tests non-linux
-        if: runner.os != 'Linux'
-        run: npm run integration-tests
+      - name: Verify coverage
+        run: npm run cov
 
       - name: Create a VSIX package for target ${{ matrix.target }}
         run: >

@@ -65,7 +65,7 @@ suite('Create a new project command', () => {
 			let infoBoxSpy = sinon.spy(vscode.window, 'showInformationMessage');
 			// given the following project name and path
 			let projectNameInput = `dummy-project-name-${sut.channelType}`;
-			let projectFolder: string = path.resolve(__dirname, `../../../test-workspace/${projectNameInput}`);
+			let projectFolder: string = path.resolve(__dirname, `../../../../test/test-workspace/${projectNameInput}`);
 			// given the path doesn't already exists
 			await fse.remove(projectFolder);
 			// given the user will select the sut type in the pick box
@@ -95,7 +95,7 @@ suite('Create a new project command', () => {
 		// wrap a spy around the information box
 		let infoBoxSpy = sinon.spy(vscode.window, 'showInformationMessage');
 		// given the default path
-		let projectFolder: string = path.resolve(__dirname, '../../../test-workspace/ocm-application');
+		let projectFolder: string = path.resolve(__dirname, '../../../../test/test-workspace/ocm-application');
 		// given the path doesn't already exists
 		await fse.remove(projectFolder);
 		// given the user will not input a project name (type enter)
@@ -120,7 +120,7 @@ suite('Create a new project command', () => {
 		let errorBoxSpy = sinon.spy(vscode.window, 'showErrorMessage');
 		// given the following project name and path
 		let projectNameInput = 'existing-folder-name';
-		let projectFolder: string = path.resolve(__dirname, `../../../test-workspace/${projectNameInput}`);
+		let projectFolder: string = path.resolve(__dirname, `../../../../test/test-workspace/${projectNameInput}`);
 		// given the folder already exists (with no files in it)
 		await fse.emptyDir(projectFolder);
 		// given the user will input the project name as the existing folder
@@ -143,7 +143,7 @@ suite('Create a new project command', () => {
 		let warningBoxSpy = sinon.spy(vscode.window, 'showWarningMessage');
 		// given the following project name and path
 		let projectNameInput = 'non-existing-folder-name';
-		let projectFolder: string = path.resolve(__dirname, `../../../test-workspace/${projectNameInput}`);
+		let projectFolder: string = path.resolve(__dirname, `../../../../test/test-workspace/${projectNameInput}`);
 		// given the path doesn't already exists
 		await fse.remove(projectFolder);
 		// given the user will input the project name as the existing folder

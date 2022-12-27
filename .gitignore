@@ -5,6 +5,6 @@ node_modules
 build
 out
 # note the order of the next test-workspace records
-test-workspace/*
-!test-workspace/.gitkeep
+test/test-workspace/*
+!test/test-workspace/.gitkeep
 **/*.vsix

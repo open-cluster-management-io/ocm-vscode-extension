@@ -1,7 +1,7 @@
 import * as chaiAsPromised from 'chai-as-promised';
-import * as shellUtils from '../src/utils/shell';
+import * as shellUtils from '../../../src/utils/shell';
 import * as sinon from 'sinon';
-import { RequiredTool, verifyTools } from '../src/utils/environment';
+import { RequiredTool, verifyTools } from '../../../src/utils/environment';
 import { use as chaiUse, expect } from 'chai';
 import { beforeEach } from 'mocha';
 
