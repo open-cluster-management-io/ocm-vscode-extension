@@ -21,6 +21,18 @@ export class OcmResource {
 	}
 }
 
+export class ContextInfo {
+    readonly name: string;
+    readonly cluster: string;
+    readonly user: string;
+
+    constructor(name: string, cluster: string, user: string) {
+        this.name = name;
+        this.cluster = cluster;
+        this.user = user;
+    }
+}
+
 class KubeDataLoader {
 	private kubeConfig = new k8s.KubeConfig();
 
@@ -36,6 +48,12 @@ class KubeDataLoader {
 		const kubeConfig = new k8s.KubeConfig();
 		kubeConfig.loadFromDefault();
 		return kubeConfig.contexts.map(context => new ConnectedContext(context));
+    }
+
+	public loadContextInfos(): ContextInfo[] {
+        const kubeConfig = new k8s.KubeConfig();
+        kubeConfig.loadFromDefault();
+        return kubeConfig.contexts.map(context => { return {name: context.name, cluster: context.cluster, user: context.user};});
     }
 
 	async loadManagedCluster(selectedContext: string): Promise<OcmResource[]> {

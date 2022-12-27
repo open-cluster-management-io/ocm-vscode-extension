@@ -55,7 +55,20 @@ export class ContextDetailsPanel {
 	*
 	* @param extensionUri The URI of the directory containing the extension.
 	*/
-	public static render(extensionUri: Uri, contextInfo: any):void {
+	public static async render(extensionUri: Uri, contextInfo: any):Promise<void> {
+		if (!contextInfo){
+			// If Context Details is called from the Command Palette 
+			let kubeLoader = new KubeDataLoader();
+			let contextInfos = kubeLoader.loadContextInfos();
+			let contextNames = contextInfos.map(context => context.name)
+			let pickedContextName: string = await window.showQuickPick(
+				contextNames, {
+				title: 'Choose a context',
+				ignoreFocusOut: true
+			}) || '';
+			if (!pickedContextName) { return; }
+			contextInfo = contextInfos.filter(context => context.name == pickedContextName)[0]
+		}
 		if (ContextDetailsPanel.currentPanel) {
 			// If the webview panel already exists dispose it
 			ContextDetailsPanel.currentPanel._panel.dispose();
