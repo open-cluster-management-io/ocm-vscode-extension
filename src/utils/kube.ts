@@ -51,9 +51,7 @@ class KubeDataLoader {
     }
 
 	public loadContextInfos(): ContextInfo[] {
-        const kubeConfig = new k8s.KubeConfig();
-        kubeConfig.loadFromDefault();
-        return kubeConfig.contexts.map(context => { return {name: context.name, cluster: context.cluster, user: context.user};});
+        return this.kubeConfig.contexts.map(context => { return {name: context.name, cluster: context.cluster, user: context.user};});
     }
 
 	async loadManagedCluster(selectedContext: string): Promise<OcmResource[]> {
