@@ -5,12 +5,9 @@
 .vscode-test/**
 coverage/**
 images/**
-integration-tests/**
-out/integration-tests/**
 src/**
-test-workspace/**
-tests/**
-out/tests/**
+test/**
+out/test/**
 .editorconfig
 .eslintrc.json
 .gitattributes

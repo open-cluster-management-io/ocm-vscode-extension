@@ -9,8 +9,7 @@
 		"sourceMap": true,
 		"rootDirs": [
 			"src",
-			"integration-tests",
-			"tests"
+			"test"
 		],
 		"skipLibCheck": true,
 		"strict": true   /* enable all strict type-checking options */

@@ -12,7 +12,7 @@
 			"args": [
 				"--disable-extensions",
 				"--extensionDevelopmentPath=${workspaceFolder}",
-				"${workspaceFolder}/test-workspace"
+				"${workspaceFolder}/test/test-workspace"
 			],
 			"outFiles": [
 				"${workspaceFolder}/out/**/*.js"
@@ -26,11 +26,11 @@
 			"args": [
 				"--disable-extensions",
 				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--extensionTestsPath=${workspaceFolder}/out/integration-tests/suite",
-				"${workspaceFolder}/test-workspace"
+				"--extensionTestsPath=${workspaceFolder}/out/test/suite",
+				"${workspaceFolder}/test/test-workspace"
 			],
 			"outFiles": [
-				"${workspaceFolder}/out/integration-tests/**/*.js"
+				"${workspaceFolder}/out/test/**/*.js"
 			],
 			"preLaunchTask": "${defaultBuildTask}"
 		}

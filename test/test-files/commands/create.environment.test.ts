@@ -1,10 +1,10 @@
-import * as buildTools from '../../src/utils/build';
-import * as environmentTools from '../../src/utils/environment';
+import * as buildTools from '../../../src/utils/build';
+import * as environmentTools from '../../../src/utils/environment';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';
 import { use as chaiUse, expect } from 'chai';
-import { YesNo } from '../../src/commands/createEnvironment';
+import { YesNo } from '../../../src/commands/createEnvironment';
 import { beforeEach } from 'mocha';
 
 chaiUse(sinonChai);
@@ -32,7 +32,7 @@ suite('Create local environment command', () => {
 		infoBoxSpy = sinon.spy(vscode.window, 'showInformationMessage'); // wrap a spy around the information box
 	});
 
-	suite('Using the default configuration', () => {
+	suite('Using the default configuration @slow', () => {
 		let errorBoxSpy: sinon.SinonSpy;
 
 		beforeEach(() => {
@@ -81,7 +81,7 @@ suite('Create local environment command', () => {
 		});
 	});
 
-	suite('Using a custom configuration', () => {
+	suite('Using a custom configuration @slow', () => {
 		const fakeHubName = 'my-fake-hub';
 		const numManagedClusters = 3;
 		const fakeManage1Name = `my-managed-cluster-1`;

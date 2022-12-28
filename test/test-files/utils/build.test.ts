@@ -1,8 +1,8 @@
 import * as chaiAsPromised from 'chai-as-promised';
-import * as shellTools from '../src/utils/shell';
+import * as shellTools from '../../../src/utils/shell';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import { Cluster, ClusterType, buildLocalEnv } from '../src/utils/build';
+import { Cluster, ClusterType, buildLocalEnv } from '../../../src/utils/build';
 import { use as chaiUse, expect } from 'chai';
 import { beforeEach } from 'mocha';
 

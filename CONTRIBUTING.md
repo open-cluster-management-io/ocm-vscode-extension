@@ -14,7 +14,6 @@
     - [Environment Preparations](#environment-preparations)
     - [Project Layout](#project-layout)
     - [NPM Scripts](#npm-scripts)
-    - [Coding Guidelines](#coding-guidelines)
     - [Launch Configurations](#launch-configurations)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -63,58 +62,67 @@ Early-access pre-release is available [here][early-access] and will always refle
 
 All you need is [VSCode][vscode] and [NodeJS][nodejs].
 
-> This project was built with *NodeJS 16* and *VSCode 1.65.2*.
-
 ### Project Layout
 
 - [src][repo-src] contains the source code for the extension.
-- [tests][repo-tests] contains the sources for the unit tests.
-- [integration-tests][repo-integration-tests] contains the sources for integration tests.
+- [test][repo-test] contains the sources for the unit tests.
 - [snippets][repo-snippets] contains the snippets offered by the extension.
 - [templates][repo-templates] contains template files for orchestrating new projects.
 - [images][repo-images] contains various images used throughout the project.
-- [test-workspace][repo-test-workspace] used for integration testing, git is keeping it and ignoring its content.
+- [webview-ui][repo-webview-ui] contains the sources for *react* module providing the *web view*.
 
 ### NPM Scripts
 
-- `npm install` will install all the required modules for the project.
-- `npm run lint` will lint all *typescript* sources.
-- `npm run tests` will run the unit tests.
-- `npm run tests:cov` will run the unit tests and verify and summarize the code coverage.
-- `npm run tests:cov-rep` will run the unit tests and verify the coverage creating an HTML coverage report.
-- `npm run build` will lint, compile, test, and verify the code coverage for the project.
-- `npm run clean:build` will remove any pre-compiled sources before building.
-- `npm run integration-tests` will run the integration tests.
-- `npm run clean` will remove the compiled sources
-- `npm run clean-ext` will clean *vscode*'s extension testing folder (.vscode-test).
-- `npm run clean-test-ws` will clean all content from the testing folder (test-workspace) excluding *.gitkeep*.
-- `npm run clean:all` will execute the above three clean scripts.
-- `npm run vsce:package` will build the VSIX package.
+Install module dependencies:
 
-### Coding Guidelines
+```bash
+npm i
+```
 
-For maintainability, readability, and testing purposes, as well as for the overall robustness of this project,
-we separate the various *vscode* integrations from their underlying implementations.</br>
+Lint the project with *eslint*:
 
-For example, at the time of writing this, *vscode* integrations reside in the [commands package][repo-src-commands] and the
-underlying implementations reside in the [utils package][repo-src-utils].</br>
-Take the layout of the package with a pinch of salt, but also take the following couple of rules of thumb under
-consideration while contributing code:
+```bash
+npm run lint
+```
 
-- The *vscode* integration part should be as small as possible, and functions should be perceived as wrappers for
-  the underlying implementations.
-- The underlying implementations should be completely decoupled from *vscode*'s API.
+Test the project (sandbox tests):
 
-In regards to testing,</br>
-*vscode*'s integration should be tested within the context of [integration tests][repo-integration-tests],</br>
-the underlying implementations can, and probably should be tested within the context of [unit tests][repo-tests].
+```bash
+npm test
+```
 
-Please be as informative as possible when opening pull requests.
+Test the project skipping "slow" tests (sandbox tests):
+> New "slow" tests should include `@slow` in their description.
+
+```bash
+npm run test:quick
+```
+
+Print and verify coverage ratio (requires tests to be executed first):
+
+```bash
+npm run cov
+```
+
+Create an *html* coverage report (requires tests to be executed first):
+
+```bash
+npm run cov:rep
+```
+
+Build the project (including the *web project*):
+
+```bash
+npm run build
+
+```
+
+> Check the *scripts* section in *package.json* for more useful scripts.
 
 ### Launch Configurations
 
 - *Run Extension* will run the extension in a separate *vscode instance*.
-- *Extension Tests* will execute the integration tests in debug mode.
+- *Extension Tests* will execute the tests in debug mode.
 
 <!-- LINKS -->
 [early-access]: https://github.com/open-cluster-management-io/ocm-vscode-extension/releases/tag/early-access
@@ -123,12 +131,9 @@ Please be as informative as possible when opening pull requests.
 [vscode-ext-api]: https://code.visualstudio.com/api
 [vscode]: https://code.visualstudio.com/
 <!-- CODE LINKS -->
-[repo-integration-tests]: https://github.com/open-cluster-management-io/ocm-vscode-extension/tree/main/integration-tests
 [repo-images]: https://github.com/open-cluster-management-io/ocm-vscode-extension/tree/main/images
 [repo-snippets]: https://github.com/open-cluster-management-io/ocm-vscode-extension/tree/main/snippets
 [repo-src]: https://github.com/open-cluster-management-io/ocm-vscode-extension/tree/main/src
-[repo-src-commands]: https://github.com/open-cluster-management-io/ocm-vscode-extension/tree/main/src/commands
-[repo-src-utils]: https://github.com/open-cluster-management-io/ocm-vscode-extension/tree/main/src/utils
 [repo-templates]: https://github.com/open-cluster-management-io/ocm-vscode-extension/tree/main/templates
-[repo-tests]: https://github.com/open-cluster-management-io/ocm-vscode-extension/tree/main/tests
-[repo-test-workspace]: https://github.com/open-cluster-management-io/ocm-vscode-extension/tree/main/test-workspace
+[repo-test]: https://github.com/open-cluster-management-io/ocm-vscode-extension/tree/main/test
+[repo-webview-ui]: https://github.com/open-cluster-management-io/ocm-vscode-extension/tree/main/webview-ui

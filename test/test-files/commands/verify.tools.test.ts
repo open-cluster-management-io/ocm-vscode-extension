@@ -1,4 +1,4 @@
-import * as environmentTools from '../../src/utils/environment';
+import * as environmentTools from '../../../src/utils/environment';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as vscode from 'vscode';

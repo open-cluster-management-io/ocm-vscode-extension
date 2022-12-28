@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       title:
-        description: "Release title"
+        description: "Release title (leave blank for tag)"
         required: false
 
 jobs:
