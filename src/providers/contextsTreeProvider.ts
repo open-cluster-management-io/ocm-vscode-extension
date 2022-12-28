@@ -49,7 +49,7 @@ export class OcmResource extends vscode.TreeItem {
 	}
 }
 
-export class ConnectedContextsProvider implements vscode.TreeDataProvider<CustomViewType> {
+export class ConnectedContextsTreeProvider implements vscode.TreeDataProvider<CustomViewType> {
 	private kubeConfig = new k8s.KubeConfig();
 	private connectedContexts: ConnectedContext[] = [];
 	private configRefreshedEmitter: vscode.EventEmitter<void> = new vscode.EventEmitter<void>();

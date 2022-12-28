@@ -117,7 +117,11 @@ npm run build
 
 ```
 
-> Check the *scripts* section in *package.json* for more useful scripts.
+List all available scripts:
+
+```bash
+npm run
+```
 
 ### Launch Configurations
 

@@ -2,11 +2,11 @@ import * as createEnvironment from './commands/createEnvironment';
 import * as newProject from './commands/newProject';
 import * as verifyEnvironment from './commands/verifyEnvironment';
 import * as vscode from 'vscode';
-import { ConnectedContextsProvider } from './providers/connectedContexts';
+import { ConnectedContextsTreeProvider } from './providers/contextsTreeProvider';
 import { ContextDetailsPanel } from './view/ContextDetailsPanel';
 
 export function activate(extensionContext: vscode.ExtensionContext): void {
-	let connectedContextsProvider = new ConnectedContextsProvider();
+	let connectedContextsTreeProvider = new ConnectedContextsTreeProvider();
 	extensionContext.subscriptions.push(
 		vscode.commands.registerCommand(
 			'ocm-vscode-extension.ocmNewProject', () => newProject.create()),
@@ -15,9 +15,9 @@ export function activate(extensionContext: vscode.ExtensionContext): void {
 		vscode.commands.registerCommand(
 			'ocm-vscode-extension.createLocalEnvironment', () => createEnvironment.createLocalEnvironment()),
 		vscode.window.registerTreeDataProvider(
-			'ocm-vscode-extension.connectedContextsView', connectedContextsProvider),
+			'ocm-vscode-extension.connectedContextsView', connectedContextsTreeProvider),
 		vscode.commands.registerCommand(
-			'ocm-vscode-extension.connectedContextsView.refresh', () => connectedContextsProvider.refresh()),
+			'ocm-vscode-extension.connectedContextsView.refresh', () => connectedContextsTreeProvider.refresh()),
 		vscode.commands.registerCommand(
 			'ocm-vscode-extension.showContextDetails',
 			(selectedContext: string) => ContextDetailsPanel.render(extensionContext.extensionUri, selectedContext))
