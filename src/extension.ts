@@ -4,9 +4,11 @@ import * as verifyEnvironment from './commands/verifyEnvironment';
 import * as vscode from 'vscode';
 import { ConnectedContextsTreeProvider } from './providers/contextsTreeProvider';
 import { ContextDetailsPanel } from './view/ContextDetailsPanel';
+import { Load } from './data/loader';
+
 
 export function activate(extensionContext: vscode.ExtensionContext): void {
-	let connectedContextsTreeProvider = new ConnectedContextsTreeProvider();
+	let connectedContextsTreeProvider = new ConnectedContextsTreeProvider(Load.getLoader());
 	extensionContext.subscriptions.push(
 		vscode.commands.registerCommand(
 			'ocm-vscode-extension.ocmNewProject', () => newProject.create()),
