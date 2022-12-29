@@ -154,6 +154,7 @@
 	"scripts": {
 		"precompile": "npm run clean:build",
 		"compile": "tsc -p ./",
+		"prewatch": "npm run clean:build",
 		"watch": "tsc -w -p ./",
 
 		"lint": "eslint src test --ext ts",
