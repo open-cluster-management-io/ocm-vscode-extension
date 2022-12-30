@@ -56,9 +56,10 @@ export class ContextDetailsPanel {
 	* @param extensionUri The URI of the directory containing the extension.
 	*/
 	public static async render(extensionUri: Uri, contextInfo: any):Promise<void> {
+		let kubeLoader = new KubeDataLoader();
+		
 		if (!contextInfo){
 			// If Context Details is called from the Command Palette 
-			let kubeLoader = new KubeDataLoader();
 			let contextInfos = kubeLoader.loadContextInfos();
 			let contextNames = contextInfos.map(context => context.name);
 			let pickedContextName: string = await window.showQuickPick(
@@ -69,10 +70,19 @@ export class ContextDetailsPanel {
 			if (!pickedContextName) { return; }
 			contextInfo = contextInfos.filter(context => context.name === pickedContextName)[0];
 		}
+
+		// Validate that a connection to the cluster of the target context can be established
+		let errMsg = await kubeLoader.validateClusterConnectivity(contextInfo.name);
+		if (errMsg) {
+			window.showErrorMessage(errMsg);
+			return;
+		}
+
 		if (ContextDetailsPanel.currentPanel) {
 			// If the webview panel already exists dispose it
 			ContextDetailsPanel.currentPanel._panel.dispose();
 		}
+
 		// Create and show a new one
 		const panel = window.createWebviewPanel(
 			"contextDetails", // Panel view type
@@ -149,7 +159,7 @@ export class ContextDetailsPanel {
 		const command = message.command;
 		let managedClusters, manifestWorks, appliedManifestWork,placements : OcmResource[];
 		let placementDecisions, managedClusterSets, managedClusterAddons, subscriptionReport, subscriptionStatus, clusterManager, klusterlet: OcmResource[];
-
+		
 		if (command === "contextInfo") { // user selected a context
 			let selectedContext = message.name;
 			if (selectedContext.length > 0) {

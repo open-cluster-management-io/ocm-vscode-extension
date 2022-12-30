@@ -54,6 +54,25 @@ class KubeDataLoader {
         return this.kubeConfig.contexts.map(context => { return {name: context.name, cluster: context.cluster, user: context.user};});
     }
 
+	public async validateClusterConnectivity(selectedContext: string) : Promise<string | undefined> {
+		let context = this.kubeConfig.getContextObject(selectedContext);
+		if (context !== null){
+			this.kubeConfig.setCurrentContext(context.name);
+			let k8sExtApi = this.kubeConfig.makeApiClient(k8s.CoreV1Api);
+			return k8sExtApi.listNamespacedPod('default')
+				.then((res) => {
+					if (res.response.statusCode !== 200){
+						return `Cluster is not accessible, Error ${String(res.response.statusCode)}`;
+					}
+					return;
+				})
+				.catch(err => {
+					return `Cluster is not accessible, ${String(err)}`;
+				});
+		}
+		return 'Context could not be found in the kubeConfig file';
+	}
+
 	async loadManagedCluster(selectedContext: string): Promise<OcmResource[]> {
 		let context = this.kubeConfig.getContextObject(selectedContext);
 		if (context !== null) {
