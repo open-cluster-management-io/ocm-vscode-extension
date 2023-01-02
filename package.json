@@ -154,28 +154,23 @@
 	"scripts": {
 		"precompile": "npm run clean:build",
 		"compile": "tsc -p ./",
+		"prewatch": "npm run clean:build",
 		"watch": "tsc -w -p ./",
-
 		"lint": "eslint src test --ext ts",
 		"lint:fix": "eslint src test --ext ts --fix",
-
 		"clean": "npm run clean:build && npm run clean:webview-build",
 		"clean:build": "rm -rf out",
 		"clean:webview-build": "rm -rf ./webview-ui/build",
 		"clean:sandbox": "rm -rf .vscode-test",
 		"clean:test-ws": "find ./test/test-workspace/ -mindepth 1  ! -name '.gitkeep' -delete",
-
 		"prebuild": "npm run compile",
 		"build": "npm run build:webview",
 		"build:webview": "npm --workspace webview-ui run build",
-
 		"pretest": "npm run compile",
 		"test": "node ./out/test/run.js",
 		"test:quick": "QUICK_TEST=\"true\" npm test",
-
 		"cov": "nyc report --check-coverage --lines 50 --clean --compact false --reporter=text",
 		"cov:rep": "rm -rf coverage/* && nyc report --reporter=lcov",
-
 		"vscode:prepublish": "npm run clean && npm run build",
 		"vsce:package": "vsce package",
 		"vsce:publish": "vsce publish"
@@ -208,6 +203,7 @@
 		"@vscode/test-electron": "^2.1.5",
 		"chai": "^4.3.6",
 		"chai-as-promised": "^7.1.1",
+		"chai-exclude": "^2.1.0",
 		"chai-things": "^0.2.0",
 		"eslint": "^8.23.1",
 		"glob": "^8.0.3",
