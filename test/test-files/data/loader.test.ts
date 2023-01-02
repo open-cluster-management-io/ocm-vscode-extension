@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import * as builder from '../../../src/data/builder';
+import * as chaiAsPromised from 'chai-as-promised';
 import * as k8s from '@kubernetes/client-node';
 import * as loader from '../../../src/data/loader';
 import * as sinon from 'sinon';
@@ -7,6 +8,7 @@ import * as sinonChai from 'sinon-chai';
 import { expect, use } from 'chai';
 import { beforeEach } from 'mocha';
 
+use(chaiAsPromised);
 use(sinonChai);
 
 suite('Load data using the data loader', () => {
@@ -62,6 +64,12 @@ suite('Load data using the data loader', () => {
 		}
 	};
 
+	let fakeK8SNamespacedCr = {
+		metadata: {
+			name: 'fake-crd1'
+		}
+	};
+
 	let fakeK8SClusteredCrd: k8s.V1CustomResourceDefinition = {
 		metadata: {
 			name: 'fake-crd2'
@@ -79,6 +87,12 @@ suite('Load data using the data loader', () => {
 			storedVersions: [
 				'2.2.2'
 			]
+		}
+	};
+
+	let fakeK8SClusteredCr = {
+		metadata: {
+			name: 'fake-crd2'
 		}
 	};
 
@@ -102,19 +116,11 @@ suite('Load data using the data loader', () => {
 		group: 'open-cluster-management'
 	};
 
-	let fakeOcmClusteredCr: loader.OcmResource = {
-		crd: {
-			krd: fakeK8SClusteredCrd,
-			name: 'fake-crd2',
-			plural: 'fake-crd2s',
-			namespaced: false,
-			kind: 'fake-crd2-kind',
-			version: '2.2.2',
-			group: 'open-cluster-management'
-		},
-		name: 'fake-crd2',
-		namespace: undefined
-	};
+	let fakeOcmClusteredCr = new loader.OcmResource(
+		fakeK8SClusteredCr,
+		fakeOcmClusteredCrd,
+		undefined
+	);
 
 	let fakeNamespace: k8s.V1Namespace = {
 		metadata: {
@@ -122,19 +128,11 @@ suite('Load data using the data loader', () => {
 		}
 	};
 
-	let fakeOcmNamespacedCr: loader.OcmResource = {
-		crd: {
-			krd: fakeK8SNamespacedCrd,
-			name: 'fake-crd1',
-			plural: 'fake-crd1s',
-			namespaced: true,
-			kind: 'fake-crd1-kind',
-			version: '1.1.1',
-			group: 'open-cluster-management'
-		},
-		name: 'fake-crd1',
-		namespace: fakeNamespace.metadata?.name
-	};
+	let fakeOcmNamespacedCr = new loader.OcmResource(
+		fakeK8SNamespacedCr,
+		fakeOcmNamespacedCrd,
+		fakeNamespace.metadata?.name
+	);
 
 	beforeEach(() => {
 		// inject values to the stubbed k8s config
@@ -219,6 +217,50 @@ suite('Load data using the data loader', () => {
 		let clusters = loadSut.getClusters();
 		expect(clusters).to.have.lengthOf(1);
 		expect(clusters[0]).to.deep.equal(fakeConnectedCluster);
+	});
+
+	test('Successfully verify cluster reachability', () => {
+		// @ts-ignore
+		loadSut.coreApi = sinon.createStubInstance(k8s.CoreV1Api, {
+			// @ts-ignore
+			listNode: Promise.resolve({
+				response: {
+					statusCode: 200
+				}
+			})
+		});
+		return expect(loadSut.verifyReachability()).to.eventually.be.fulfilled;
+	});
+
+	[
+		{
+			prefix: 'Failed response',
+			stub: Promise.resolve({
+				response: {
+					statusCode: 500
+				}
+			}),
+			message: 'Cluster is not accessible, 500'
+		},
+		{
+			prefix: 'No response',
+			stub: Promise.resolve(undefined),
+			message: 'Cluster is not accessible'
+		},
+		{
+			prefix: 'Error thrown',
+			stub: sinon.stub().throwsException('fake reason'),
+			message: 'Cluster is not accessible, fake reason'
+		}
+	].forEach(testCase => {
+		test(`${testCase.prefix} from the api should fail reachability verification`, () => {
+			// @ts-ignore
+			loadSut.coreApi = sinon.createStubInstance(k8s.CoreV1Api, {
+				// @ts-ignore
+				listNode: testCase.stub
+			});
+			return expect(loadSut.verifyReachability()).to.eventually.be.rejectedWith(testCase.message);
+		});
 	});
 
 	function verifyApiRefresh(includeLoad = false): void {
@@ -367,7 +409,7 @@ suite('Load data using the data loader', () => {
 						},
 						body: {
 							items: [
-								fakeK8SClusteredCrd
+								fakeK8SClusteredCr
 							]
 						}
 					})
@@ -426,7 +468,7 @@ suite('Load data using the data loader', () => {
 						},
 						body: {
 							items: [
-								fakeK8SNamespacedCrd
+								fakeK8SNamespacedCr
 							]
 						}
 					})

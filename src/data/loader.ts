@@ -4,13 +4,15 @@ import * as k8s from '@kubernetes/client-node';
 const OCM_GROUP = 'open-cluster-management';
 
 export class OcmResource {
+	readonly kr: any;
 	readonly crd: OcmResourceDefinition;
 	readonly name: string;
 	readonly namespace?: string;
 
-	constructor(crd: OcmResourceDefinition, name: string, namespace?: string) {
+	constructor(kr: any, crd: OcmResourceDefinition, namespace?: string) {
+		this.kr = kr;
 		this.crd = crd;
-		this.name = name;
+		this.name = kr.metadata.name;
 		this.namespace = namespace;
 	}
 }
@@ -64,9 +66,25 @@ export class Load {
 	}
 
 	private refreshClients(): void {
-		this.extApi = this.config.makeApiClient(k8s.ApiextensionsV1Api);
-		this.objApi = this.config.makeApiClient(k8s.CustomObjectsApi);
-		this.coreApi = this.config.makeApiClient(k8s.CoreV1Api);
+		if (this.getContext()) {
+			this.extApi = this.config.makeApiClient(k8s.ApiextensionsV1Api);
+			this.objApi = this.config.makeApiClient(k8s.CustomObjectsApi);
+			this.coreApi = this.config.makeApiClient(k8s.CoreV1Api);
+		}
+	}
+
+	async verifyReachability(): Promise<void> {
+		try {
+			let r = await this.coreApi?.listNode();
+			if (!r) {
+				return Promise.reject('Cluster is not accessible');
+			}
+			if (r.response.statusCode !== 200) {
+				return Promise.reject(`Cluster is not accessible, ${String(r.response.statusCode)}`);
+			}
+		} catch (e: any) {
+			return Promise.reject(`Cluster is not accessible, ${String(e)}`);
+		}
 	}
 
 	setContext(context: string | builder.ConnectedContext): void {
@@ -132,7 +150,7 @@ export class Load {
 		let response = await this.objApi?.listClusterCustomObject(crd.group, crd.version, crd.plural);
 		if (response && response.response.statusCode === 200) {
 			// @ts-ignore
-			retRes.push(...response.body.items.map(item => new OcmResource(crd, item.metadata.name)));
+			retRes.push(...response.body.items.map(item => new OcmResource(item, crd)));
 		}
 		return retRes;
 	}
@@ -146,7 +164,7 @@ export class Load {
 				let objResponse = await this.objApi?.listNamespacedCustomObject(crd.group, crd.version, namespace, crd.plural);
 				if (objResponse && objResponse.response.statusCode === 200) {
 					// @ts-ignore
-					retRes.push(...objResponse.body.items.map(item => new OcmResource(crd, item.metadata.name, namespace)));
+					retRes.push(...objResponse.body.items.map(item => new OcmResource(item, crd, namespace)));
 				}
 			});
 		}

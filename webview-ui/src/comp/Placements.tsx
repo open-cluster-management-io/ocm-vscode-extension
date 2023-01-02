@@ -1,20 +1,21 @@
 import { VSCodeDataGrid, VSCodeDataGridCell, VSCodeDataGridRow,  } from '@vscode/webview-ui-toolkit/react';
 import { useState, useEffect } from 'react';
+import { OcmResource } from '../../../src/data/loader'
 
-function ShowPlacements() {
-    const [placements, setPlacements] = useState([]);
-    useEffect(() => {
+export default function ShowPlacements() {
+    let [placements, setPlacements] = useState<OcmResource[]>([]);
+
+	useEffect(() => {
         window.addEventListener("message", event => {
-			if ('placements' in event.data) {
-				const placementsList = JSON.parse(event.data.placements)
-				setPlacements(placementsList)
+			if ('crsDistribution' in event.data && 'Placement' === event.data.crsDistribution.kind) {
+				setPlacements(JSON.parse(event.data.crsDistribution.crs));
 			}
         });
-    },[])
+    });
 
     return (
         <section className="component-row">
-            { placements.length >0 &&
+            { placements.length > 0 &&
                 <>
                     <h2 style={{ marginTop: '40px' }}>Placements</h2>
                     <VSCodeDataGrid gridTemplateColumns="1fr 1fr 1fr 1fr" aria-label='Placement' >
@@ -25,13 +26,12 @@ function ShowPlacements() {
                                 <VSCodeDataGridCell cellType='columnheader' gridColumn='4'>Conditions</VSCodeDataGridCell>
                         </VSCodeDataGridRow>
 
-                        {placements.map((placement:any) => {
-                            console.log(placement)
+                        {placements.map(placement => {
                             return <VSCodeDataGridRow>
-                                        <VSCodeDataGridCell gridColumn='1'>{placement.metadata.name}</VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='2'>{placement.metadata.namespace} </VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='3'>{placement.status.numberOfSelectedClusters} </VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='4'>{placement.status.conditions.map( ( condition:any )=> { return<p> - lastTransitionTime: {condition.lastTransitionTime}, message: {condition.message}, reason: {condition.reason}, status: {condition.status}, type: {condition.type} </p>  })} </VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='1'>{placement.kr.metadata.name}</VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='2'>{placement.kr.metadata.namespace} </VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='3'>{placement.kr.status.numberOfSelectedClusters} </VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='4'>{placement.kr.status.conditions.map( ( condition:any )=> { return<p> - lastTransitionTime: {condition.lastTransitionTime}, message: {condition.message}, reason: {condition.reason}, status: {condition.status}, type: {condition.type} </p>  })} </VSCodeDataGridCell>
                                     </VSCodeDataGridRow>
                         } )
                         }
@@ -40,8 +40,5 @@ function ShowPlacements() {
                 </>
             }
         </section>
-    )
-
+    );
 }
-
-export default ShowPlacements

@@ -1,50 +1,45 @@
 import React from "react";
-import ShowContextInfo from "./comp/ContextInfo";
-import ShowManagedClusters from "./comp/ManagedClustersDetails";
-import ShowAppliedManifestWork from "./comp/AppliedManifestWork";
+import ShowSelectedContext from "./comp/SelectedContext";
+import ShowManagedClusters from "./comp/ManagedClusters";
+import ShowManifestWorks from "./comp/ManifestWorks";
 import ShowPlacements from "./comp/Placements";
 import ShowPlacementDecisions from "./comp/PlacementDecisions";
 import ShowManagedClusterSets from "./comp/ManagedClusterSets";
 import ShowManagedClusterAddons from "./comp/ManagedClusterAddons";
-import ShowClusterManager from "./comp/ClusterManager";
-import ShowKlusterlet from "./comp/Klusterlet";
-import ShowSubscriptionReport from "./comp/SubscriptionReport";
-import ShowSubscriptionStatus from "./comp/SubscriptionStatus";
-import ShowManifestWorks from "./comp/Manifestwork";
+import ShowClusterManagers from "./comp/ClusterManagers";
+import ShowSubscriptionReports from "./comp/SubscriptionReports";
+import ShowKlusterlets from "./comp/Klusterlets";
+import ShowAppliedManifestWorks from "./comp/AppliedManifestWorks";
+import ShowSubscriptionStatuses from "./comp/SubscriptionStatuses";
+export default class App extends React.Component {
+	render(): JSX.Element {
+		return (
+			<main>
+				<ShowSelectedContext/>
 
+				<ShowClusterManagers/>
 
+				<ShowManagedClusters/>
 
+				<ShowManifestWorks/>
 
-class App extends React.Component {
-  render(): JSX.Element {
-    return (
-        <main>
-		  <ShowContextInfo/>
+				<ShowSubscriptionReports/>
 
-          <ShowClusterManager/>
+				<ShowPlacements/>
 
-          <ShowManagedClusters/>
+				<ShowPlacementDecisions/>
 
-          <ShowManifestWorks/>
+				<ShowManagedClusterSets/>
 
-          <ShowSubscriptionReport/>
+				<ShowManagedClusterAddons/>
 
-          <ShowPlacements/>
+				<ShowKlusterlets/>
 
-          <ShowPlacementDecisions/>
+				<ShowAppliedManifestWorks/>
 
-          <ShowManagedClusterSets/>
+				<ShowSubscriptionStatuses/>
 
-          <ShowManagedClusterAddons/>
-
-          <ShowKlusterlet/>
-
-          <ShowAppliedManifestWork/>
-
-          <ShowSubscriptionStatus/>
-
-        </main>
-  )}
+			</main>
+		)
+	}
 }
-
- export default App;

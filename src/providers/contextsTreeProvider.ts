@@ -20,7 +20,7 @@ export class TreeContext extends vscode.TreeItem {
 		this.command = {
 			title: LAUNCH_WEBVIEW_TITLE,
 			command: LAUNCH_WEBVIEW_CMD,
-			arguments: [{name: context.name, cluster: context.cluster.name, user: context.user.name}]
+			arguments: [context]
 		};
 	}
 

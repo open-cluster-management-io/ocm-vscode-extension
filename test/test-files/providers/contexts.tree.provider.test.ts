@@ -73,8 +73,8 @@ suite('Load the tree provider', () => {
 			}
 		});
 		// inject fake ocmCr objects
-		fakeCr1 = new loader.OcmResource(fakeCrd1,'fake-cr1', 'fake-namespace');
-		fakeCr2 = new loader.OcmResource(fakeCrd2,'fake-cr2');
+		fakeCr1 = new loader.OcmResource({metadata: {name: 'fake-cr1'}}, fakeCrd1, 'fake-namespace');
+		fakeCr2 = new loader.OcmResource({metadata: {name: 'fake-cr2'}}, fakeCrd2);
 		// mock the loader and override the various methods with fakes and stubs
 		loadStub = sinon.createStubInstance(loader.Load, {
 			getContexts: [fakeContext1, fakeContext2],
@@ -124,11 +124,7 @@ suite('Load the tree provider', () => {
 			command: {
 				title: 'Context Info',
 				command: 'ocm-vscode-extension.showContextDetails',
-				arguments: [{
-					name: 'fake-context1',
-					cluster: 'fake-cluster1',
-					user: 'fake-user1'
-				}]
+				arguments: [fakeContext1]
 			}
 		});
 		expect(treeContexts[1]).excluding('iconPath').to.deep.equal({
@@ -149,11 +145,7 @@ suite('Load the tree provider', () => {
 			command: {
 				title: 'Context Info',
 				command: 'ocm-vscode-extension.showContextDetails',
-				arguments: [{
-					name: 'fake-context2',
-					cluster: 'fake-cluster2',
-					user: 'fake-user2'
-				}]
+				arguments: [fakeContext2]
 			}
 		});
 	});
@@ -195,7 +187,7 @@ suite('Load the tree provider', () => {
 		let treeCrs = await providerSut.getChildren(new contextsTreeProvider.TreeCrd(fakeCrd1));
 		expect(loadStub.getCrs).to.have.been.calledOnceWith(fakeCrd1);
 		expect(treeCrs).to.have.lengthOf(2);
-		expect(treeCrs[0]).excludingEvery('krd').to.deep.equal({
+		expect(treeCrs[0]).excludingEvery('krd').excludingEvery('kr').to.deep.equal({
 			collapsibleState: 0,
 			label: 'fake-cr1',
 			cr: {
@@ -212,7 +204,7 @@ suite('Load the tree provider', () => {
 			},
 			tooltip: '1.1.1'
 		});
-		expect(treeCrs[1]).excludingEvery('krd').to.deep.equal({
+		expect(treeCrs[1]).excludingEvery('krd').excludingEvery('kr').to.deep.equal({
 			collapsibleState: 0,
 			label: 'fake-cr2',
 			cr: {
