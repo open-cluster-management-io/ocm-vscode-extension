@@ -32,7 +32,7 @@ export class OcmResourceDefinition {
 		this.plural = krd.spec.names.plural;
 		this.namespaced = krd.spec.scope === 'Namespaced';
 		this.kind = krd.spec.names.kind;
-		this.version = krd.status?.storedVersions?.at(0) as string;
+		this.version = krd.spec.versions.find(v => v.storage)?.name as string;
 		this.group = krd.spec.group;
 	}
 }

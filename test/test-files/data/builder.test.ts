@@ -1,34 +1,21 @@
 import * as builder from '../../../src/data/builder';
+import * as fixtures from './fixtures';
 import * as k8s from '@kubernetes/client-node';
 import * as sinon from 'sinon';
 import { beforeEach } from 'mocha';
 import { expect } from 'chai';
 
 suite('Build using the data builder', () => {
-	let fakeKUser: k8s.User = {
-		name: 'fakeUser'
-	};
-	let fakeKCluster: k8s.Cluster = {
-		name: 'fakeCluster',
-		server: 'https://my-fake-server:6443',
-		skipTLSVerify: false
-	};
-	let fakeKContext: k8s.Context = {
-		name: 'fakeContext',
-		cluster: 'fakeCluster',
-		user: 'fakeUser'
-	};
-
 	let buildSut: builder.Build;
 
 	beforeEach(() => {
 		// stub and inject the various getX methods
 		let getUserStub = sinon.stub();
-		getUserStub.withArgs(fakeKUser.name).returns(fakeKUser);
+		getUserStub.withArgs(fixtures.k8sUser1.name).returns(fixtures.k8sUser1);
 		let getClusterStub = sinon.stub();
-		getClusterStub.withArgs(fakeKCluster.name).returns(fakeKCluster);
+		getClusterStub.withArgs(fixtures.k8sCluster1.name).returns(fixtures.k8sCluster1);
 		let getContextStub = sinon.stub();
-		getContextStub.withArgs(fakeKContext.name).returns(fakeKContext);
+		getContextStub.withArgs(fixtures.k8sContext1.name).returns(fixtures.k8sContext1);
 
 		let configMock = sinon.createStubInstance(k8s.KubeConfig, {
 			getUser: getUserStub,
@@ -43,20 +30,15 @@ suite('Build using the data builder', () => {
 	[
 		{
 			title: 'Successfully build a user from a k8s user',
-			argument: fakeKUser
+			argument: fixtures.k8sUser1
 		},
 		{
 			title: 'Successfully build a user from a user name',
-			argument: fakeKUser.name
+			argument: fixtures.k8sUser1.name
 		}
 	].forEach(value => {
 		test(value.title, () => {
-			expect(buildSut.user(value.argument)).to.deep.equal({
-				kuser: {
-					name: 'fakeUser'
-				},
-				name: 'fakeUser'
-			});
+			expect(buildSut.user(value.argument)).to.deep.equal(fixtures.connectedUser1);
 		});
 	});
 
@@ -67,24 +49,16 @@ suite('Build using the data builder', () => {
 	[
 		{
 			title: 'Successfully build a cluster from a k8s cluster',
-			argument: fakeKCluster
+			argument: fixtures.k8sCluster1
 
 		},
 		{
 			title: 'Successfully build a cluster from a cluster name',
-			argument: fakeKCluster.name
+			argument: fixtures.k8sCluster1.name
 		}
 	].forEach(value => {
 		test(value.title, () => {
-			expect(buildSut.cluster(value.argument)).to.deep.equal({
-				kluster: {
-					name: 'fakeCluster',
-					server: 'https://my-fake-server:6443',
-					skipTLSVerify: false
-				},
-				name: 'fakeCluster',
-				server: 'https://my-fake-server:6443'
-			});
+			expect(buildSut.cluster(value.argument)).to.deep.equal(fixtures.connectedCluster1);
 		});
 	});
 
@@ -95,37 +69,15 @@ suite('Build using the data builder', () => {
 	[
 		{
 			title: 'Successfully build a context from a k8s context',
-			argument: fakeKContext
+			argument: fixtures.k8sContext1
 		},
 		{
 			title: 'Successfully build a context from a context name',
-			argument: fakeKContext.name
+			argument: fixtures.k8sContext1.name
 		}
 	].forEach(value => {
 		test(value.title, () => {
-			expect(buildSut.context(value.argument)).to.deep.equal({
-				kontext: {
-					name: 'fakeContext',
-					cluster: 'fakeCluster',
-					user: 'fakeUser'
-				},
-				name: 'fakeContext',
-				cluster: {
-					kluster: {
-						name: 'fakeCluster',
-						server: 'https://my-fake-server:6443',
-						skipTLSVerify: false
-					},
-					name: 'fakeCluster',
-					server: 'https://my-fake-server:6443'
-				},
-				user: {
-					kuser: {
-						name: 'fakeUser'
-					},
-					name: 'fakeUser'
-				}
-			});
+			expect(buildSut.context(value.argument)).to.deep.equal(fixtures.connectedContext1);
 		});
 	});
 

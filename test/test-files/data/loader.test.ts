@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import * as builder from '../../../src/data/builder';
 import * as chaiAsPromised from 'chai-as-promised';
+import * as fixtures from './fixtures';
 import * as k8s from '@kubernetes/client-node';
 import * as loader from '../../../src/data/loader';
 import * as sinon from 'sinon';
@@ -16,138 +17,20 @@ suite('Load data using the data loader', () => {
 	let buildMock: builder.Build;
 	let loadSut: loader.Load;
 
-	let fakeConnectedUser: builder.ConnectedUser = {
-		kuser: {
-			name: 'fakeUser'
-		},
-		name: 'fakeUser',
-	};
-
-	let fakeConnectedCluster: builder.ConnectedCluster = {
-		kluster: {
-			name: 'fakeCluster',
-			server: 'https://my-fake-server:6443',
-			skipTLSVerify: false
-		},
-		name: 'fakeCluster',
-		server: 'https://my-fake-server:6443',
-	};
-
-	let fakeConnectedContext: builder.ConnectedContext = {
-		kontext: {
-			name: 'fakeContext',
-			cluster: ' fakeCluster',
-			user: 'fakeUser'
-		},
-		name: 'fakeContext',
-		cluster: fakeConnectedCluster,
-		user: fakeConnectedUser
-	};
-
-	let fakeK8SNamespacedCrd: k8s.V1CustomResourceDefinition = {
-		metadata: {
-			name: 'fake-crd1'
-		},
-		spec: {
-			names: {
-				kind: 'fake-crd1-kind',
-				plural: 'fake-crd1s'
-			},
-			scope: 'Namespaced',
-			group: 'open-cluster-management',
-			versions: []
-		},
-		status: {
-			storedVersions: [
-				'1.1.1'
-			]
-		}
-	};
-
-	let fakeK8SNamespacedCr = {
-		metadata: {
-			name: 'fake-crd1'
-		}
-	};
-
-	let fakeK8SClusteredCrd: k8s.V1CustomResourceDefinition = {
-		metadata: {
-			name: 'fake-crd2'
-		},
-		spec: {
-			names: {
-				kind: 'fake-crd2-kind',
-				plural: 'fake-crd2s'
-			},
-			scope: 'Clustered',
-			group: 'open-cluster-management',
-			versions: []
-		},
-		status: {
-			storedVersions: [
-				'2.2.2'
-			]
-		}
-	};
-
-	let fakeK8SClusteredCr = {
-		metadata: {
-			name: 'fake-crd2'
-		}
-	};
-
-	let fakeOcmClusteredCrd: loader.OcmResourceDefinition = {
-		krd: fakeK8SClusteredCrd,
-		name: 'fake-crd2',
-		plural: 'fake-crd2s',
-		namespaced: false,
-		kind: 'fake-crd2-kind',
-		version: '2.2.2',
-		group: 'open-cluster-management'
-	};
-
-	let fakeOcmNamespacedCrd: loader.OcmResourceDefinition = {
-		krd: fakeK8SNamespacedCrd,
-		name: 'fake-crd1',
-		plural: 'fake-crd1s',
-		namespaced: true,
-		kind: 'fake-crd1-kind',
-		version: '1.1.1',
-		group: 'open-cluster-management'
-	};
-
-	let fakeOcmClusteredCr = new loader.OcmResource(
-		fakeK8SClusteredCr,
-		fakeOcmClusteredCrd,
-		undefined
-	);
-
-	let fakeNamespace: k8s.V1Namespace = {
-		metadata: {
-			name: 'my-fake-app-namespace'
-		}
-	};
-
-	let fakeOcmNamespacedCr = new loader.OcmResource(
-		fakeK8SNamespacedCr,
-		fakeOcmNamespacedCrd,
-		fakeNamespace.metadata?.name
-	);
-
 	beforeEach(() => {
 		// inject values to the stubbed k8s config
 		configMock = sinon.createStubInstance(k8s.KubeConfig, {
 			makeApiClient: sinon.stub()
 		});
-		configMock.currentContext = fakeConnectedContext.name;
-		configMock.contexts = [fakeConnectedContext.kontext];
-		configMock.clusters = [fakeConnectedCluster.kluster];
-		configMock.users = [fakeConnectedUser.kuser];
+		configMock.currentContext = fixtures.connectedContext1.name;
+		configMock.contexts = [fixtures.connectedContext1.kontext];
+		configMock.clusters = [fixtures.connectedCluster1.kluster];
+		configMock.users = [fixtures.connectedUser1.kuser];
 		// mock our builder short-circuiting the building methods
 		buildMock = sinon.createStubInstance(builder.Build, {
-			context: fakeConnectedContext,
-			cluster: fakeConnectedCluster,
-			user: fakeConnectedUser,
+			context: fixtures.connectedContext1,
+			cluster: fixtures.connectedCluster1,
+			user: fixtures.connectedUser1,
 		});
 		// @ts-ignore
 		loadSut = new loader.Load(configMock, buildMock);
@@ -169,11 +52,11 @@ suite('Load data using the data loader', () => {
 	[
 		{
 			title: 'Setting a connected context should invoke k8s config and refresh the apis',
-			argument: fakeConnectedContext
+			argument: fixtures.connectedContext1
 		},
 		{
 			title: 'Setting a string context should invoke k8s config and refresh the apis',
-			argument: fakeConnectedContext.name
+			argument: fixtures.connectedContext1.name
 		}
 	].forEach(value => {
 		test(value.title, () => {
@@ -182,7 +65,7 @@ suite('Load data using the data loader', () => {
 			// @ts-ignore
 			configMock.makeApiClient.reset();
 			loadSut.setContext(value.argument);
-			expect(configMock.setCurrentContext).to.have.been.calledOnceWith('fakeContext');
+			expect(configMock.setCurrentContext).to.have.been.calledOnceWith('fakeContext1');
 			// @ts-ignore
 			configMock.setCurrentContext.reset();
 			verifyApiRefresh();
@@ -190,33 +73,33 @@ suite('Load data using the data loader', () => {
 	});
 
 	test('Successfully retrieving the current connected context', () => {
-		expect(loadSut.getContext()).to.deep.equal(fakeConnectedContext);
+		expect(loadSut.getContext()).to.deep.equal(fixtures.connectedContext1);
 	});
 
 	test('Successfully retrieving all connected contexts', () => {
 		let contexts = loadSut.getContexts();
 		expect(contexts).to.have.lengthOf(1);
-		expect(contexts[0]).to.deep.equal(fakeConnectedContext);
+		expect(contexts[0]).to.deep.equal(fixtures.connectedContext1);
 	});
 
 	test('Successfully retrieving a connected user', () => {
-		expect(loadSut.getUser(fakeConnectedUser.name)).to.deep.equal(fakeConnectedUser);
+		expect(loadSut.getUser(fixtures.connectedUser1.name)).to.deep.equal(fixtures.connectedUser1);
 	});
 
 	test('Successfully retrieving all connected users', () => {
 		let users = loadSut.getUsers();
 		expect(users).to.have.lengthOf(1);
-		expect(users[0]).to.deep.equal(fakeConnectedUser);
+		expect(users[0]).to.deep.equal(fixtures.connectedUser1);
 	});
 
 	test('Successfully retrieving a connected cluster', () => {
-		expect(loadSut.getCluster(fakeConnectedCluster.name)).to.deep.equal(fakeConnectedCluster);
+		expect(loadSut.getCluster(fixtures.connectedCluster1.name)).to.deep.equal(fixtures.connectedCluster1);
 	});
 
 	test('Successfully retrieving all connected clusters', () => {
 		let clusters = loadSut.getClusters();
 		expect(clusters).to.have.lengthOf(1);
-		expect(clusters[0]).to.deep.equal(fakeConnectedCluster);
+		expect(clusters[0]).to.deep.equal(fixtures.connectedCluster1);
 	});
 
 	test('Successfully verify cluster reachability', () => {
@@ -284,8 +167,8 @@ suite('Load data using the data loader', () => {
 					},
 					body: {
 						items: [
-							fakeK8SClusteredCrd,
-							fakeK8SNamespacedCrd
+							fixtures.k8sCrd1Namespaced,
+							fixtures.k8sCrd2Clustered
 						]
 					}
 				})
@@ -293,8 +176,8 @@ suite('Load data using the data loader', () => {
 
 			let crds = await loadSut.getCrds();
 			expect(crds).to.have.lengthOf(2);
-			expect(crds[0]).to.deep.equal(fakeOcmClusteredCrd);
-			expect(crds[1]).to.deep.equal(fakeOcmNamespacedCrd);
+			expect(crds[0]).to.deep.equal(fixtures.ocmCrd1Namespaced);
+			expect(crds[1]).to.deep.equal(fixtures.ocmCrd2Clustered);
 		});
 
 		test('When retrieving with no ocm crds available should return an empty array', async () => {
@@ -307,7 +190,7 @@ suite('Load data using the data loader', () => {
 					},
 					body: {
 						items: [
-							{...fakeK8SClusteredCrd, spec: { group: 'non-ocm-group'}},
+							{...fixtures.k8sCrd1Namespaced, spec: { group: 'non-ocm-group'}},
 						]
 					}
 				})
@@ -338,12 +221,12 @@ suite('Load data using the data loader', () => {
 					},
 					body: {
 						items: [
-							fakeK8SClusteredCrd
+							fixtures.k8sCrd1Namespaced
 						]
 					}
 				})
 			});
-			expect(await loadSut.getCrd(fakeK8SClusteredCrd.spec.names.kind)).to.be.deep.equal(fakeOcmClusteredCrd);
+			expect(await loadSut.getCrd(fixtures.k8sCrd1Namespaced.spec.names.kind)).to.be.deep.equal(fixtures.ocmCrd1Namespaced);
 		});
 
 		test('Retrieving a non-existing single ocm crd should return undefined', async () => {
@@ -358,7 +241,7 @@ suite('Load data using the data loader', () => {
 					}
 				})
 			});
-			expect(await loadSut.getCrd(fakeK8SClusteredCrd.spec.names.kind)).to.be.undefined;
+			expect(await loadSut.getCrd(fixtures.k8sCrd1Namespaced.spec.names.kind)).to.be.undefined;
 		});
 
 		test('Failed cluster access while retrieving a single crd should not fail, but return undefined', async () => {
@@ -371,7 +254,7 @@ suite('Load data using the data loader', () => {
 					}
 				})
 			});
-			expect(await loadSut.getCrd(fakeK8SClusteredCrd.spec.names.kind)).to.be.undefined;
+			expect(await loadSut.getCrd(fixtures.k8sCrd1Namespaced.spec.names.kind)).to.be.undefined;
 		});
 	});
 
@@ -379,11 +262,11 @@ suite('Load data using the data loader', () => {
 		[
 			{
 				title: 'Successfully retrieving existing ocm crs for a clustered ocm crd',
-				argument: fakeOcmClusteredCrd
+				argument: fixtures.ocmCrd2Clustered
 			},
 			{
 				title: 'Successfully retrieving existing ocm crs a clustered kind name',
-				argument: fakeOcmClusteredCrd.kind
+				argument: fixtures.ocmCrd2Clustered.kind
 			}
 		].forEach(value => {
 			test(value.title, async () => {
@@ -395,7 +278,7 @@ suite('Load data using the data loader', () => {
 						},
 						body: {
 							items: [
-								fakeK8SClusteredCrd
+								fixtures.k8sCrd2Clustered
 							]
 						}
 					})
@@ -409,7 +292,7 @@ suite('Load data using the data loader', () => {
 						},
 						body: {
 							items: [
-								fakeK8SClusteredCr
+								fixtures.k8sCr2Clustered
 							]
 						}
 					})
@@ -417,18 +300,18 @@ suite('Load data using the data loader', () => {
 
 				let crs = await loadSut.getCrs(value.argument);
 				expect(crs).to.be.lengthOf(1);
-				expect(crs[0]).to.deep.equal(fakeOcmClusteredCr);
+				expect(crs[0]).to.deep.equal(fixtures.ocmCr2Clustered);
 			});
 		});
 
 		[
 			{
 				title: 'Successfully retrieving existing ocm crs for a namespaced ocm crd',
-				argument: fakeOcmNamespacedCrd
+				argument: fixtures.ocmCrd1Namespaced
 			},
 			{
 				title: 'Successfully retrieving existing ocm crs a namespaced kind name',
-				argument: fakeOcmNamespacedCrd.kind
+				argument: fixtures.ocmCrd1Namespaced.kind
 			}
 		].forEach(value => {
 			test(value.title, async () => {
@@ -440,7 +323,7 @@ suite('Load data using the data loader', () => {
 						},
 						body: {
 							items: [
-								fakeK8SNamespacedCrd
+								fixtures.k8sCrd1Namespaced
 							]
 						}
 					})
@@ -454,7 +337,7 @@ suite('Load data using the data loader', () => {
 						},
 						body: {
 							items: [
-								fakeNamespace
+								fixtures.k8sNamespace
 							]
 						}
 					})
@@ -468,7 +351,7 @@ suite('Load data using the data loader', () => {
 						},
 						body: {
 							items: [
-								fakeK8SNamespacedCr
+								fixtures.k8sCr1Namespaced
 							]
 						}
 					})
@@ -476,7 +359,7 @@ suite('Load data using the data loader', () => {
 
 				let crs = await loadSut.getCrs(value.argument);
 				expect(crs).to.be.lengthOf(1);
-				expect(crs[0]).to.deep.equal(fakeOcmNamespacedCr);
+				expect(crs[0]).to.deep.equal(fixtures.ocmCr1Namespaced);
 			});
 		});
 
@@ -509,7 +392,7 @@ suite('Load data using the data loader', () => {
 				})
 			});
 
-			expect(await loadSut.getCrs(fakeOcmClusteredCrd)).to.be.empty;
+			expect(await loadSut.getCrs(fixtures.ocmCrd2Clustered)).to.be.empty;
 		});
 
 		test('Failed cluster access while retrieving crs for clustered crd should not fail, but return an empty array', async () => {
@@ -523,7 +406,7 @@ suite('Load data using the data loader', () => {
 				})
 			});
 
-			expect(await loadSut.getCrs(fakeOcmClusteredCrd)).to.be.empty;
+			expect(await loadSut.getCrs(fixtures.ocmCrd2Clustered)).to.be.empty;
 		});
 
 		test('Retrieving crs for namespaced crd when no crs available should return an empty array', async () => {
@@ -535,7 +418,7 @@ suite('Load data using the data loader', () => {
 					},
 					body: {
 						items: [
-							fakeNamespace
+							fixtures.k8sNamespace
 						]
 					}
 				})
@@ -553,7 +436,7 @@ suite('Load data using the data loader', () => {
 				})
 			});
 
-			expect(await loadSut.getCrs(fakeOcmNamespacedCrd)).to.be.empty;
+			expect(await loadSut.getCrs(fixtures.ocmCrd1Namespaced)).to.be.empty;
 		});
 
 		test('Failed cluster access while fetching namespaces for retrieving crs for namespaced crd should not fail, but return an empty array', async () => {
@@ -567,7 +450,7 @@ suite('Load data using the data loader', () => {
 				})
 			});
 
-			expect(await loadSut.getCrs(fakeOcmNamespacedCrd)).to.be.empty;
+			expect(await loadSut.getCrs(fixtures.ocmCrd1Namespaced)).to.be.empty;
 		});
 
 		test('Failed cluster while retrieving crs for namespaced crd should not fail, but return an empty array', async () => {
@@ -579,7 +462,7 @@ suite('Load data using the data loader', () => {
 					},
 					body: {
 						items: [
-							fakeNamespace
+							fixtures.k8sNamespace
 						]
 					}
 				})
@@ -595,7 +478,7 @@ suite('Load data using the data loader', () => {
 				})
 			});
 
-			expect(await loadSut.getCrs(fakeOcmNamespacedCrd)).to.be.empty;
+			expect(await loadSut.getCrs(fixtures.ocmCrd1Namespaced)).to.be.empty;
 		});
 
 	});
