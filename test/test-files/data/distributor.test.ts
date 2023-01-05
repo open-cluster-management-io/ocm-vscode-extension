@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import * as distributer from '../../../src/data/distributer';
+import * as distributor from '../../../src/data/distributor';
 import * as fixtures from './fixtures';
 import * as loader from '../../../src/data/loader';
 import * as sinon from 'sinon';
@@ -9,7 +9,7 @@ import { expect, use } from 'chai';
 
 use(sinonChai);
 
-suite('Distribute messages using the data distributer', () => {
+suite('Distribute messages using the data distributor', () => {
 	let sandbox: sinon.SinonSandbox;
 	let mockConsumer: sinon.SinonStub;
 
@@ -35,7 +35,7 @@ suite('Distribute messages using the data distributer', () => {
 		// given the cluster in context is not a spoke (no Klusterlet crs)
 		mockLoad.getCrs.withArgs('Klusterlet').resolves([]);
 		// when
-		await distributer.distributeMessages(fixtures.connectedContext1, mockConsumer);
+		await distributor.distributeMessages(fixtures.connectedContext1, mockConsumer);
 		// then
 		expect(mockConsumer).to.be.calledOnceWith({selectedContext: JSON.stringify(fixtures.connectedContext1)});
 	});
@@ -50,7 +50,7 @@ suite('Distribute messages using the data distributer', () => {
 		// given the cluster in context is not a spoke (no Klusterlet crs)
 		mockLoad.getCrs.withArgs('Klusterlet').resolves([]);
 		// when
-		await distributer.distributeMessages(fixtures.connectedContext1, mockConsumer);
+		await distributor.distributeMessages(fixtures.connectedContext1, mockConsumer);
 		// then
 		expect(mockConsumer).to.have.callCount(2);
 		expect(mockConsumer).to.be.calledWith({selectedContext: JSON.stringify(fixtures.connectedContext1)});
@@ -71,7 +71,7 @@ suite('Distribute messages using the data distributer', () => {
 			// given the kind under test has resources
 			mockLoad.getCrs.withArgs(kind).resolves([fixtures.ocmCr1Namespaced]);
 			// when
-			await distributer.distributeMessages(fixtures.connectedContext1, mockConsumer);
+			await distributor.distributeMessages(fixtures.connectedContext1, mockConsumer);
 			// then
 			expect(mockConsumer).to.have.callCount(3);
 			expect(mockConsumer).to.be.calledWith({selectedContext: JSON.stringify(fixtures.connectedContext1)});
@@ -90,7 +90,7 @@ suite('Distribute messages using the data distributer', () => {
 		// given the cluster in context is a spoke (Klusterlet crs exists)
 		mockLoad.getCrs.withArgs('Klusterlet').resolves([fixtures.ocmCr2Clustered]);
 		// when
-		await distributer.distributeMessages(fixtures.connectedContext1, mockConsumer);
+		await distributor.distributeMessages(fixtures.connectedContext1, mockConsumer);
 		// then
 		expect(mockConsumer).to.have.callCount(2);
 		expect(mockConsumer).to.be.calledWith({selectedContext: JSON.stringify(fixtures.connectedContext1)});
@@ -111,7 +111,7 @@ suite('Distribute messages using the data distributer', () => {
 			// given the kind under test has resources
 			mockLoad.getCrs.withArgs(kind).resolves([fixtures.ocmCr1Namespaced]);
 			// when
-			await distributer.distributeMessages(fixtures.connectedContext2, mockConsumer);
+			await distributor.distributeMessages(fixtures.connectedContext2, mockConsumer);
 			// then
 			expect(mockConsumer).to.have.callCount(3);
 			expect(mockConsumer).to.be.calledWith({selectedContext: JSON.stringify(fixtures.connectedContext2)});
@@ -130,7 +130,7 @@ suite('Distribute messages using the data distributer', () => {
 		// given the cluster in context is a spoke (no Klusterlet crs)
 		mockLoad.getCrs.withArgs('Klusterlet').resolves([fixtures.ocmCr2Clustered]);
 		// when
-		await distributer.distributeMessages(fixtures.connectedContext1, mockConsumer);
+		await distributor.distributeMessages(fixtures.connectedContext1, mockConsumer);
 		// then
 		expect(mockConsumer).to.have.callCount(3);
 		expect(mockConsumer).to.be.calledWith({selectedContext: JSON.stringify(fixtures.connectedContext1)});
@@ -150,7 +150,7 @@ suite('Distribute messages using the data distributer', () => {
 		// given the AppliedManifestWork has no resources
 		mockLoad.getCrs.withArgs('AppliedManifestWork').resolves([]);
 		// when
-		await distributer.distributeMessages(fixtures.connectedContext2, mockConsumer);
+		await distributor.distributeMessages(fixtures.connectedContext2, mockConsumer);
 		// then
 		expect(mockConsumer).to.have.callCount(2);
 		expect(mockConsumer).to.be.calledWith({selectedContext: JSON.stringify(fixtures.connectedContext2)});

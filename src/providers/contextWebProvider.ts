@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import * as distributer from '../data/distributer';
+import * as distributor from '../data/distributor';
 import * as loader from '../data/loader';
 import { Disposable, Uri, ViewColumn, Webview, WebviewPanel, window } from "vscode";
 import { ConnectedContext } from '../data/builder';
@@ -75,7 +75,7 @@ export class ConnectedContextWebProvider {
 		// eslint-disable-next-line @typescript-eslint/unbound-method
 		this.panel.onDidDispose(this.dispose, null, this.disposables);
 		this.panel.webview.html = this.generateHtml(this.panel.webview, extensionUri);
-		distributer.distributeMessages(selectedContext, (msg: any) => this.panel.webview.postMessage(msg));
+		distributor.distributeMessages(selectedContext, (msg: any) => this.panel.webview.postMessage(msg));
 	}
 
 	public dispose():void {
