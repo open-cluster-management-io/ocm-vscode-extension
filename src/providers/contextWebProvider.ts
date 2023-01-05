@@ -4,11 +4,13 @@ import * as loader from '../data/loader';
 import { Disposable, Uri, ViewColumn, Webview, WebviewPanel, window } from "vscode";
 import { ConnectedContext } from '../data/builder';
 
+// class used for management and encapsulation of the webview panel
 export class ConnectedContextWebProvider {
 	public static currentPanel?: ConnectedContextWebProvider;
 	private readonly panel: WebviewPanel;
 	private disposables: Disposable[] = [];
 
+	// static function used for rendering a web view
 	public static async render(extensionUri: Uri, context: ConnectedContext | undefined): Promise<void> {
 		// get the loader instance
 		let load = loader.Load.getLoader();

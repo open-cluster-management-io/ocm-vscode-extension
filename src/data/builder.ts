@@ -1,5 +1,6 @@
 import * as k8s from '@kubernetes/client-node';
 
+// our connected context component is used for encapsulating a kubectl context
 export class ConnectedContext {
 	readonly kontext: k8s.Context;
 	readonly name: string;
@@ -14,6 +15,7 @@ export class ConnectedContext {
     }
 }
 
+// our connected cluster component is used for encapsulating a kubectl cluster
 export class ConnectedCluster {
 	readonly kluster: k8s.Cluster;
 	readonly name: string;
@@ -26,6 +28,7 @@ export class ConnectedCluster {
     }
 }
 
+// our connected user component is used for encapsulating a kubectl user
 export class ConnectedUser {
 	readonly kuser: k8s.User;
 	readonly name: string;
@@ -36,6 +39,7 @@ export class ConnectedUser {
 	}
 }
 
+// a builder class used for building our component
 export class Build {
 	private config: k8s.KubeConfig;
 
@@ -43,6 +47,7 @@ export class Build {
 		this.config = config;
 	}
 
+	// build a context component
 	context(item: string | k8s.Context): ConnectedContext | undefined {
 		let connectedContext;
 		let kontext = typeof item === 'string' ? this.config.getContextObject(item) : item;
@@ -56,6 +61,7 @@ export class Build {
 		return connectedContext;
 	}
 
+	// build a cluster component
 	cluster(item: string | k8s.Cluster): ConnectedCluster | undefined{
 		let connectedCluster;
 		let kluster = typeof item === 'string' ? this.config.getCluster(item) : item;
@@ -65,6 +71,7 @@ export class Build {
 		return connectedCluster;
 	}
 
+	// build a user component
 	user(item: string | k8s.User): ConnectedUser | undefined {
 		let connectedUser;
 		let kuser = typeof item === 'string' ? this.config.getUser(item) : item;

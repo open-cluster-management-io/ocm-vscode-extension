@@ -10,6 +10,7 @@ const ICON_CRD = 'ocm';
 
 type TreeElement = TreeContext | TreeCrd | TreeCr;
 
+// tree view element for encapsulating a context representing a cluster and a user
 export class TreeContext extends vscode.TreeItem {
 	readonly context: builder.ConnectedContext;
 
@@ -17,6 +18,7 @@ export class TreeContext extends vscode.TreeItem {
 		super(context.name, vscode.TreeItemCollapsibleState.Collapsed);
 		this.context = context;
 		this.tooltip =  context.cluster.name;
+		// this command launces the webview with the encapsulated context as an argument
 		this.command = {
 			title: LAUNCH_WEBVIEW_TITLE,
 			command: LAUNCH_WEBVIEW_CMD,
@@ -30,6 +32,7 @@ export class TreeContext extends vscode.TreeItem {
 	};
 }
 
+// tree view element for encapsulating a custom resource definition
 export class TreeCrd extends vscode.TreeItem {
 	readonly crd: loader.OcmResourceDefinition;
 
@@ -45,6 +48,7 @@ export class TreeCrd extends vscode.TreeItem {
 	};
 }
 
+// tree view element for encapsulating a custom resource
 export class TreeCr extends vscode.TreeItem {
 	readonly cr: loader.OcmResource;
 
@@ -55,6 +59,8 @@ export class TreeCr extends vscode.TreeItem {
 	}
 }
 
+// implementation of tree view, provides contexts as highest entity:
+// contexts > crds > crs
 export class ConnectedContextsTreeProvider implements vscode.TreeDataProvider<TreeElement> {
 	private load: loader.Load;
 
@@ -71,6 +77,7 @@ export class ConnectedContextsTreeProvider implements vscode.TreeDataProvider<Tr
 		return element;
 	}
 
+	// (highest) contexts > crds > crs (lowest)
 	async getChildren(element?: TreeElement): Promise<TreeElement[]> {
 		let elements: TreeElement[] = [];
 		if (element) {
