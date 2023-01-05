@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import * as builder from '../../../src/data/builder';
+import * as distributer from '../../../src/data/distributer';
 import * as fixtures from '../data/fixtures';
 import * as loader from '../../../src/data/loader';
 import * as sinon from 'sinon';
@@ -89,7 +89,7 @@ suite('Use the web provider to render the ui panel', () => {
 		errorBoxSpy.restore();
 	});
 
-	test('Successfully rendering a provider should dispose the existing panel and create a new panel', async () => {
+	test('Successfully rendering a provider should dispose the existing panel, create a new one, and invoke the message distributer', async () => {
 		// @ts-ignore create a fake webview panel with a dispose method to act as the previously created panel
 		let previousPanel: vscode.WebviewPanel = sandbox.stub();
 		previousPanel.dispose = sandbox.fake();
@@ -103,6 +103,8 @@ suite('Use the web provider to render the ui panel', () => {
 		let mockLoad = sandbox.createStubInstance(loader.Load);
 		// @ts-ignore inject a loader mock as the loader's singleton instance
 		loader.Load.loader = mockLoad;
+		// mock the distributer message posting function
+		let distributerMock = sandbox.stub(distributer, 'distributeMessages');
 		// when
 		await vscode.commands.executeCommand('ocm-vscode-extension.showContextDetails', fixtures.connectedContext1);
 		// collect new panel
@@ -120,8 +122,7 @@ suite('Use the web provider to render the ui panel', () => {
 		expect(newProvider.panel.options.retainContextWhenHidden).to.be.true;
 		// @ts-ignore
 		expect(newProvider.panel.options.enableScripts).to.be.true;
-		// @ts-ignore
-		expect(newProvider.load).to.equal(mockLoad);
+		expect(distributerMock).to.have.been.calledOnceWith(fixtures.connectedContext1, sandbox.match.func);
 	});
 
 	test('Disposing the previous panel should dispose the encapsulated panel, dispose all disposables, and remove current provider', async () => {

@@ -1,19 +1,13 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/unbound-method */
+import * as distributer from '../data/distributer';
 import * as loader from '../data/loader';
 import { Disposable, Uri, ViewColumn, Webview, WebviewPanel, window } from "vscode";
 import { ConnectedContext } from '../data/builder';
-
-const hubManagedClusterKind = 'ManagedCluster';
-const hubKinds = ['ManifestWork', 'Placement', 'PlacementDecision', 'ManagedClusterSet', 'ManagedClusterAddOn', 'ClusterManager', 'SubscriptionReport'];
-const spokeKlusterletKind = 'Klusterlet';
-const spokeKinds = ['AppliedManifestWork', 'SubscriptionStatus'];
 
 export class ConnectedContextWebProvider {
 	public static currentPanel?: ConnectedContextWebProvider;
 	private readonly panel: WebviewPanel;
 	private disposables: Disposable[] = [];
-	private load: loader.Load;
 
 	public static async render(extensionUri: Uri, context: ConnectedContext | undefined): Promise<void> {
 		// get the loader instance
@@ -54,7 +48,7 @@ export class ConnectedContextWebProvider {
 		);
 
 		// instantiate the provider and set it as the current one for future disposing
-		ConnectedContextWebProvider.currentPanel = new ConnectedContextWebProvider(panel, extensionUri, load, selectedContext);
+		ConnectedContextWebProvider.currentPanel = new ConnectedContextWebProvider(panel, extensionUri, selectedContext);
 	}
 
 	// collect context from the user
@@ -74,12 +68,12 @@ export class ConnectedContextWebProvider {
 	}
 
 	// generate the html and distribute message for the react module
-	private constructor(panel: WebviewPanel, extensionUri: Uri, load: loader.Load, selectedContext: ConnectedContext) {
+	private constructor(panel: WebviewPanel, extensionUri: Uri, selectedContext: ConnectedContext) {
 		this.panel = panel;
+		// eslint-disable-next-line @typescript-eslint/unbound-method
 		this.panel.onDidDispose(this.dispose, null, this.disposables);
 		this.panel.webview.html = this.generateHtml(this.panel.webview, extensionUri);
-		this.load = load;
-		this.distributeMessages(selectedContext);
+		distributer.distributeMessages(selectedContext, (msg: any) => this.panel.webview.postMessage(msg));
 	}
 
 	public dispose():void {
@@ -114,46 +108,5 @@ export class ConnectedContextWebProvider {
 		</body>
 		</html>
 		`;
-	}
-
-	// listeners for messages posted here resides in the components package in the react module
-	private async distributeMessages(selectedContext: ConnectedContext): Promise<void> {
-		// retrieve all managedclusters and klusterlets resources
-		let managedClusters = await this.load.getCrs(hubManagedClusterKind);
-		let klusterlets = await this.load.getCrs(spokeKlusterletKind);
-
-		// populate the SelectedContext ui component
-		this.panel.webview.postMessage({selectedContext: JSON.stringify(selectedContext)});
-
-		let crsDistributions: Promise<void>[] = [];
-
-		// a cluster with ManagedCluster resources, acts as a hub cluster
-		if (managedClusters.length > 0 ){
-			// populate the ManagedClusters ui component
-			crsDistributions.push(this.distributeCrs(hubManagedClusterKind, managedClusters));
-			// populate common crs used by the hub cluster
-			hubKinds.forEach(kind => crsDistributions.push(this.distributeCrsForKind(kind)));
-		}
-
-		// a cluster with Klusterlet resources, acts as a spoke cluster
-		if (klusterlets.length > 0 ){
-			// populate the Klusterlets ui component
-			crsDistributions.push(this.distributeCrs(spokeKlusterletKind, klusterlets));
-			// populate common crs used by the spoke cluster
-			spokeKinds.forEach(kind => crsDistributions.push(this.distributeCrsForKind(kind)));
-		}
-
-		await Promise.allSettled(crsDistributions);
-	}
-
-	private async distributeCrsForKind(kind: string): Promise<void> {
-		let crs = await this.load.getCrs(kind);
-		await this.distributeCrs(kind, crs);
-	}
-
-	private async distributeCrs(kind: string, crs: loader.OcmResource[]): Promise<void> {
-		if (crs.length > 0) {
-			this.panel.webview.postMessage({ crsDistribution: { kind: kind, crs: JSON.stringify(crs)}});
-		}
 	}
 }
