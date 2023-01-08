@@ -169,7 +169,7 @@
 		"pretest": "npm run compile",
 		"test": "node ./out/test/run.js",
 		"test:quick": "QUICK_TEST=\"true\" npm test",
-		"cov": "nyc report --check-coverage --lines 50 --clean --compact false --reporter=text",
+		"cov": "nyc report --check-coverage --lines 80 --clean --compact false --reporter=text",
 		"cov:rep": "rm -rf coverage/* && nyc report --reporter=lcov",
 		"vscode:prepublish": "npm run clean && npm run build",
 		"vsce:package": "vsce package",

@@ -1,20 +1,21 @@
 import { VSCodeDataGrid, VSCodeDataGridCell, VSCodeDataGridRow,  } from '@vscode/webview-ui-toolkit/react';
 import { useState, useEffect } from 'react';
+import { OcmResource } from '../../../src/data/loader'
 
-function ShowManagedClusterSets() {
-    const [managedClusterSets, setManagedClusterSets] = useState([]);
-    useEffect(() => {
+export default function ShowManagedClusterSets() {
+    let [managedClusterSets, setManagedClusterSets] = useState<OcmResource[]>([]);
+
+	useEffect(() => {
         window.addEventListener("message", event => {
-			if ('managedClusterSets' in event.data) {
-				const managedClusterSetsList = JSON.parse(event.data.managedClusterSets)
-				setManagedClusterSets(managedClusterSetsList)
+			if ('crsDistribution' in event.data && 'ManagedClusterSet' === event.data.crsDistribution.kind) {
+				setManagedClusterSets(JSON.parse(event.data.crsDistribution.crs));
 			}
         });
-    },[])
+    });
 
     return (
         <section className="component-row">
-            { managedClusterSets.length >0 &&
+            { managedClusterSets.length > 0 &&
                 <>
                     <h2 style={{ marginTop: '40px' }}>Managed Cluster Sets</h2>
                     <VSCodeDataGrid gridTemplateColumns="1fr 1fr" aria-label='ManagedClusterSets' >
@@ -23,11 +24,10 @@ function ShowManagedClusterSets() {
                         <VSCodeDataGridCell cellType='columnheader' gridColumn='2'>Conditions</VSCodeDataGridCell>
                     </VSCodeDataGridRow>
 
-                    {managedClusterSets.map((set:any) => {
-                        console.log(set)
+                    {managedClusterSets.map(managedClusterSet => {
                         return <VSCodeDataGridRow>
-                                    <VSCodeDataGridCell gridColumn='1'>{set.metadata.name}</VSCodeDataGridCell>
-                                    <VSCodeDataGridCell gridColumn='2'>{set.status.conditions.map( ( condition:any )=> { return<p> - lastTransitionTime: {condition.lastTransitionTime}, message: {condition.message}, reason: {condition.reason}, status: {condition.status}, type: {condition.type} </p>  })} </VSCodeDataGridCell>
+                                    <VSCodeDataGridCell gridColumn='1'>{managedClusterSet.kr.metadata.name}</VSCodeDataGridCell>
+                                    <VSCodeDataGridCell gridColumn='2'>{managedClusterSet.kr.status.conditions.map( ( condition:any )=> { return<p> - lastTransitionTime: {condition.lastTransitionTime}, message: {condition.message}, reason: {condition.reason}, status: {condition.status}, type: {condition.type} </p>  })} </VSCodeDataGridCell>
                                 </VSCodeDataGridRow>
                     } )
                     }
@@ -36,8 +36,5 @@ function ShowManagedClusterSets() {
                 </>
             }
         </section>
-    )
-
+    );
 }
-
-export default ShowManagedClusterSets

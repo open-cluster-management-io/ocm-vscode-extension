@@ -1,20 +1,21 @@
 import { VSCodeDataGrid, VSCodeDataGridCell, VSCodeDataGridRow,  } from '@vscode/webview-ui-toolkit/react';
 import { useState, useEffect } from 'react';
+import { OcmResource } from '../../../src/data/loader'
 
-function ShowSubscriptionReport() {
-    const [subscriptionReport, setSubscriptionReport] = useState([]);
-    useEffect(() => {
+export default function ShowSubscriptionReports() {
+    let [subscriptionReports, setSubscriptionReports] = useState<OcmResource[]>([]);
+
+	useEffect(() => {
         window.addEventListener("message", event => {
-			if ('subscriptionReport' in event.data) {
-				const subscriptionReportList = JSON.parse(event.data.subscriptionReport)
-				setSubscriptionReport(subscriptionReportList)
+			if ('crsDistribution' in event.data && 'SubscriptionReport' === event.data.crsDistribution.kind) {
+				setSubscriptionReports(JSON.parse(event.data.crsDistribution.crs));
 			}
         });
     },[])
 
     return (
         <section className="component-row">
-            { subscriptionReport.length >0 &&
+            { subscriptionReports.length >0 &&
                 <>
                     <h2 style={{ marginTop: '40px' }}>Subscription Report</h2>
                     <VSCodeDataGrid gridTemplateColumns="1fr 1fr 1fr 1fr" aria-label='SubscriptionReport' >
@@ -25,13 +26,12 @@ function ShowSubscriptionReport() {
                                 <VSCodeDataGridCell cellType='columnheader' gridColumn='4'>Results</VSCodeDataGridCell>
                         </VSCodeDataGridRow>
 
-                        {subscriptionReport.map((report:any) => {
-                            console.log(report)
+                        {subscriptionReports.map(subscriptionReport => {
                             return <VSCodeDataGridRow>
-                                        <VSCodeDataGridCell gridColumn='1' >{report.metadata.name}</VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='2' >{report.metadata.namespace}</VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='3'>{report.reportType} </VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='4'>{report.results.map( ( result:any )=> { return<p> - source: {result.source}, result: {result.result} </p>  })} </VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='1' >{subscriptionReport.kr.metadata.name}</VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='2' >{subscriptionReport.kr.metadata.namespace}</VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='3'>{subscriptionReport.kr.reportType} </VSCodeDataGridCell>
+                                        <VSCodeDataGridCell gridColumn='4'>{subscriptionReport.kr.results.map( ( result:any )=> { return<p> - source: {result.source}, result: {result.result} </p>  })} </VSCodeDataGridCell>
                                     </VSCodeDataGridRow>
                         } )
                         }
@@ -40,8 +40,5 @@ function ShowSubscriptionReport() {
                 </>
             }
         </section>
-    )
-
+    );
 }
-
-export default ShowSubscriptionReport

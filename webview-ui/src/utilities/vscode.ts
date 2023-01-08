@@ -38,7 +38,7 @@ class VSCodeAPIWrapper {
 
   public eventListener(message: unknown) {
 
-    
+
   }
 
   /**
