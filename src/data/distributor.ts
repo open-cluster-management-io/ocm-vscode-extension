@@ -1,5 +1,5 @@
-import * as loader from '../data/loader';
-import { ConnectedContext } from '../data/builder';
+import * as loader from './loader';
+import { ConnectedContext } from './builder';
 
 // the ManagedCluster kind is used in hub clusters for managing spoke clusters
 const hubManagedClusterKind = 'ManagedCluster';
