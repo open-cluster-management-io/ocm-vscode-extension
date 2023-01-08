@@ -26,7 +26,7 @@ suite('Distribute messages using the data distributor', () => {
 	});
 
 	test('When the context is not a hub nor a spoke, should only distribute a context info message', async () => {
-		// mock a loader stubbing the required methods for the test run
+		// mock a loader instance
 		let mockLoad = sandbox.createStubInstance(loader.Load);
 		// @ts-ignore inject a loader mock as the loader's singleton instance
 		loader.Load.loader = mockLoad;
@@ -41,7 +41,7 @@ suite('Distribute messages using the data distributor', () => {
 	});
 
 	test('When the context is a hub but has no other resources, should distribute only context info and ManagedCluster messages', async () => {
-		// mock a loader stubbing the required methods for the test run
+		// mock a loader instance
 		let mockLoad = sandbox.createStubInstance(loader.Load);
 		// @ts-ignore inject a loader mock as the loader's singleton instance
 		loader.Load.loader = mockLoad;
@@ -60,7 +60,7 @@ suite('Distribute messages using the data distributor', () => {
 	['ManifestWork', 'Placement', 'PlacementDecision', 'ManagedClusterSet', 'ManagedClusterAddOn', 'ClusterManager', 'SubscriptionReport']
 	.forEach(kind => {
 		test(`When the context is a hub with existing ${kind} crs, should distribute context info, ManagedCluster, and ${kind} messages`, async () => {
-			// mock a loader stubbing the required methods for the test run
+			// mock a loader instance
 			let mockLoad = sandbox.createStubInstance(loader.Load);
 			// @ts-ignore inject a loader mock as the loader's singleton instance
 			loader.Load.loader = mockLoad;
@@ -81,7 +81,7 @@ suite('Distribute messages using the data distributor', () => {
 	});
 
 	test('When the context is a spoke but has no other resources, should distribute only context info and klusterlet messages', async () => {
-		// mock a loader stubbing the required methods for the test run
+		// mock a loader instance
 		let mockLoad = sandbox.createStubInstance(loader.Load);
 		// @ts-ignore inject a loader mock as the loader's singleton instance
 		loader.Load.loader = mockLoad;
@@ -100,7 +100,7 @@ suite('Distribute messages using the data distributor', () => {
 	['AppliedManifestWork', 'SubscriptionStatus']
 	.forEach(kind => {
 		test(`When the context is a spoke with existing ${kind} crs, should distribute context info, Klusterlet, and ${kind} messages`, async () => {
-			// mock a loader stubbing the required methods for the test run
+			// mock a loader instance
 			let mockLoad = sandbox.createStubInstance(loader.Load);
 			// @ts-ignore inject a loader mock as the loader's singleton instance
 			loader.Load.loader = mockLoad;
@@ -121,7 +121,7 @@ suite('Distribute messages using the data distributor', () => {
 	});
 
 	test('When the context is both a hub and a spoke, should distribute context info, ManagedCluster, and Klusterlet messages', async () => {
-		// mock a loader stubbing the required methods for the test run
+		// mock a loader instance
 		let mockLoad = sandbox.createStubInstance(loader.Load);
 		// @ts-ignore inject a loader mock as the loader's singleton instance
 		loader.Load.loader = mockLoad;
@@ -138,8 +138,8 @@ suite('Distribute messages using the data distributor', () => {
 		expect(mockConsumer).to.be.calledWith({ crsDistribution: { kind: 'Klusterlet', crs: JSON.stringify([fixtures.ocmCr2Clustered])}});
 	});
 
-	test('When no crs find for kind, should send kind message', async () => {
-		// mock a loader stubbing the required methods for the test run
+	test('When no crs found for kind, should not send message for kind', async () => {
+		// mock a loader instance
 		let mockLoad = sandbox.createStubInstance(loader.Load);
 		// @ts-ignore inject a loader mock as the loader's singleton instance
 		loader.Load.loader = mockLoad;
