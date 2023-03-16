@@ -15,11 +15,11 @@ jobs:
       matrix:
         include:
           - os: macos-latest
-            target: darwin-x64
+            targets: "darwin-x64,darwin-arm64"
           - os: ubuntu-latest
-            target: linux-x64
+            targets: "linux-x64,linux-arm64"
           - os: windows-latest
-            target: win32-x64
+            targets: "win32-x64"
       fail-fast: false
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -56,8 +56,11 @@ jobs:
       - name: Verify coverage
         run: npm run cov
 
-      - name: Create a VSIX package for target ${{ matrix.target }}
+      - name: Create a VSIX package for targets [ ${{ matrix.targets }} ]
+        shell: bash
         run: >
-          npm run vsce:package --
-          --target ${{ matrix.target }}
-          --out ocm-vscode-extension-${{ matrix.target }}-dev.vsix
+          echo "${{ matrix.targets }}" | tr "," "\n"  |  while read  -r target; do
+            npm run vsce:package -- \
+              --target ${target} \
+              --out ocm-vscode-extension-${target}-dev.vsix
+          done
