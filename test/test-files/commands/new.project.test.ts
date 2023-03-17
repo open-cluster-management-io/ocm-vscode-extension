@@ -35,6 +35,7 @@ suite('Create a new project command', () => {
 		'clusterset.yaml',
 		'clustersetbinding.yaml',
 		'placement.yaml',
+		'policy.yaml',
 		'subscription.yaml'
 	];
 
