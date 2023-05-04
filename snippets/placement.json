@@ -2,7 +2,7 @@
 	"placement-v1alpha1": {
 		"scope": "yaml",
 		"prefix": "OCM Placement v1beta1",
-		"description": "The placement is used to select clusters from a clusterset based on pre-defined predicates.",
+		"description": "The placement is used to select clusters from a clusterset based on pre-defined predicates. ",
 		"body": [
 			"---",
 			"apiVersion: cluster.open-cluster-management.io/v1beta1",
