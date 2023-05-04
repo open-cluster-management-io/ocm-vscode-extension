@@ -53,6 +53,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     name: Create an Early-access release
+    if: github.repository_owner == 'open-cluster-management-io'
     needs: package
     steps:
       - name: Checkout sources
@@ -91,6 +92,11 @@ jobs:
       - name: Delete EA tag if exists
         continue-on-error: true
         run: git push --delete origin early-access
+
+      # a little pause between deleting the release and creating a new one
+      # without it, the new release might be a weird release, i.e. a draft release which is not deleted with the previous step
+      - name: Sleep 5
+        run: sleep 5
 
       - name: Create new EA release
         id: new_release
