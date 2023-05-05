@@ -24,7 +24,19 @@
 			"#             - key: platform.open-cluster-management.io",
 			"#               operator: In",
 			"#               values:",
-			"#                 - aws"
+			"#                 - aws",
+			"#  tolerations: # are applied to placements, and allow (but do not require) the managed clusters with certain taints to be selected by placements with matching tolerations.",
+			"#  - key: cluster.open-cluster-management.io/unreachable",
+			"#    operator: Exists",
+			"#    tolerationSeconds: 300",
+			"#  prioritizerPolicy: #defines the policy of the prioritizers. If this field is unset, then default prioritizer mode and configurations are used. Referring to PrioritizerPolicy to see more description about Mode and Configurations.",
+			"#    configurations:",
+			"#     - scoreCoordinate:",
+			"#         builtIn: ${11|Steady,Balance,ResourceAllocatableCPU,ResourceAllocatableMemory|} ",
+			"#       weight: 2",
+			"#     - scoreCoordinate:",
+			"#         builtIn: ResourceAllocatableMemory",
+			"#     weight: 2"
 		]
 	}
 }
