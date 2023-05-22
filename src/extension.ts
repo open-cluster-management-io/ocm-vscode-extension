@@ -1,3 +1,4 @@
+import * as argoProject from './commands/argoProject';
 import * as createEnvironment from './commands/createEnvironment';
 import * as newProject from './commands/newProject';
 import * as verifyEnvironment from './commands/verifyEnvironment';
@@ -13,6 +14,8 @@ export function activate(extensionContext: vscode.ExtensionContext): void {
 	extensionContext.subscriptions.push(
 		vscode.commands.registerCommand(
 			'ocm-vscode-extension.ocmNewProject', () => newProject.create()),
+		vscode.commands.registerCommand(
+			'ocm-vscode-extension.argoProject', () => argoProject.create()),	
 		vscode.commands.registerCommand(
 			'ocm-vscode-extension.verifyTools', () => verifyEnvironment.verifyTools()),
 		vscode.commands.registerCommand(

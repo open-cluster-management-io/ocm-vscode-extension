@@ -2,8 +2,12 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 
 export const availableTemplates = ['Git', 'HelmRepo', 'ObjectBucket'];
+export const argoTemplates = ['Argo'];
+
 export const defaultTemplate = 'Git';
+export const defaultArgoTemplate = 'Argo';
 export const defaultProjectName = 'ocm-application';
+export const defaultArgoProjectName = 'ocm-argo-application';
 
 // create a template project
 export async function createProjectFromTemplate(

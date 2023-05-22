@@ -29,6 +29,7 @@
 		"Other"
 	],
 	"activationEvents": [
+		"onCommand:ocm-vscode-extension.argoProject",
 		"onCommand:ocm-vscode-extension.ocmNewProject",
 		"onCommand:ocm-vscode-extension.verifyTools",
 		"onCommand:ocm-vscode-extension.createLocalEnvironment",
@@ -38,6 +39,11 @@
 	"main": "./out/src/extension.js",
 	"contributes": {
 		"commands": [
+			{
+				"command": "ocm-vscode-extension.argoProject",
+				"title": "Create an ArgoCD project",
+				"category": "OCM"
+			},
 			{
 				"command": "ocm-vscode-extension.ocmNewProject",
 				"title": "Create an application-manager project",
