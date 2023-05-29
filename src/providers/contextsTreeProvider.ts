@@ -64,6 +64,10 @@ export class TreeCr extends vscode.TreeItem {
 export class ConnectedContextsTreeProvider implements vscode.TreeDataProvider<TreeElement> {
 	private load: loader.Load;
 
+	private _onDidChangeTreeData: vscode.EventEmitter<TreeElement | undefined | null | void> = new vscode.EventEmitter<TreeElement | undefined | null | void>();
+	readonly onDidChangeTreeData: vscode.Event<TreeElement | undefined | null | void> = this._onDidChangeTreeData.event;
+  
+
 	constructor(load: loader.Load) {
 		this.load = load;
 		this.refresh();
@@ -71,6 +75,7 @@ export class ConnectedContextsTreeProvider implements vscode.TreeDataProvider<Tr
 
 	refresh(): void {
 		this.load.refresh();
+		this._onDidChangeTreeData.fire();
 	}
 
 	getTreeItem(element: TreeElement): TreeElement {
