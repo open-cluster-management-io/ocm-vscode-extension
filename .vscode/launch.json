@@ -7,7 +7,7 @@
 	"configurations": [
 		{
 			"name": "Run Extension",
-			"type": "extensionHost",
+			"type": "extensionHost",			
 			"request": "launch",
 			"args": [
 				"--disable-extensions",

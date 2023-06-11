@@ -1,44 +1,81 @@
-import { VSCodeDataGrid, VSCodeDataGridCell, VSCodeDataGridRow,  } from '@vscode/webview-ui-toolkit/react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { OcmResource } from '../../../src/data/loader'
+import { Accordion, AccordionContent, AccordionItem, AccordionToggle, Gallery, Title } from '@patternfly/react-core';
+import GalleryTableComponent from '../common/ConditionTable';
+import { DateFormat } from '../common/common';
+import  PlacementDecision from './PlacementDecision'
+import yaml from 'js-yaml';
+import { OcmLabels } from '../common/Labels';
 
-export default function ShowPlacements() {
-    let [placements, setPlacements] = useState<OcmResource[]>([]);
+type placementsProps = {
+    placements: OcmResource[]
+}
 
-	useEffect(() => {
-        window.addEventListener("message", event => {
-			if ('crsDistribution' in event.data && 'Placement' === event.data.crsDistribution.kind) {
-				setPlacements(JSON.parse(event.data.crsDistribution.crs));
-			}
-        });
-    });
+
+
+export default function ShowPlacements(Props: placementsProps ) {
+    
+    const [expanded, setExpanded] =  useState('');
+
+  
+
+        const onToggle = (id: string) => {
+            if (id === expanded) {
+                setExpanded('');
+            } else {
+            setExpanded(id);
+            }
+        };
 
     return (
         <section className="component-row">
-            { placements.length > 0 &&
+            { Props.placements.length > 0 &&
                 <>
-                    <h2 style={{ marginTop: '40px' }}>Placements</h2>
-                    <VSCodeDataGrid gridTemplateColumns="1fr 1fr 1fr 1fr" aria-label='Placement' >
-                        <VSCodeDataGridRow rowType="sticky-header">
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='1'>Placement Name</VSCodeDataGridCell>
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='2'>Namespace</VSCodeDataGridCell>
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='3'>Number of Selected Clusters</VSCodeDataGridCell>
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='4'>Conditions</VSCodeDataGridCell>
-                        </VSCodeDataGridRow>
 
-                        {placements.map(placement => {
-                            return <VSCodeDataGridRow>
-                                        <VSCodeDataGridCell gridColumn='1'>{placement.kr.metadata.name}</VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='2'>{placement.kr.metadata.namespace} </VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='3'>{placement.kr.status.numberOfSelectedClusters} </VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='4'>{placement.kr.status.conditions.map( ( condition:any )=> { return<p> - lastTransitionTime: {condition.lastTransitionTime}, message: {condition.message}, reason: {condition.reason}, status: {condition.status}, type: {condition.type} </p>  })} </VSCodeDataGridCell>
-                                    </VSCodeDataGridRow>
-                        } )
+                <Title headingLevel='h2' size='md' style={{ marginTop: '40px' }}>Placements</Title>
+                <Gallery className='ocm-gallery' hasGutter={true} >
+                { Props.placements.map( (placement) => { 
+                           
+                            const codeJson = placement.kr.spec 
+                            const code =yaml.dump(codeJson);
+                            const row = placement.kr.status.conditions.map( (condition:any) => { 
+                                return [new Date(condition.lastTransitionTime).toLocaleString("en-US",DateFormat),
+                                        condition.message,
+                                        condition.reason,
+                                        condition.status
+                                    ]      
+                                })  
+                            const placementName =  placement.kr.metadata.name;    
+                            const labels = placement.kr.metadata.labels? <OcmLabels labels={placement.kr.metadata.labels} />:null     
+                    return <>
+                            <GalleryTableComponent
+                                title={`Name: ${placementName}`}
+                                subtitle={`Namespace: ${placement.kr.metadata.namespace}`}
+                                rows={row}
+                                code={code}
+                                id={`${placementName}`} > 
+                                <Accordion> 
+                                    <AccordionItem>
+                                        <AccordionToggle  onClick={() => {
+                                                                            onToggle(`def-list-${placementName}`);
+                                                                        }}
+                                                                        isExpanded={expanded === `def-list-${placementName}`}
+                                                                        id={`def-list-${placementName}`}>
+                                            Number of selected clusters: {placement.kr.status.numberOfSelectedClusters} 
+                                        </AccordionToggle>
+                                    <AccordionContent id={`def-expanded-${placementName}`} isHidden={expanded !== `def-list-${placementName}`}>
+                                        <PlacementDecision placementName={placementName}/>
+                                    </AccordionContent>    
+                                    </AccordionItem>
+                                </Accordion>
+                            {labels}     
+                            </GalleryTableComponent>
+                        </>   
                         }
-                    </VSCodeDataGrid>
-                    <div style={{ borderTop: "1px solid #fff ", marginLeft: 10, marginRight: 10 }}></div>
+                    )}                            
+                </Gallery>
                 </>
-            }
+            }            
         </section>
     );
 }

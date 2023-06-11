@@ -1,40 +1,46 @@
-import { VSCodeDataGrid, VSCodeDataGridCell, VSCodeDataGridRow,  } from '@vscode/webview-ui-toolkit/react';
 import { useState, useEffect } from 'react';
 import { OcmResource } from '../../../src/data/loader'
+import { ConditionTableComponent } from '../common/ConditionTable';
+import { DateFormat } from '../common/common';
+import { OcmLabels } from '../common/Labels';
 
 export default function ShowKlusterlets() {
     let [klusterlets, setKlusterlets] = useState<OcmResource[]>([]);
 
 	useEffect(() => {
         window.addEventListener("message", event => {
-			if ('crsDistribution' in event.data && 'Klusterlet' === event.data.crsDistribution.kind) {
-				setKlusterlets(JSON.parse(event.data.crsDistribution.crs));
+			if ('crsDistribution' in event.data.msg && 'Klusterlet' === event.data.msg.crsDistribution.kind) {
+				setKlusterlets(JSON.parse(event.data.msg.crsDistribution.crs));
 			}
         });
     });
 
+    const row = klusterlets.map(klusterlet => {            
+        return klusterlet.kr.status.conditions.map( (condition:any) => { 
+            return [new Date(condition.lastTransitionTime).toLocaleString("en-US",DateFormat),
+                    condition.message,
+                    condition.reason,
+                    condition.status
+                ]      
+            })
+        })
     return (
+        //TODO-Add panel 
+        //TODO-add clusterlet dashboard 
         <section className="component-row">
             { klusterlets.length > 0 &&
                 <>
-                    <h2 style={{ marginTop: '40px' }}>Klusterlet</h2>
-                    <VSCodeDataGrid gridTemplateColumns="1fr 1fr" aria-label='Klusterlet' >
-                        <VSCodeDataGridRow rowType="sticky-header">
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='1'>Klusterlet Name</VSCodeDataGridCell>
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='2'>Conditions</VSCodeDataGridCell>
-                        </VSCodeDataGridRow>
-
                         {klusterlets.map(klusterlet => {
-                            return <VSCodeDataGridRow>
-                                        <VSCodeDataGridCell gridColumn='1'>{klusterlet.kr.metadata.name}</VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='2'>{klusterlet.kr.status.conditions.map( ( condition:any )=> { return<p> - lastTransitionTime: {condition.lastTransitionTime}, message: {condition.message}, reason: {condition.reason}, status: {condition.status}, type: {condition.type} </p>  })} </VSCodeDataGridCell>
-                                    </VSCodeDataGridRow>
+                            return  <>               
+                                    <ConditionTableComponent id='' title={`${klusterlet.kr.metadata.name}` } rows={ row[0]}  /> 
+                                    {klusterlet.kr.metadata.labels?<OcmLabels labels={klusterlet.kr.metadata.labels} />:null }
+                                    </>
                         } )
                         }
-                    </VSCodeDataGrid>
                     <div style={{ borderTop: "1px solid #fff ", marginLeft: 10, marginRight: 10 }}></div>
                 </>
             }
         </section>
+
     );
 }

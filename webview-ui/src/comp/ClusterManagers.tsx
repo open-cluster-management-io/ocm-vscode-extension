@@ -1,40 +1,39 @@
-import { VSCodeDataGrid, VSCodeDataGridCell, VSCodeDataGridRow,  } from '@vscode/webview-ui-toolkit/react';
-import { useState, useEffect } from 'react';
 import { OcmResource } from '../../../src/data/loader'
+import { PageSection, Panel, PanelMain, PanelMainBody} from '@patternfly/react-core';
+import { DateFormat } from '../common/common';
+import { ConditionTableComponent } from '../common/ConditionTable';
+ 
 
-export default function ShowClusterManagers() {
-    let [clusterManagers, setClusterManagers] = useState<OcmResource[]>([]);
+type clusterManagerProps = {
+    clusterManagers: OcmResource[]
+}
 
-	useEffect(() => {
-        window.addEventListener("message", event => {
-			if ('crsDistribution' in event.data && 'ClusterManager' === event.data.crsDistribution.kind) {
-				setClusterManagers(JSON.parse(event.data.crsDistribution.crs));
-			}
-		});
-    });
+export default function ShowClusterManagers( Props: clusterManagerProps) {
 
+    const row = Props.clusterManagers.map(clusterManager => {            
+        return clusterManager.kr.status.conditions.map( (condition:any) => { 
+            return [new Date(condition.lastTransitionTime).toLocaleString("en-US",DateFormat),
+                    condition.message,
+                    condition.reason,
+                    condition.status
+                ]      
+            })
+        })
+            
     return (
+        <PageSection>
         <section className="component-row">
-            { clusterManagers.length > 0 &&
-                <>
-                    <h2 style={{ marginTop: '40px' }}>Cluster Manager</h2>
-                    <VSCodeDataGrid gridTemplateColumns="1fr 1fr" aria-label='ClusterManager' >
-                        <VSCodeDataGridRow rowType="sticky-header">
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='1'>Cluster Manager Name</VSCodeDataGridCell>
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='2'>Conditions</VSCodeDataGridCell>
-                        </VSCodeDataGridRow>
-
-                        {clusterManagers.map(clusterManager => {
-                            return <VSCodeDataGridRow>
-                                        <VSCodeDataGridCell gridColumn='1'>{clusterManager.kr.metadata.name}</VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='2'>{clusterManager.kr.status.conditions.map( ( condition:any )=> { return<p> - lastTransitionTime: {condition.lastTransitionTime}, message: {condition.message}, reason: {condition.reason}, status: {condition.status}, type: {condition.type} </p>  })} </VSCodeDataGridCell>
-                                    </VSCodeDataGridRow>
-                        } )
-                        }
-                    </VSCodeDataGrid>
-                    <div style={{ borderTop: "1px solid #fff ", marginLeft: 10, marginRight: 10 }}></div>
-                </>
+            { Props.clusterManagers.length > 0 &&
+                <Panel>
+                    <PanelMain>
+                    <PanelMainBody>
+                        <ConditionTableComponent id='' title={"Cluster Manager"} rows={row[0]}   />
+                        <div style={{ borderTop: "1px solid #fff ", marginLeft: 10, marginRight: 10 }}></div>
+                    </PanelMainBody>
+                    </PanelMain>
+                </Panel>
             }
         </section>
+        </PageSection>
     );
 }

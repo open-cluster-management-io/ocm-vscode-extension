@@ -1,5 +1,5 @@
 ---
-apiVersion: cluster.open-cluster-management.io/v1beta1
+apiVersion: cluster.open-cluster-management.io/v1beta1 # TODO change to v1beta2 --cluster selector https://open-cluster-management.io/concepts/managedclusterset/#:~:text=clusterset%0Aspec%3A-,clusterSelector,-%3A%0A%20%20%20%20labelSelector%3A
 kind: ManagedClusterSet
 metadata:
   name: helloworld-clusterset

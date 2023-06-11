@@ -9,14 +9,27 @@
 		"sourceMap": true,
 		"rootDirs": [
 			"src",
-			"test"
+			"test",
+			"styles"
 		],
 		"skipLibCheck": true,
-		"strict": true   /* enable all strict type-checking options */
+		"strict": true,
+		 /* enable all strict type-checking options */
 		/* Additional Checks */
 		// "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
 		// "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
 		// "noUnusedParameters": true,  /* Report errors on unused parameters. */
+		"baseUrl": ".",
+		"paths": {
+			"@app/*": ["src/app/*"],
+			"@assets/*": ["node_modules/@patternfly/react-core/dist/styles/assets/*"]
+		},
 	},
+	"include": [
+		"**/*.ts",
+		"**/*.tsx",
+		"**/*.jsx",
+		"**/*.js"
+	  ],
 	"exclude": ["*/node_modules", ".vscode-test", "webview-ui"]
 }
