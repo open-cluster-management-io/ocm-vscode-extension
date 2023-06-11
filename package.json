@@ -152,7 +152,10 @@
 				"language": "yaml",
 				"path": "./snippets/subscription_helmrepo.json"
 			}
-		]
+		],
+		"webview": {
+			"contentSecurityPolicy": "img-src *;"
+		}
 	},
 	"workspaces": [
 		"webview-ui"
@@ -183,19 +186,26 @@
 	},
 	"dependencies": {
 		"@kubernetes/client-node": "^0.17.1",
+		"@patternfly/react-core": "^4.276.8",
+		"@patternfly/react-styles": "^4.92.6",
+		"@patternfly/react-table": "^4.113.0",
+		"@types/d3-shape": "^3.1.1",
 		"@types/lodash": "^4.14.185",
 		"@types/shelljs": "^0.8.11",
 		"@vscode/webview-ui-toolkit": "^1.0.1",
+		"d3": "^7.8.5",
 		"fs-extra": "^10.1.0",
 		"http2": "^2.7.1",
 		"lodash": "^4.17.21",
 		"ocm-webview": "file:webview-ui",
+		"react": "^18.2.0",
 		"shelljs": "0.8.5"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.3.3",
 		"@types/chai-as-promised": "^7.1.5",
 		"@types/chai-things": "^0.0.35",
+		"@types/d3": "^7.4.0",
 		"@types/fs-extra": "^9.0.13",
 		"@types/glob": "^8.0.0",
 		"@types/js-yaml": "^4.0.5",

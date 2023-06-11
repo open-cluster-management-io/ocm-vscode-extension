@@ -10,7 +10,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "strict": true,
+    "strict": true,   
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "esnext",
@@ -26,5 +26,9 @@
   ],
   "include": [
     "src"
-  ]
+  ],
+  "paths": {
+    "@app/*": ["src/app/*"],
+    "@assets/*": ["node_modules/@patternfly/react-core/dist/styles/assets/*"]
+  },
 }

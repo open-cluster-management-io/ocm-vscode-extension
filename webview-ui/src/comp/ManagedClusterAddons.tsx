@@ -1,23 +1,25 @@
 import { VSCodeDataGrid, VSCodeDataGridCell, VSCodeDataGridRow,  } from '@vscode/webview-ui-toolkit/react';
 import { useState, useEffect } from 'react';
 import { OcmResource } from '../../../src/data/loader'
+import { PageSection, Title } from '@patternfly/react-core';
 
 export default function ShowManagedClusterAddons() {
     let [managedClusterAddons, setManagedClusterAddons] = useState<OcmResource[]>([]);
 
 	useEffect(() => {
         window.addEventListener("message", event => {
-			if ('crsDistribution' in event.data && 'ManagedClusterAddOn' === event.data.crsDistribution.kind) {
-				setManagedClusterAddons(JSON.parse(event.data.crsDistribution.crs));
+			if ('crsDistribution' in event.data.msg && 'ManagedClusterAddOn' === event.data.msg.crsDistribution.kind) {
+				setManagedClusterAddons(JSON.parse(event.data.msg.crsDistribution.crs));
 			}
         });
     });
 
     return (
+        
         <section className="component-row">
             { managedClusterAddons.length > 0 &&
                 <>
-                    <h2 style={{ marginTop: '40px' }}>Managed Cluster Addons</h2>
+                    <Title headingLevel='h2' size='md' style={{ marginTop: '40px' }}>Managed Cluster Addons</Title>
                     <VSCodeDataGrid gridTemplateColumns="1fr 1fr 2fr" aria-label='ManagedClusterAddons' >
                         <VSCodeDataGridRow rowType="sticky-header">
                                 <VSCodeDataGridCell cellType='columnheader' gridColumn='1'>Managed Cluster Addon Name</VSCodeDataGridCell>
