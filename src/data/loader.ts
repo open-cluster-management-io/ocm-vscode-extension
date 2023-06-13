@@ -178,14 +178,22 @@ export class Load {
 		let retRes: OcmResource[] = [];
 		let nsResponse = await this.coreApi?.listNamespace();
 		if (nsResponse && nsResponse.response.statusCode === 200) {
+			let objectPromises: Promise<void>[] = [];
 			nsResponse.body.items.forEach(async nsitem => {
 				let namespace = nsitem.metadata?.name as string;
-				let objResponse = await this.objApi?.listNamespacedCustomObject(crd.group, crd.version, namespace, crd.plural);
-				if (objResponse && objResponse.response.statusCode === 200) {
-					// @ts-ignore
-					retRes.push(...objResponse.body.items.map(item => new OcmResource(item, crd, namespace)));
+				let objectPromise = this.objApi?.listNamespacedCustomObject(crd.group, crd.version, namespace, crd.plural)
+					.then(objResponse => {
+						// @ts-ignore
+						if (objResponse && objResponse.response.statusCode === 200 && objResponse.body.items.length > 0) {
+							// @ts-ignore
+							retRes.push(...objResponse.body.items.map(item => new OcmResource(item, crd, namespace)));
+						}
+					});
+				if (objectPromise) {
+					objectPromises.push(objectPromise);
 				}
 			});
+			await Promise.all(objectPromises);
 		}
 		return retRes;
 	}
