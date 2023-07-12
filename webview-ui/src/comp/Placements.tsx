@@ -1,4 +1,3 @@
-import { VSCodeDataGrid, VSCodeDataGridCell, VSCodeDataGridRow,  } from '@vscode/webview-ui-toolkit/react';
 import { useState, useEffect } from 'react';
 import { OcmResource } from '../../../src/data/loader'
 import { Accordion, AccordionContent, AccordionItem, AccordionToggle, Gallery, Title } from '@patternfly/react-core';

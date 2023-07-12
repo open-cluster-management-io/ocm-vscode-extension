@@ -24,16 +24,16 @@ export default function PlacementDecision(Props: PlacementDecisionsProps ) {
     <p>Selected Clusters</p>
     {placementDecisions.map( (placementDecision:any) => {
                             let res                           
-                            placementDecision.kr.metadata.ownerReferences.map( (ref:any) => { 
+                            placementDecision.kr.metadata.ownerReferences.forEach( (ref:any) => { 
                                 if(placementDecision.kr.status  !== undefined && placementDecision.kr.status.decisions  !== undefined){
                                     if (ref.kind.toLowerCase() === "placement" && ref.name.toLowerCase() === Props.placementName.toLowerCase() ) {
-                                        placementDecision.kr.status.decisions.map((decision:any) => {
+                                        placementDecision.kr.status.decisions.forEach((decision:any) => {
                                                 res = <>                                    
                                                         <p>Cluster: {decision.clusterName} </p>
-                                                    </>
+                                                    </>                                                    
                                             })                                            
                                         }                                      
-                                    }                                                                
+                                    }                                                                                                      
                                 })
                             return res      
                             })

@@ -1,7 +1,7 @@
 import { VSCodeDataGrid, VSCodeDataGridCell, VSCodeDataGridRow,  } from '@vscode/webview-ui-toolkit/react';
 import { useState, useEffect } from 'react';
 import { OcmResource } from '../../../src/data/loader'
-import { PageSection, Title } from '@patternfly/react-core';
+import { Title } from '@patternfly/react-core';
 
 export default function ShowManagedClusterAddons() {
     let [managedClusterAddons, setManagedClusterAddons] = useState<OcmResource[]>([]);
