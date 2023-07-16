@@ -1,0 +1,33 @@
+
+.logo img{
+  max-width: 25%;
+}
+
+.node text {
+  font-size: 10px;
+  color: black;
+}
+
+.node {
+  fill: black;
+  stroke: purple;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1px;
+}
+
+
+.managed-clusters-table tr > * {
+  font-size: x-small !important;
+  }
+
+.pf-c-card__header {
+    display: block !important;
+}
+
+.ocm-gallery{
+  --pf-l-gallery--GridTemplateColumns--min: 450px !important; 
+}

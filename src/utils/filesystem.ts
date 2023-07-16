@@ -1,5 +1,6 @@
 import * as fse from 'fs-extra';
 import * as path from 'path';
+import { Uri } from 'vscode';
 
 export const availableTemplates = ['Git', 'HelmRepo', 'ObjectBucket'];
 export const argoTemplates = ['Argo'];
@@ -38,4 +39,25 @@ export async function createProjectFromTemplate(
 				}
 			});
 	});
+}
+
+type KubeImage = { 
+	name:string 
+	uri:string
+};
+
+// export file list 
+export async function getKubeImagesFileList(dirName:string): Promise<KubeImage[]>  {
+
+		let images: KubeImage[] = [];
+		let templatesFolder = path.resolve(__dirname, dirName);
+		let fileList = fse.readdir(templatesFolder);
+		(await fileList).forEach( file => { 
+			const parsedPath = path.parse(file);	
+			images.push({ 
+				name:parsedPath.name,  
+				uri: `${templatesFolder}/${file}`
+			});
+		});
+	return images ;
 }

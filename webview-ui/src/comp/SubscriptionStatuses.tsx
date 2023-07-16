@@ -1,14 +1,15 @@
 import { VSCodeDataGrid, VSCodeDataGridCell, VSCodeDataGridRow,  } from '@vscode/webview-ui-toolkit/react';
 import { useState, useEffect } from 'react';
 import { OcmResource } from '../../../src/data/loader'
+import { Title } from '@patternfly/react-core';
 
 export default function ShowSubscriptionStatuses() {
     let [subscriptionStatuses, setSubscriptionStatuses] = useState<OcmResource[]>([]);
 
 	useEffect(() => {
         window.addEventListener("message", event => {
-			if ('crsDistribution' in event.data && 'SubscriptionStatus' === event.data.crsDistribution.kind) {
-				setSubscriptionStatuses(JSON.parse(event.data.crsDistribution.crs));
+			if ('crsDistribution' in event.data.msg && 'SubscriptionStatus' === event.data.msg.crsDistribution.kind) {
+				setSubscriptionStatuses(JSON.parse(event.data.msg.crsDistribution.crs));
 			}
         });
     });
@@ -17,7 +18,7 @@ export default function ShowSubscriptionStatuses() {
         <section className="component-row">
             { subscriptionStatuses.length >0 &&
                 <>
-                    <h2 style={{ marginTop: '40px' }}>Subscription Status</h2>
+                    <Title headingLevel='h2' size='md' style={{ marginTop: '40px' }}>Subscription Status</Title>
                     <VSCodeDataGrid gridTemplateColumns="1fr 1fr" aria-label='SubscriptionStatus' >
                         <VSCodeDataGridRow rowType="sticky-header">
                                 <VSCodeDataGridCell cellType='columnheader' gridColumn='1'>Subscription Name</VSCodeDataGridCell>
