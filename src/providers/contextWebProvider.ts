@@ -6,16 +6,12 @@ import { ConnectedContext } from '../data/builder';
 import { getKubeImagesFileList } from '../utils/filesystem';
 import path = require('path');
 
-
-
 // class used for management and encapsulation of the webview panel
 export class ConnectedContextWebProvider {
 	public static currentPanel?: ConnectedContextWebProvider;
 	private readonly panel: WebviewPanel;
 	private disposables: Disposable[] = [];
 
-                
- 
 	// static function used for rendering a web view
 	public static async render(extensionUri: Uri, context: ConnectedContext | undefined  ): Promise<void> {
 		// get the loader instance
@@ -140,11 +136,7 @@ export class ConnectedContextWebProvider {
 		
 		let customCssUri = webview.asWebviewUri(
 			Uri.joinPath(extensionUri,  "styles", "custom.css"));
-		
-		
-		
-		
-		
+
 		return /*html*/ `
 		<!DOCTYPE html>
 		<html lang="en">

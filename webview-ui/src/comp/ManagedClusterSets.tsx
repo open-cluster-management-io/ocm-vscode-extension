@@ -21,8 +21,6 @@ export default function ShowManagedClusterSets(Props: managedClusterSetsProps) {
                     <Gallery className='ocm-gallery' hasGutter={true} >
 
                     {Props.managedClusterSets.map(managedClusterSet => {
-                        console.log(`managedClusterSet`)
-                        console.log(managedClusterSet)
                         const code = yaml.dump(managedClusterSet.kr.spec.clusterSelector)
                         const row = managedClusterSet.kr.status.conditions.map( (condition:any) => { 
                             return [new Date(condition.lastTransitionTime).toLocaleString("en-US",DateFormat),

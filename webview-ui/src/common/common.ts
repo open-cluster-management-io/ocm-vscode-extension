@@ -1,5 +1,3 @@
-
-
 export const DateFormat: Object = {
     year: 'numeric',
     month: '2-digit',

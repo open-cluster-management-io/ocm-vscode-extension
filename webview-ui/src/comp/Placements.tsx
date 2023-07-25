@@ -72,7 +72,7 @@ export default function ShowPlacements(Props: placementsProps ) {
                             </GalleryTableComponent>
                         </>   
                         }
-                    )}                            
+                    )}
                 </Gallery>
                 </>
             }            

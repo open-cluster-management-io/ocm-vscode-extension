@@ -36,8 +36,6 @@ export default function ShowSubscriptionReports(Props: SubscriptionReportsProps)
                                             subscriptionReport.kr.summary.propagationFailed
                                         ]]
                                         
-                            console.log(rows)
-
                             return <GalleryItem>
                                     <Card>
                                         <CardHeader>   

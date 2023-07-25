@@ -94,8 +94,8 @@ export default function ClusterManagerPage(){
         clusterManagersDataRef.current = newClusterManagersData
     },[kubeImages]);
 
-    if(dataRequests.current > 15 ){    
-            return (<>  {console.log(dataRequests)}
+    if(dataRequests.current > 16 ){    
+            return (<> 
                         <ClusterManagerDashboard data={clusterManagersDataRef.current}/> 
                         <ShowClusterManagers clusterManagers={clusterManagersRef.current} />
                         <ShowManagedClusters managedClusters={managedClustersRef.current} />
@@ -108,9 +108,11 @@ export default function ClusterManagerPage(){
             )
         }
 
-        else { 
-            return(
-            <Spinner isSVG size='xl'/>
+    else if(clusterManagersRef.current.length === 0  ) { 
+            return <></>
+    }
+    else {
+        return ( <Spinner size='xl'/>       
         )
     }
     

@@ -31,7 +31,7 @@ const resourceTranslationMap:ResourceObject = {
   configmap: 'cm',
   secret: 'secret',
   ingress: 'ing',
-  serviceaccount: 'sa',
+  serviceaccount: 'sa',  
   cronjob: 'cronjob',
   endpoint: 'ep',
   limitrange: 'limits',
@@ -67,14 +67,16 @@ export const  Graph: React.FC<GraphProps> = ({ data ,images }) => {
       namespace: data.namespace,     
       children: data.children.map(mf => { 
             images.forEach( (image: kubeImage)  => {
-                          let field = mf.kind.toLowerCase() 
-                          let shortKind = resourceTranslationMap[field]
-                          if (shortKind === image.name.toLowerCase()) {
+                          if (resourceTranslationMap[mf.kind.toLowerCase()] === image.name.toLowerCase()) {
                                 mf.icon = image.uri 
                                 return mf
                           }
+                          else if  (resourceTranslationMap[mf.kind.toLowerCase().slice(0, -1)] === image.name.toLowerCase()) {
+                            mf.icon = image.uri 
+                            return mf
+                          }
                             return mf   
-                          })    
+                        })    
               return mf
               }) 
     }

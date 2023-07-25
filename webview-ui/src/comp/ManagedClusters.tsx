@@ -3,7 +3,6 @@ import {  Gallery, Title } from '@patternfly/react-core';
 import { DateFormat } from '../common/common';
 import GalleryTableComponent from '../common/ConditionTable';
 import { OcmLabels } from '../common/Labels';
- 
 
 type ManagedClusterProps = {
     managedClusters: OcmResource[]
