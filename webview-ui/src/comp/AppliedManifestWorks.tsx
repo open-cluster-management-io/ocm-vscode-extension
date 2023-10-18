@@ -1,40 +1,65 @@
-import { VSCodeDataGrid, VSCodeDataGridCell, VSCodeDataGridRow,  } from '@vscode/webview-ui-toolkit/react';
-import { useState, useEffect } from 'react';
 import { OcmResource } from '../../../src/data/loader'
+import { Gallery, Title } from '@patternfly/react-core';
+import GalleryTableComponent from '../common/ConditionTable';
+import {DateFormat, kubeImage} from '../common/common'
+import Graph from '../common/Graph';
 
-export default  function ShowAppliedManifestWorks() {
-    let [appliedManifestWorks, setAppliedManifestWorks] = useState<OcmResource[]>([]);
 
-	useEffect(() => {
-		window.addEventListener("message", event => {
-			if ('crsDistribution' in event.data && 'AppliedManifestWork' === event.data.crsDistribution.kind) {
-				setAppliedManifestWorks(JSON.parse(event.data.crsDistribution.crs));
-			}
-        });
-    });
+type AppliedManifestWorksProps = {
+    appliedManifestWorks: OcmResource[],
+    kubeImages: kubeImage[]
+}    
 
+export default  function ShowAppliedManifestWorks(Props:AppliedManifestWorksProps) {
+
+
+    const AppliedResourcesColumn:  Object[] = [    
+        {title: "Resource Name",},
+        {title: "Resource"},
+        {title: "Group" , }, 
+        {title: "Namespace" }
+    ]
     return (
         <section className="component-row">
-            { appliedManifestWorks.length > 0 &&
-                <>
-                    <h2 style={{ marginTop: '40px' }}>Applied ManifestWorks</h2>
-                    <VSCodeDataGrid gridTemplateColumns="1fr 1fr 2fr" aria-label='AppliedManifestWork' >
-                        <VSCodeDataGridRow rowType="sticky-header">
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='1'>ManifestWork Name</VSCodeDataGridCell>
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='2'>Creation TimeStamp</VSCodeDataGridCell>
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='3'>Applied Resources</VSCodeDataGridCell>
-                        </VSCodeDataGridRow>
+            { Props.appliedManifestWorks.length > 0 &&
+                <> 
+                    
+                    <Title headingLevel='h2' size='md' style={{ marginTop: '40px' }}>Applied ManifestWorks</Title>
+                    <Gallery className='ocm-gallery' hasGutter={true} >
+                        {Props.appliedManifestWorks.map(appliedManifestWork => {
+                                console.log(`appliedManifestWork`)
+                                console.log(appliedManifestWork)
+                                const row = appliedManifestWork.kr.status.appliedResources.map( (resource:any) => { 
+                                        return [ resource.name, resource.resource, resource.group, resource.namespace]      
+                                        })
 
-                        {appliedManifestWorks.map(appliedManifestWork => {
-                            return <VSCodeDataGridRow>
-                                        <VSCodeDataGridCell gridColumn='1'>{appliedManifestWork.kr.spec.manifestWorkName}</VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='2'>{appliedManifestWork.kr.metadata.creationTimestamp} </VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='3'>{appliedManifestWork.kr.status.appliedResources.map( ( resource:any )=> { return<p>  - group: {resource.group}, name: {resource.name}, namespace: {resource.namespace}, resource: {resource.resource} </p>  })} </VSCodeDataGridCell>
-                                    </VSCodeDataGridRow>
-                        } )
-                        }
-                    </VSCodeDataGrid>
-                    <div style={{ borderTop: "1px solid #fff ", marginLeft: 10, marginRight: 10 }}></div>
+                        return  <GalleryTableComponent  
+                                        title={`ManifestWork Name: ${appliedManifestWork.kr.spec.manifestWorkName}`}
+                                        subtitle={`Creation TimeStamp: ${new Date(appliedManifestWork.kr.metadata.creationTimestamp).toLocaleString("en-US",DateFormat)}`}
+                                        rows={row}
+                                        cells={AppliedResourcesColumn}
+                                        sort={{index: 1, direction:"asc"}}
+                                        id={`${appliedManifestWork.kr.spec.manifestWorkName}`}
+                                    >
+                                        <Graph data={{  name: appliedManifestWork.kr.spec.manifestWorkName,
+                                                                namespace: appliedManifestWork.kr.metadata.namespace?appliedManifestWork.kr.metadata.namespace:'missing namespace',
+                                                                children:  appliedManifestWork.kr.status.appliedResources.map( (appliedResources:any) => {
+
+                                                                    return {
+                                                                        group: appliedResources.group,
+                                                                        name: appliedResources.name,
+                                                                        namespace: appliedResources.namespace,
+                                                                        kind: appliedResources.resource,
+                                                                        version: appliedResources.version
+                                                                    }
+                                                                })
+                                                } } images={Props.kubeImages}
+                                        />    
+                                    </GalleryTableComponent>                     
+                                    }
+                                )}   
+                    </Gallery>
+                <div style={{ borderTop: "1px solid #fff ", marginLeft: 10, marginRight: 10 }}></div>
                 </>
             }
         </section>

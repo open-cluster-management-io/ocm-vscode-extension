@@ -1,42 +1,68 @@
-import { VSCodeDataGrid, VSCodeDataGridCell, VSCodeDataGridRow,  } from '@vscode/webview-ui-toolkit/react';
-import { useState, useEffect } from 'react';
 import { OcmResource } from '../../../src/data/loader'
+import { Gallery,GalleryItem,Card,CardHeader, Title,CardBody } from '@patternfly/react-core';
+import Graph from '../common/Graph';
+import { kubeImage } from '../common/common';
+import { Table, TableBody, TableHeader } from '@patternfly/react-table';
 
-export default function ShowSubscriptionReports() {
-    let [subscriptionReports, setSubscriptionReports] = useState<OcmResource[]>([]);
 
-	useEffect(() => {
-        window.addEventListener("message", event => {
-			if ('crsDistribution' in event.data && 'SubscriptionReport' === event.data.crsDistribution.kind) {
-				setSubscriptionReports(JSON.parse(event.data.crsDistribution.crs));
-			}
-        });
-    },[])
+type SubscriptionReportsProps = {
+    subscriptionReports: OcmResource[],
+    kubeImages: kubeImage[]
+}
+
+const SubscriptionReportsSummeryColumns: Object[] = [     
+    {title: "Clusters" ,}, 
+    {title: "Deployed",  },
+    {title: "Failed" },
+    {title: "InProgress" },
+    {title: "PropagationFailed" }
+]
+
+export default function ShowSubscriptionReports(Props: SubscriptionReportsProps) {
 
     return (
         <section className="component-row">
-            { subscriptionReports.length >0 &&
+            { Props.subscriptionReports.length >0 &&
+                
                 <>
-                    <h2 style={{ marginTop: '40px' }}>Subscription Report</h2>
-                    <VSCodeDataGrid gridTemplateColumns="1fr 1fr 1fr 1fr" aria-label='SubscriptionReport' >
-                        <VSCodeDataGridRow rowType="sticky-header">
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='1'>Subscription Name</VSCodeDataGridCell>
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='2'>Namespace</VSCodeDataGridCell>
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='3'>Report Type</VSCodeDataGridCell>
-                                <VSCodeDataGridCell cellType='columnheader' gridColumn='4'>Results</VSCodeDataGridCell>
-                        </VSCodeDataGridRow>
+                    <Title headingLevel='h2' size='md' style={{ marginTop: '40px' }}>Subscription Report</Title>
+                    <Gallery className='ocm-gallery' hasGutter={true} >
 
-                        {subscriptionReports.map(subscriptionReport => {
-                            return <VSCodeDataGridRow>
-                                        <VSCodeDataGridCell gridColumn='1' >{subscriptionReport.kr.metadata.name}</VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='2' >{subscriptionReport.kr.metadata.namespace}</VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='3'>{subscriptionReport.kr.reportType} </VSCodeDataGridCell>
-                                        <VSCodeDataGridCell gridColumn='4'>{subscriptionReport.kr.results.map( ( result:any )=> { return<p> - source: {result.source}, result: {result.result} </p>  })} </VSCodeDataGridCell>
-                                    </VSCodeDataGridRow>
-                        } )
-                        }
-                    </VSCodeDataGrid>
-                    <div style={{ borderTop: "1px solid #fff ", marginLeft: 10, marginRight: 10 }}></div>
+                    {Props.subscriptionReports.map( subscriptionReport => { 
+                            const rows = [[subscriptionReport.kr.summary.clusters,
+                                            subscriptionReport.kr.summary.deployed,
+                                            subscriptionReport.kr.summary.failed,
+                                            subscriptionReport.kr.summary.inProgress,
+                                            subscriptionReport.kr.summary.propagationFailed
+                                        ]]
+                                        
+                            return <GalleryItem>
+                                    <Card>
+                                        <CardHeader>   
+                                        <Title headingLevel='h3' size='md'>Subscription Name: {subscriptionReport.kr.metadata.name}</Title> 
+                                        <Title headingLevel='h3' size='md'>Namespace: {subscriptionReport.kr.metadata.namespace?subscriptionReport.kr.metadata.namespace:'missing namespace'}</Title>                   
+                                        </CardHeader>
+                                        <CardBody>
+                                            <p> Report Type:  {subscriptionReport.kr.reportType}</p>
+                                                <Graph data={{  name: subscriptionReport.kr.metadata.name,
+                                                                namespace: subscriptionReport.kr.metadata.namespace?subscriptionReport.kr.metadata.namespace:'missing namespace',
+                                                                children:  subscriptionReport.kr.resources
+                                                } } images={Props.kubeImages}/>
+                                            <div style={{ borderTop: "1px solid #fff ", marginLeft: 10, marginRight: 10 }}></div>
+                                            <Table gridBreakPoint= 'grid-md'  rows={rows} cells={SubscriptionReportsSummeryColumns} >
+                                            <TableHeader/>
+                                            <TableBody />   
+                                            </Table>
+
+                                        </CardBody>
+
+                                        
+
+                                    </Card>
+                                    </GalleryItem>   
+                                    })}
+                    </Gallery>
+
                 </>
             }
         </section>
