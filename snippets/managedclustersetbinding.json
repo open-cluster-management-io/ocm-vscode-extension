@@ -1,11 +1,11 @@
 {
-	"managedclustersetbinding-v1beta1": {
+	"managedclustersetbinding-v1beta2": {
 		"scope": "yaml",
-		"prefix": "OCM ManagedClusterSetBinding v1beta1",
+		"prefix": "OCM ManagedClusterSetBinding v1beta2",
 		"description": "The managed clusters set binding is used to bind the managed clusters set to a namespace.",
 		"body": [
 			"---",
-			"apiVersion: cluster.open-cluster-management.io/v1beta1",
+			"apiVersion: cluster.open-cluster-management.io/v1beta2",
 			"kind: ManagedClusterSetBinding",
 			"metadata:",
 			"  name: ${1:<managed-clustterset-name>} # should be identical to the underlying ManagedClusterSet",
