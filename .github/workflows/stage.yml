@@ -24,10 +24,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install node 16
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '16'
           cache: npm
@@ -45,7 +45,7 @@ jobs:
           done
 
       - name: Upload VSIX package as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: vsix
           path: ./*.vsix
@@ -57,20 +57,20 @@ jobs:
     needs: package
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.OCM_BOT_PAT }}
 
       - name: Download VSIX package artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: vsix
           path: ./vsix
 
       - name: Check for existing EA release
         id: existing_release
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         continue-on-error: true
         with:
           github-token: ${{ secrets.OCM_BOT_PAT }}
@@ -82,7 +82,7 @@ jobs:
 
       - name: Delete EA release if exists
         if: ${{ steps.existing_release.outputs.id }}
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.OCM_BOT_PAT }}
           script: |
@@ -100,7 +100,7 @@ jobs:
 
       - name: Create new EA release
         id: new_release
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.OCM_BOT_PAT }}
           script: |
