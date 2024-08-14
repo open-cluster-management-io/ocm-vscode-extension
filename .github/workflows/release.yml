@@ -137,7 +137,6 @@ jobs:
             core.setOutput('upload_url', response.data.upload_url)
 
       - name: Create SHA256 checksums for the VSIX packages
-        working-directory: vsix
         run: |
           for pkg in ./vsix/*.vsix
           do
