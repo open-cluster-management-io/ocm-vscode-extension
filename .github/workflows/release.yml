@@ -139,7 +139,7 @@ jobs:
       - name: Create SHA256 checksums for the VSIX packages
         working-directory: vsix
         run: |
-          for pkg in *.vsix
+          for pkg in ./vsix/*.vsix
           do
             sha_file=$(echo $pkg | sed 's/\.vsix/\.sha256/g')
             sha256sum $pkg > $sha_file
