@@ -137,16 +137,18 @@ jobs:
             core.setOutput('upload_url', response.data.upload_url)
 
       - name: Create SHA256 checksums for the VSIX packages
+        working-directory: vsix
         run: |
-          for pkg in ./vsix/*.vsix
+          for pkg in ./**/*.vsix
           do
             sha_file=$(echo $pkg | sed 's/\.vsix/\.sha256/g')
             sha256sum $pkg > $sha_file
           done
 
       - name: Upload packages and checksums as EA release assets
+        working-directory: vsix
         run: |
-          for file in ./vsix/*.{vsix,sha256}
+          for file in ./**/*.{vsix,sha256}
           do
             asset_name=$(basename $file)
             upload_url=$(echo "${{ steps.new_release.outputs.upload_url }}" | sed "s/{?name,label}/?name=$asset_name/g")
