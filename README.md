@@ -1,3 +1,8 @@
+## IMPORTANT
+
+This repo will be archived, and all future development will take place in the
+[lab](https://github.com/open-cluster-management-io/lab/) repo.
+
 # OCM VScode Extension
 
 [Open Cluster Management][ocm-io] (OCM) is a community-driven project focused on multicluster and multicloud scenarios for Kubernetes apps.
